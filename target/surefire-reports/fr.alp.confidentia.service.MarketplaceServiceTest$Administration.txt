@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: fr.alp.confidentia.service.MarketplaceServiceTest$Administration
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.686 s -- in fr.alp.confidentia.service.MarketplaceServiceTest$Administration
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.575 s -- in fr.alp.confidentia.service.MarketplaceServiceTest$Administration

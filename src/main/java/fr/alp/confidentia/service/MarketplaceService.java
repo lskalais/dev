@@ -713,7 +713,8 @@ public class MarketplaceService {
         boolean ndaSigned = request != null && request.isNdaSigned();
         String company = ndaSigned ? CryptoService.decrypt(listing.companyNameEncrypted) : null;
         String exactLocation = ndaSigned ? CryptoService.decrypt(listing.exactLocationEncrypted) : null;
-        return new ListingView(listing.id, listing.sector, listing.region, listing.description,
+        return new ListingView(listing.id, listing.sector, listing.secondarySector, listing.foundedYear,
+                listing.region, listing.description,
                 listing.revenue, listing.ebitda, listing.askingPrice, listing.views,
                 matchPercent(listing, profile), company, exactLocation, listing.status);
     }

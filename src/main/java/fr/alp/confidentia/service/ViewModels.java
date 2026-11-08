@@ -17,7 +17,8 @@ public final class ViewModels {
             implements java.io.Serializable {
     }
 
-    public record ListingView(Long id, String sector, String region, String description,
+    public record ListingView(Long id, String sector, String secondarySector, Integer foundedYear,
+                              String region, String description,
                               BigDecimal revenue, BigDecimal ebitda, BigDecimal askingPrice,
                               long views, int matchPercent, String companyName, String exactLocation,
                               String status) {

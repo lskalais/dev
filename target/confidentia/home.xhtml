@@ -1,49 +1,181 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html">
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
 <h:head>
-    <title>Africa Legacy Market | Acheter ou vendre une entreprise</title>
+    <title>Africa Legacy Partners | Transmettre et reprendre une entreprise</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description"
+          content="Africa Legacy Partners accompagne la cession et la reprise d'entreprises en Afrique, dans un cadre confidentiel."/>
     <h:outputStylesheet library="css" name="app.css"/>
     <h:outputStylesheet library="css" name="theme.css"/>
     <h:outputScript library="js" name="theme.js" target="head"/>
 </h:head>
 <h:body class="public-page">
 <header class="public-header">
-    <a class="brand" href="home.xhtml">Africa Legacy <span>Market</span></a>
+    <a class="brand" href="home.xhtml">Africa Legacy <span>Partners</span></a>
     <nav aria-label="Navigation principale">
+        <a class="button outline" href="#opportunites">Opportunités</a>
+        <a class="button outline" href="#services">Nos services</a>
         <a class="button outline" href="acheter.xhtml">Acheter</a>
-        <a class="button outline" href="vendre.xhtml">Vendre</a>
-        <a class="button primary" href="login.xhtml">Connexion</a>
+        <a class="button primary" href="register.xhtml">Créer un compte</a>
+        <a class="button outline" href="login.xhtml">Connexion</a>
         <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
                 aria-pressed="false">Mode sombre</button>
     </nav>
 </header>
-<main class="public-container">
-    <section class="public-hero">
-        <p class="eyebrow">LE MARCHÉ DE LA TRANSMISSION D'ENTREPRISES</p>
-        <h1>La bonne rencontre pour la suite de votre entreprise.</h1>
-        <p class="muted">Africa Legacy Market met en relation cédants, acquéreurs et courtiers pour faciliter des transmissions d'entreprises confidentielles et accompagnées.</p>
-        <div class="public-actions">
-            <a class="button primary" href="acheter.xhtml">Acheter une entreprise</a>
-            <a class="button outline" href="vendre.xhtml">Vendre mon entreprise</a>
+<main class="public-container home-container">
+    <section class="public-hero home-hero">
+        <div>
+            <p class="eyebrow">TRANSMISSION · REPRISE · INVESTISSEMENT</p>
+            <h1>La prochaine étape de votre entreprise commence ici.</h1>
+            <p class="muted">Africa Legacy Partners accompagne les dirigeants qui transmettent leur entreprise et les repreneurs qui souhaitent investir dans une activité existante, avec méthode et confidentialité.</p>
+            <div class="public-actions">
+                <a class="button primary" href="acheter.xhtml">Découvrir les entreprises</a>
+                <a class="button outline" href="vendre.xhtml">Préparer une cession</a>
+            </div>
+        </div>
+        <aside class="home-hero-note">
+            <span class="home-note-mark" aria-hidden="true">ALP</span>
+            <p>Un cadre de confiance pour préparer, structurer et réussir la transmission de votre entreprise.</p>
+            <a href="#services">Découvrir l’accompagnement <span aria-hidden="true">→</span></a>
+        </aside>
+    </section>
+
+    <section class="home-opportunities" id="opportunites" aria-labelledby="opportunities-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">OPPORTUNITÉS ANONYMISÉES</p>
+                <h2 id="opportunities-title">Des entreprises à reprendre</h2>
+                <p class="muted">Un aperçu volontairement limité aux informations non identifiantes. Les informations complémentaires sont accessibles après inscription et validation du profil.</p>
+            </div>
+            <a class="button outline" href="acheter.xhtml">Voir les opportunités</a>
+        </div>
+        <section class="listing-grid public-listings home-listings" aria-label="Aperçu des entreprises à céder">
+            <ui:repeat value="#{marketplace.publicListings}" var="listing">
+                <article class="listing-card home-listing-card">
+                    <div class="card-topline">
+                        <span class="tag">#{listing.sector()}</span>
+                        <span class="tiny">Opportunité confidentielle</span>
+                    </div>
+                    <h3>Entreprise confidentielle</h3>
+                    <dl class="listing-facts">
+                        <div>
+                            <dt>Domaine</dt>
+                            <dd>#{empty listing.secondarySector() ? 'À préciser' : listing.secondarySector()}</dd>
+                        </div>
+                        <div>
+                            <dt>Localisation</dt>
+                            <dd>#{listing.region()}</dd>
+                        </div>
+                        <div>
+                            <dt>Ancienneté</dt>
+                            <dd>
+                                <ui:fragment rendered="#{not empty listing.foundedYear()}">Depuis #{listing.foundedYear()}</ui:fragment>
+                                <ui:fragment rendered="#{empty listing.foundedYear()}">À préciser</ui:fragment>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Taille</dt>
+                            <dd>À confirmer</dd>
+                        </div>
+                    </dl>
+                    <div class="card-footer">
+                        <span class="tiny">Identité et données financières protégées</span>
+                        <a class="button outline small" href="register.xhtml">En savoir plus</a>
+                    </div>
+                </article>
+            </ui:repeat>
+            <h:panelGroup layout="block" rendered="#{empty marketplace.publicListings}">
+                <div class="empty-state">Les prochaines opportunités vérifiées seront présentées ici. <a href="register.xhtml">Créez un compte</a> pour être informé.</div>
+            </h:panelGroup>
+        </section>
+        <div class="home-privacy-note">
+            <span aria-hidden="true">●</span>
+            Les noms d’entreprise, adresses précises et documents sensibles ne sont pas publiés sur cette page.
         </div>
     </section>
-    <section class="public-benefits">
-        <article class="panel">
-            <h2>Des offres vérifiées</h2>
-            <p class="muted">Les offres ne sont présentées aux acquéreurs qu'après validation par le courtier mandaté.</p>
-        </article>
-        <article class="panel">
-            <h2>Une démarche confidentielle</h2>
-            <p class="muted">Les informations identifiantes restent protégées pendant l'étude des opportunités.</p>
-        </article>
-        <article class="panel">
-            <h2>Un accompagnement dédié</h2>
-            <p class="muted">Cédants et acquéreurs échangent dans un parcours structuré, avec un courtier à leurs côtés.</p>
-        </article>
+
+    <section class="home-services" id="services" aria-labelledby="services-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">UN ACCOMPAGNEMENT À CHAQUE ÉTAPE</p>
+                <h2 id="services-title">Nos services</h2>
+            </div>
+            <a class="button outline" href="vendre.xhtml">Parlons de votre projet</a>
+        </div>
+        <div class="home-service-grid">
+            <article class="panel home-service-card">
+                <span class="service-number">01</span>
+                <h3>Conseil en cession</h3>
+                <p class="muted">Préparer votre entreprise et organiser un processus de transmission adapté à vos objectifs.</p>
+            </article>
+            <article class="panel home-service-card">
+                <span class="service-number">02</span>
+                <h3>Conseil en acquisition</h3>
+                <p class="muted">Clarifier vos critères de reprise et vous accompagner dans l’étude des opportunités.</p>
+            </article>
+            <article class="panel home-service-card">
+                <span class="service-number">03</span>
+                <h3>Mise en relation</h3>
+                <p class="muted">Faciliter la rencontre entre cédants et repreneurs qualifiés dans un cadre confidentiel.</p>
+            </article>
+            <article class="panel home-service-card">
+                <span class="service-number">04</span>
+                <h3>Diagnostic et valorisation</h3>
+                <p class="muted">Éclairer les enjeux de l’entreprise et préparer une valorisation avec l’appui de professionnels.</p>
+            </article>
+            <article class="panel home-service-card">
+                <span class="service-number">05</span>
+                <h3>Accompagnement de la négociation</h3>
+                <p class="muted">Structurer les échanges et accompagner les parties jusqu’aux prochaines étapes de l’opération.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="home-insights" id="actualites" aria-labelledby="insights-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">LE REGARD ALP</p>
+                <h2 id="insights-title">Articles et actualités</h2>
+                <p class="muted">Des repères pour mieux comprendre la transmission, la reprise et l’environnement économique.</p>
+            </div>
+        </div>
+        <div class="home-insight-grid">
+            <article class="panel home-insight-card">
+                <p class="insight-category">TRANSMISSION D’ENTREPRISE</p>
+                <h3>Anticiper la cession : les premières étapes de préparation</h3>
+                <p class="muted">Identifier ses objectifs, organiser les informations clés et préparer un dialogue serein avec les repreneurs.</p>
+            </article>
+            <article class="panel home-insight-card">
+                <p class="insight-category">REPRISE DE PME</p>
+                <h3>Reprendre une PME : transformer une opportunité en projet</h3>
+                <p class="muted">De la définition des critères à l’analyse d’une entreprise, les points de repère pour avancer avec méthode.</p>
+            </article>
+            <article class="panel home-insight-card">
+                <p class="insight-category">ÉCONOMIE &amp; ENTREPRENEURIAT</p>
+                <h3>Entreprendre et investir dans les économies africaines</h3>
+                <p class="muted">Suivre les évolutions économiques et financières qui façonnent les opportunités des entreprises.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="home-join" aria-labelledby="join-title">
+        <div>
+            <p class="eyebrow">REJOIGNEZ LE RÉSEAU ALP</p>
+            <h2 id="join-title">Vous souhaitez reprendre ou transmettre ?</h2>
+            <p class="muted">Créez votre espace en choisissant votre profil. Les échanges et informations sont adaptés à votre démarche.</p>
+        </div>
+        <div class="home-join-actions">
+            <a class="button primary" href="acheter.xhtml">Je suis acquéreur / investisseur</a>
+            <a class="button outline" href="vendre.xhtml">Je suis cédant</a>
+            <a class="home-login-link" href="login.xhtml">Déjà membre ? Se connecter</a>
+        </div>
     </section>
 </main>
-<footer>Africa Legacy Market · La transmission d'entreprise en confiance.</footer>
+<footer class="home-footer">
+    <a class="brand" href="home.xhtml">Africa Legacy <span>Partners</span></a>
+    <p>Africa Legacy Partners · La transmission d’entreprise en confiance.</p>
+</footer>
 </h:body>
 </html>

@@ -68,12 +68,15 @@ class ViewModelsTest {
     }
 
     @Test
-    @DisplayName("ListingView : les champs percent et views sont transmis tels quels")
+    @DisplayName("ListingView : les champs de l'annonce sont transmis tels quels")
     void listingView_champsPresents() {
-        ListingView view = new ListingView(3L, "Agro", "Abidjan", "Desc",
+        ListingView view = new ListingView(3L, "Agro", "Cultures vivrières", 2010,
+                "Abidjan", "Desc",
                 new BigDecimal("1000.00"), new BigDecimal("150.00"), new BigDecimal("900.00"),
                 42L, 66, "Société X", "Rue Y", "PUBLISHED");
 
+        assertEquals("Cultures vivrières", view.secondarySector());
+        assertEquals(2010, view.foundedYear());
         assertEquals(42L, view.views());
         assertEquals(66, view.matchPercent());
         assertEquals("PUBLISHED", view.status());

@@ -69,6 +69,48 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--focus); bor
 .public-page-heading h1 { margin-top: 0; }
 .public-page-heading .button { margin-top: 10px; }
 .public-listings { align-items: start; }
+.home-container { margin-top: 34px; }
+.home-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, .34fr); align-items: center; gap: clamp(24px, 5vw, 64px); }
+.home-hero-note { padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.home-note-mark { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; color: var(--green-dark); background: var(--mint); font-weight: 800; }
+.home-hero-note p { color: var(--ink); font-size: 1rem; font-weight: 650; line-height: 1.5; }
+.home-hero-note a { font-size: .8rem; font-weight: 700; text-decoration: none; }
+.home-opportunities, .home-services, .home-insights { margin-top: 72px; }
+.home-opportunities .section-heading, .home-services .section-heading, .home-insights .section-heading { align-items: end; }
+.home-opportunities .section-heading > div { max-width: 710px; }
+.home-opportunities .section-heading .eyebrow, .home-services .section-heading .eyebrow, .home-insights .section-heading .eyebrow { margin-top: 0; }
+.home-opportunities .section-heading h2, .home-services .section-heading h2, .home-insights .section-heading h2 { margin-bottom: 8px; }
+.home-opportunities .section-heading p.muted { margin: 0; }
+.home-listings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.home-listing-card { display: flex; flex-direction: column; min-height: 245px; }
+.home-listing-card h3 { margin: 20px 0 0; }
+.listing-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; margin: 18px 0; }
+.listing-facts div { min-width: 0; }
+.listing-facts dt { color: var(--muted); font-size: .7rem; }
+.listing-facts dd { margin: 4px 0 0; color: var(--ink); font-size: .82rem; font-weight: 700; overflow-wrap: anywhere; }
+.home-listing-card .card-footer { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
+.home-privacy-note { margin-top: 16px; color: var(--muted); font-size: .78rem; line-height: 1.5; }
+.home-privacy-note span { margin-right: 7px; color: var(--green); font-size: .65rem; }
+.home-service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.home-service-card { min-height: 190px; margin: 0; }
+.service-number { color: var(--gold); font-size: .75rem; font-weight: 800; letter-spacing: .12em; }
+.home-service-card h3 { margin: 15px 0 8px; }
+.home-service-card p { margin: 0; font-size: .88rem; }
+.home-insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.home-insight-card { margin: 0; }
+.insight-category { color: var(--green); font-size: .68rem; font-weight: 800; letter-spacing: .1em; }
+.home-insight-card h3 { line-height: 1.4; }
+.home-insight-card p.muted { margin-bottom: 0; font-size: .88rem; }
+.home-join { display: flex; justify-content: space-between; align-items: center; gap: 28px; margin-top: 72px; padding: clamp(24px, 5vw, 48px); border-radius: 18px; color: var(--white); background: var(--green-dark); }
+.home-join .eyebrow { color: #c4dfd2; margin-top: 0; }
+.home-join h2 { max-width: 540px; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.home-join .muted { max-width: 580px; color: #e0ebe5; }
+.home-join-actions { display: grid; justify-items: stretch; gap: 10px; min-width: 250px; }
+.home-join-actions .button.primary { color: var(--green-dark); background: var(--white); }
+.home-join-actions .button.outline { color: var(--white); background: transparent; border-color: #ffffff66; }
+.home-login-link { color: var(--white); font-size: .78rem; text-align: center; }
+.home-footer { display: grid; justify-items: center; gap: 4px; padding: 28px 20px; border-top: 1px solid var(--line); background: var(--surface); }
+.home-footer p { margin: 0; color: var(--muted); font-size: .75rem; }
 .seller-introduction { max-width: 850px; }
 .seller-introduction li { margin: 12px 0; padding-left: 6px; line-height: 1.6; }
 .seller-introduction .public-actions { margin-top: 24px; }
@@ -155,6 +197,12 @@ footer { padding: 24px 0; color: var(--muted); text-align: center; font-size: .7
     .public-header .brand { font-size: 1.2rem; }
     .public-container { width: min(100% - 24px, 1180px); margin: 28px auto; }
     .public-benefits { grid-template-columns: 1fr; }
+    .home-hero { grid-template-columns: 1fr; }
+    .home-opportunities, .home-services, .home-insights, .home-join { margin-top: 48px; }
+    .home-opportunities .section-heading, .home-services .section-heading, .home-insights .section-heading { align-items: start; flex-direction: column; }
+    .home-listings, .home-service-grid, .home-insight-grid { grid-template-columns: 1fr; }
+    .home-join { align-items: stretch; flex-direction: column; }
+    .home-join-actions { min-width: 0; }
     .topbar-user { gap: 8px; font-size: .8rem; }
     .welcome, .section-heading, .deal-summary { align-items: start; flex-direction: column; }
     .metrics { grid-template-columns: 1fr; }
