@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>Acheter | Africa Legacy Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body class="public-page">
+<header class="public-header">
+    <a class="brand" href="home.xhtml">Africa Legacy <span>Market</span></a>
+    <nav aria-label="Navigation principale">
+        <a class="button outline" href="vendre.xhtml">Vendre</a>
+        <a class="button primary" href="login.xhtml">Connexion</a>
+        <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
+                aria-pressed="false">Mode sombre</button>
+    </nav>
+</header>
+<main class="public-container">
+    <section class="public-page-heading">
+        <p class="eyebrow">OPPORTUNITÉS VALIDÉES</p>
+        <h1>Entreprises à découvrir</h1>
+        <p class="muted">Parcourez les offres anonymisées que leur courtier a validées. Pour demander une mise en relation, connectez-vous ou créez un compte acquéreur.</p>
+        <a class="button primary" href="register.xhtml">Créer un compte acquéreur</a>
+    </section>
+    <section class="listing-grid public-listings" aria-label="Offres validées">
+        <ui:repeat value="#{marketplace.publicListings}" var="listing">
+            <article class="listing-card">
+                <div class="card-topline"><span class="tag">#{listing.sector()}</span><span class="tiny">Offre validée par un courtier</span></div>
+                <h2>Entreprise confidentielle · #{listing.region()}</h2>
+                <p class="muted">#{listing.description()}</p>
+                <div class="financials">
+                    <div><span>CA</span><strong>#{listing.revenue() == null ? 'Sur demande' : listing.revenue()}</strong></div>
+                    <div><span>EBE</span><strong>#{listing.ebitda() == null ? 'Sur demande' : listing.ebitda()}</strong></div>
+                    <div><span>Prix</span><strong>#{listing.askingPrice() == null ? 'Sur demande' : listing.askingPrice()}</strong></div>
+                </div>
+                <div class="card-footer">
+                    <span class="tiny">Identité protégée</span>
+                    <a class="button outline small" href="login.xhtml">Demander une introduction</a>
+                </div>
+            </article>
+        </ui:repeat>
+        <h:panelGroup layout="block" rendered="#{empty marketplace.publicListings}">
+            <div class="empty-state">Aucune offre validée n'est disponible pour le moment. Revenez bientôt ou <a href="register.xhtml">créez un compte</a>.</div>
+        </h:panelGroup>
+    </section>
+</main>
+<footer><a href="home.xhtml">Africa Legacy Market</a> · Les identités des entreprises restent protégées.</footer>
+</h:body>
+</html>

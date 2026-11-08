@@ -1,0 +1,8 @@
+{
+    "svn.ignoreMissingSvnWarning": true,
+    "chat.tools.terminal.autoApprove": {
+        "java": true,
+        "mvn -DskipTests package": true
+    },
+    "java.configuration.updateBuildConfiguration": "interactive"
+}

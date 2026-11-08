@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <!-- Keep secrets empty in source control; the application falls back to process environment variables. -->
+    <Parameter name="DB_HOST" value="127.0.0.1" override="false"/>
+    <Parameter name="DB_PORT" value="3306" override="false"/>
+    <Parameter name="DB_NAME" value="confidentia" override="false"/>
+    <Parameter name="DB_USER" value="" override="false"/>
+    <Parameter name="DB_PASSWORD" value="" override="false"/>
+    <Parameter name="DB_SCHEMA_MODE" value="update" override="false"/>
+    <Parameter name="APP_ENCRYPTION_KEY" value="" override="false"/>
+    <Parameter name="PRIVATE_STORAGE_DIR" value="" override="false"/>
+    <Parameter name="SUPER_ADMIN_EMAIL" value="" override="false"/>
+    <Parameter name="SUPER_ADMIN_PASSWORD" value="" override="false"/>
+    <Parameter name="SUPER_ADMIN_NAME" value="Administrateur" override="false"/>
+</Context>

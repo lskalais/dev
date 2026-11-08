@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<h:head>
+    <title>Tableau de bord | Africa Legacy Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<f:metadata>
+    <f:viewAction action="#{marketplace.refresh}"/>
+</f:metadata>
+<header class="topbar">
+    <a class="brand" href="app.xhtml">Africa Legacy <span>Market</span></a>
+    <div class="topbar-user">
+        <span>#{marketplace.user.name()} <small>#{marketplace.roleLabel}</small></span>
+        <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
+                aria-pressed="false">Mode sombre</button>
+        <h:link outcome="admin-users" value="Administration" styleClass="button outline small"
+                rendered="#{marketplace.superUser}"/>
+        <h:form><h:commandButton value="Déconnexion" action="#{marketplace.logout}" styleClass="button outline small"/></h:form>
+    </div>
+</header>
+<main class="container">
+    <section class="welcome">
+        <div>
+            <p class="eyebrow">ESPACE #{marketplace.roleLabel}</p>
+            <h1>Bonjour #{marketplace.user.name()}.</h1>
+            <p class="muted">Les identités restent masquées jusqu'à la signature bilatérale de l'accord de confidentialité.</p>
+        </div>
+        <div class="privacy-badge"><span>●</span> Espace confidentiel</div>
+    </section>
+
+    <h:messages globalOnly="false" styleClass="messages"/>
+
+    <section class="metrics">
+        <article class="metric"><span>Annonces visibles / gérées</span><strong>#{marketplace.listings.size()}</strong></article>
+        <article class="metric"><span>Dossiers de mise en relation</span><strong>#{marketplace.deals.size()}</strong></article>
+        <article class="metric"><span>Rôle du compte</span><strong class="metric-role">#{marketplace.roleLabel}</strong></article>
+    </section>
+
+    <h:panelGroup layout="block" rendered="#{marketplace.buyer}">
+    <section class="panel">
+        <div class="section-heading">
+            <div><p class="eyebrow">VOTRE PROFIL D'ACQUÉREUR</p><h2>Définir vos critères</h2></div>
+            <span class="muted">Les annonces compatibles seront mieux classées.</span>
+        </div>
+        <h:form styleClass="criteria-grid">
+            <div><label for="sectors">Secteurs recherchés</label><h:inputText id="sectors" value="#{marketplace.sectors}" placeholder="Industrie, santé, services"/></div>
+            <div><label for="buyer-region">Région souhaitée</label><h:inputText id="buyer-region" value="#{marketplace.preferredRegion}"/></div>
+            <div><label for="min-investment">Investissement min. (€)</label><h:inputText id="min-investment" value="#{marketplace.minimumInvestment}"/></div>
+            <div><label for="max-investment">Investissement max. (€)</label><h:inputText id="max-investment" value="#{marketplace.maximumInvestment}"/></div>
+            <h:commandButton value="Enregistrer mes critères" action="#{marketplace.saveCriteria}" styleClass="button primary"/>
+        </h:form>
+    </section>
+    </h:panelGroup>
+
+    <h:panelGroup layout="block" rendered="#{marketplace.seller}">
+    <section class="panel">
+        <div class="section-heading">
+        <div><p class="eyebrow">TEASER ANONYMISÉ</p><h2>#{empty marketplace.selectedListingId ? 'Présenter votre entreprise' : 'Modifier votre teaser'}</h2></div>
+        <span class="muted">Publiez même sans courtier attribué. Le nom et l'adresse exacte restent chiffrés et masqués; vous pouvez modifier le teaser jusqu'à sa prise en charge par un courtier. Lors d'une modification, laisser le nom ou l'adresse privée vide conserve sa valeur actuelle.</span>
+        </div>
+        <h:form styleClass="listing-form">
+            <div class="form-grid">
+                <div><label for="sector">Secteur primaire *</label><h:inputText id="sector" value="#{marketplace.sector}" required="true"/></div>
+                <div><label for="secondary">Secteur secondaire</label><h:inputText id="secondary" value="#{marketplace.secondarySector}"/></div>
+                <div><label for="year">Année de création</label><h:inputText id="year" value="#{marketplace.foundedYear}"/></div>
+                <div><label for="region">Région affichée (pas d'adresse précise) *</label><h:inputText id="region" value="#{marketplace.region}" required="true"/></div>
+                <div class="span-2"><label for="description">Description anonymisée (sans nom, adresse ni indice identifiant) *</label><h:inputTextarea id="description" value="#{marketplace.description}" required="true" rows="4"/></div>
+                <div><label for="customers">Clientèle</label><h:inputTextarea id="customers" value="#{marketplace.customerSummary}" rows="3"/></div>
+                <div><label for="advantages">Avantages concurrentiels</label><h:inputTextarea id="advantages" value="#{marketplace.advantages}" rows="3"/></div>
+                <div><label for="sale-reason">Raison de la vente</label><h:inputTextarea id="sale-reason" value="#{marketplace.saleReason}" rows="2"/></div>
+                <div><label for="sale-conditions">Conditions de cession</label><h:inputTextarea id="sale-conditions" value="#{marketplace.saleConditions}" rows="2"/></div>
+                <div><label for="support-period">Accompagnement envisagé</label><h:inputText id="support-period" value="#{marketplace.supportPeriod}"/></div>
+                <div><label for="broker">Courriel du courtier (facultatif)</label><h:inputText id="broker" value="#{marketplace.brokerEmail}"/><small>Si aucun courtier actif ne correspond, le teaser sera publié sans attribution et un courtier pourra le prendre en charge.</small></div>
+                <div><label for="revenue">Chiffre d'affaires (€)</label><h:inputText id="revenue" value="#{marketplace.revenue}"/></div>
+                <div><label for="ebitda">EBE / EBITDA (€)</label><h:inputText id="ebitda" value="#{marketplace.ebitda}"/></div>
+                <div><label for="asking-price">Prix demandé (€)</label><h:inputText id="asking-price" value="#{marketplace.askingPrice}"/></div>
+                <div><label for="margin">Marge bénéficiaire (%)</label><h:inputText id="margin" value="#{marketplace.profitMargin}"/></div>
+                <div><label for="company">Nom réel de l'entreprise (privé)</label><h:inputText id="company" value="#{marketplace.companyName}"/></div>
+                <div><label for="exact-location">Localisation exacte (privée)</label><h:inputText id="exact-location" value="#{marketplace.exactLocation}"/></div>
+            </div>
+            <h:commandButton value="#{empty marketplace.selectedListingId ? 'Publier le teaser anonymisé' : 'Enregistrer les modifications'}"
+                             action="#{marketplace.saveListing}" styleClass="button primary"/>
+            <h:commandButton value="Créer un nouveau teaser" action="#{marketplace.startNewListing}"
+                             rendered="#{not empty marketplace.selectedListingId}" immediate="true"
+                             styleClass="button outline"/>
+        </h:form>
+    </section>
+    </h:panelGroup>
+
+    <section class="panel">
+        <div class="section-heading">
+            <div><p class="eyebrow">OPPORTUNITÉS</p><h2>#{marketplace.buyer ? 'Entreprises à découvrir' : 'Votre portefeuille'}</h2></div>
+            <span class="muted">#{marketplace.listings.size()} résultat(s)</span>
+        </div>
+        <h:panelGroup layout="block" rendered="#{marketplace.buyer}">
+            <h:form styleClass="criteria-grid search-filters">
+                <div><label for="filter-sector">Filtrer par secteur</label><h:inputText id="filter-sector" value="#{marketplace.sectorFilter}"/></div>
+                <div><label for="filter-region">Filtrer par région</label><h:inputText id="filter-region" value="#{marketplace.regionFilter}"/></div>
+                <div><label for="filter-price">Prix maximum (€)</label><h:inputText id="filter-price" value="#{marketplace.maximumPriceFilter}"/></div>
+                <h:commandButton value="Appliquer les filtres" action="#{marketplace.refresh}" styleClass="button outline"/>
+            </h:form>
+        </h:panelGroup>
+        <div class="listing-grid">
+            <ui:repeat value="#{marketplace.listings}" var="listing">
+                <article class="listing-card">
+                    <div class="card-topline"><span class="tag">#{listing.sector()}</span><h:panelGroup rendered="#{marketplace.buyer}" styleClass="match">#{listing.matchPercent()} % match</h:panelGroup></div>
+                    <h3>PME confidentielle · #{listing.region()}</h3>
+                    <p class="muted">#{listing.description()}</p>
+                    <div class="financials">
+                        <div><span>CA</span><strong>#{listing.revenue() == null ? 'Sur demande' : listing.revenue()}</strong></div>
+                        <div><span>EBE</span><strong>#{listing.ebitda() == null ? 'Sur demande' : listing.ebitda()}</strong></div>
+                        <div><span>Prix</span><strong>#{listing.askingPrice() == null ? 'Sur demande' : listing.askingPrice()}</strong></div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="tiny">#{listing.views()} vues · identité protégée</span>
+                        <h:form rendered="#{marketplace.buyer}">
+                            <h:commandButton value="Demander une introduction" action="#{marketplace.requestIntroduction(listing.id())}" styleClass="button primary small"/>
+                        </h:form>
+                        <h:form rendered="#{marketplace.seller and listing.status() ne 'BROKER_ACCEPTED'}">
+                            <h:commandButton value="Modifier le teaser" action="#{marketplace.loadListingForEdit(listing.id())}" styleClass="button outline small"/>
+                        </h:form>
+                        <h:form rendered="#{marketplace.broker and (listing.status() eq 'PUBLISHED' or listing.status() eq 'PENDING_BROKER_APPROVAL')}">
+                            <h:commandButton value="Accepter le dossier" action="#{marketplace.acceptListing(listing.id())}" styleClass="button primary small"/>
+                        </h:form>
+                    </div>
+                    <h:panelGroup layout="block" styleClass="tiny pending-approval"
+                                  rendered="#{marketplace.seller and listing.status() ne 'BROKER_ACCEPTED'}">
+                        Publié anonymement · modifiable jusqu'à la prise en charge par un courtier.
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="tiny"
+                                  rendered="#{listing.status() eq 'BROKER_ACCEPTED'}">
+                        Dossier pris en charge par le courtier.
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="tiny pending-approval" rendered="#{listing.status() eq 'PENDING_BROKER_APPROVAL'}">En attente de validation par le courtier mandaté.</h:panelGroup>
+                    <h:panelGroup rendered="#{marketplace.seller or (marketplace.broker and listing.status() eq 'BROKER_ACCEPTED')}">
+                        <h4>Documents du dossier</h4>
+                        <ui:repeat value="#{marketplace.documentsFor(listing.id())}" var="doc">
+                            <p class="tiny">
+                                <h:outputText value="#{doc.name()}" rendered="#{doc.encryptedNameUnavailable()}"/>
+                                <h:outputLink value="documents?id=#{doc.id()}" rendered="#{not doc.encryptedNameUnavailable()}">#{doc.name()}</h:outputLink>
+                                · #{doc.sizeBytes()} octets
+                            </p>
+                        </ui:repeat>
+                        <form method="post" action="documents" enctype="multipart/form-data" class="upload-form">
+                            <input type="hidden" name="listingId" value="#{listing.id()}"/>
+                            <input type="hidden" name="csrfToken" value="#{marketplace.csrfToken}"/>
+                            <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" required="required"/>
+                            <button class="button outline small" type="submit">Téléverser en chiffré</button>
+                        </form>
+                        <h:form rendered="#{marketplace.broker}" styleClass="broker-tools">
+                            <h4>Retraitement financier · EBITDA × multiple</h4>
+                            <div class="criteria-grid">
+                                <div><label for="processed-revenue">CA retraité (€)</label><h:inputText id="processed-revenue" value="#{marketplace.processedRevenue}"/></div>
+                                <div><label for="processed-ebitda">EBE / EBITDA retraité (€)</label><h:inputText id="processed-ebitda" value="#{marketplace.processedEbitda}"/></div>
+                                <div><label for="multiple">Multiple (0 à 30)</label><h:inputText id="multiple" value="#{marketplace.valuationMultiple}"/></div>
+                            </div>
+                            <h:commandButton value="Enregistrer les indicateurs" action="#{marketplace.processFinancials(listing.id())}" styleClass="button outline small"/>
+                        </h:form>
+                    </h:panelGroup>
+                </article>
+            </ui:repeat>
+        </div>
+        <h:panelGroup rendered="#{empty marketplace.listings}">
+            <div class="empty-state">Aucune annonce pour le moment. Revenez bientôt ou complétez votre profil.</div>
+        </h:panelGroup>
+    </section>
+
+    <section class="panel">
+        <div class="section-heading">
+            <div><p class="eyebrow">PROCESSUS NDA</p><h2>Demandes et dossiers</h2></div>
+            <span class="muted">L'identité se dévoile uniquement après les deux signatures.</span>
+        </div>
+        <div class="deal-list">
+            <c:forEach items="#{marketplace.deals}" var="deal">
+                <article class="deal-card">
+                    <div class="deal-summary">
+                        <div>
+                            <span class="tag">#{deal.status()}</span>
+                            <h3>#{deal.sector()} · dossier ##{deal.id()}</h3>
+                            <p class="muted">Acquéreur : #{deal.buyerName()} · Cédant : #{deal.sellerName()}</p>
+                            <h:panelGroup rendered="#{deal.ndaSigned()}">
+                                <h:panelGroup rendered="#{deal.encryptedIdentityUnavailable()}">
+                                    <p class="tiny">#{deal.companyName()}</p>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{not deal.encryptedIdentityUnavailable()}">
+                                    <p class="revealed">Identité révélée : #{deal.companyName()} · #{deal.exactLocation()}</p>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{not deal.ndaSigned() and deal.status() ne 'PENDING' and deal.status() ne 'DECLINED'}">
+                                <p class="tiny">Signature acquéreur : #{deal.buyerSigned() ? 'reçue' : 'en attente'} · Signature cédant : #{deal.sellerSigned() ? 'reçue' : 'en attente'}</p>
+                                <div class="nda-terms">
+                                    <strong>Accord de confidentialité · #{deal.ndaVersion()}</strong>
+                                    <p>Les informations non publiques partagées pour examiner cette opportunité doivent être utilisées uniquement pour évaluer la transaction, protégées contre tout accès non autorisé et ne pas être divulguées à des tiers, hors conseils eux-mêmes tenus à la confidentialité. Sont exclues les informations déjà publiques, déjà connues licitement ou obtenues indépendamment. À la fin des discussions, leur utilisation doit cesser et les copies être supprimées ou restituées dans la mesure du possible.</p>
+                                    <p class="tiny">En signant ci-dessous, vous confirmez avoir lu et accepter ces conditions pour ce dossier.</p>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                        <div class="deal-actions">
+                            <h:form rendered="#{not marketplace.buyer and deal.status() eq 'PENDING'}">
+                                <h:commandButton value="Accepter" action="#{marketplace.acceptIntroduction(deal.id())}" styleClass="button primary small"/>
+                                <h:commandButton value="Refuser" action="#{marketplace.declineIntroduction(deal.id())}" styleClass="button danger small"/>
+                            </h:form>
+                            <h:form rendered="#{deal.status() eq 'NDA_PENDING'}">
+                                <h:inputText value="#{marketplace.signatureName}" required="true" styleClass="signature-input" pt:placeholder="Nom complet pour signer" xmlns:pt="jakarta.faces.passthrough"/>
+                                <h:commandButton value="Signer l'accord de confidentialité" action="#{marketplace.signNda(deal.id())}" styleClass="button primary small"/>
+                            </h:form>
+                            <h:form rendered="#{deal.ndaSigned()}">
+                                <h:commandButton value="Ouvrir la messagerie" action="#{marketplace.openDeal(deal.id())}" styleClass="button outline small"/>
+                            </h:form>
+                        </div>
+                    </div>
+                </article>
+            </c:forEach>
+        </div>
+        <h:panelGroup rendered="#{empty marketplace.deals}">
+            <div class="empty-state">Aucune demande pour le moment.</div>
+        </h:panelGroup>
+    </section>
+
+    <h:panelGroup rendered="#{not empty marketplace.activeDealId}">
+        <section class="panel">
+            <div class="section-heading">
+                <div><p class="eyebrow">ESPACE APRÈS NDA</p><h2>Messagerie sécurisée</h2></div>
+                <span class="privacy-badge"><span>●</span> Messages chiffrés au repos</span>
+            </div>
+            <div class="message-list">
+                <ui:repeat value="#{marketplace.activeMessages}" var="line">
+                    <article class="message"><strong>#{line.sender()}</strong><p>#{line.body()}</p><time>#{line.sentAt()}</time></article>
+                </ui:repeat>
+            </div>
+            <h:form styleClass="message-compose">
+                <h:inputTextarea value="#{marketplace.message}" rows="3" required="true" maxlength="8000" pt:placeholder="Votre message confidentiel..." xmlns:pt="jakarta.faces.passthrough"/>
+                <div class="message-compose-actions">
+                    <h:commandButton value="Envoyer" action="#{marketplace.sendMessage(marketplace.activeDealId)}" styleClass="button primary"/>
+                </div>
+            </h:form>
+            <h3>Data room basique</h3>
+            <ui:repeat value="#{marketplace.activeDealDocuments}" var="doc">
+                <p>
+                    <h:outputText value="#{doc.name()}" rendered="#{doc.encryptedNameUnavailable()}"/>
+                    <h:outputLink value="documents?id=#{doc.id()}" rendered="#{not doc.encryptedNameUnavailable()}">#{doc.name()}</h:outputLink>
+                    · #{doc.sizeBytes()} octets
+                </p>
+            </ui:repeat>
+            <form method="post" action="documents" enctype="multipart/form-data" class="upload-form">
+                <input type="hidden" name="requestId" value="#{marketplace.activeDealId}"/>
+                <input type="hidden" name="csrfToken" value="#{marketplace.csrfToken}"/>
+                <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" required="required"/>
+                <button class="button outline small" type="submit">Ajouter un document à la data room</button>
+            </form>
+        </section>
+    </h:panelGroup>
+
+    <footer>Africa Legacy Market · Les données de transaction sont strictement réservées aux participants autorisés.</footer>
+</main>
+</h:body>
+</html>

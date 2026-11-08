@@ -1,0 +1,104 @@
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --ink: #e6eee9;
+    --muted: #a6b8ae;
+    --line: #35483f;
+    --paper: #111a16;
+    --green: #82c9a7;
+    --green-dark: #5eaf89;
+    --mint: #233c31;
+    --white: #19241e;
+    --gold: #d9b878;
+    --surface: #19241e;
+    --surface-subtle: #1d2b24;
+    --input-border: #40564a;
+    --label: #c2d0c8;
+    --focus: #365c49;
+    --muted-surface: #202e27;
+    --badge-surface: #1b3026;
+    --nda-surface: #2c2a21;
+    --nda-ink: #d3d4c6;
+    --error: #f0a69c;
+    --pending: #dfbf7c;
+    --danger: #f0a19a;
+    --danger-line: #65403d;
+    --glow: #243c30;
+}
+
+:root[data-theme="dark"] body {
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.theme-toggle {
+    flex: 0 0 auto;
+}
+
+.auth-theme-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+
+:root[data-theme="dark"] .auth-page {
+    background: radial-gradient(circle at 75% 10%, var(--glow), transparent 38%), var(--paper);
+}
+
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .public-header,
+:root[data-theme="dark"] .topbar,
+:root[data-theme="dark"] .metric,
+:root[data-theme="dark"] .panel,
+:root[data-theme="dark"] .public-hero {
+    background-color: var(--surface);
+}
+
+:root[data-theme="dark"] .public-hero {
+    background-image: radial-gradient(circle at 90% 15%, var(--glow), transparent 42%);
+}
+
+:root[data-theme="dark"] .button.outline,
+:root[data-theme="dark"] .button.danger {
+    border-color: var(--line);
+    background: var(--surface);
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+    border-color: var(--input-border);
+    color: var(--ink);
+    background: var(--surface);
+}
+
+:root[data-theme="dark"] label {
+    color: var(--label);
+}
+
+:root[data-theme="dark"] .search-filters,
+:root[data-theme="dark"] .empty-state,
+:root[data-theme="dark"] .message {
+    background: var(--muted-surface);
+}
+
+:root[data-theme="dark"] .listing-card {
+    background: var(--surface-subtle);
+}
+
+:root[data-theme="dark"] .privacy-badge {
+    background: var(--badge-surface);
+}
+
+:root[data-theme="dark"] .nda-terms {
+    color: var(--nda-ink);
+    background: var(--nda-surface);
+}
+
+:root[data-theme="dark"] .pending-approval,
+:root[data-theme="dark"] .match {
+    color: var(--pending);
+}
+
+:root[data-theme="dark"] .messages {
+    color: var(--error);
+}

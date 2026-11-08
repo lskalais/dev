@@ -1,0 +1,23 @@
+Rôle : Agis en tant que Product Manager expert et Développeur Full-Stack Senior Laravel et base de données. Ton objectif est de concevoir l'architecture complète, le modèle de données et le plan de développement d'une application de mise en relation (Marketplace/Matchmaking) entre des propriétaires d'entreprises à vendre (Cédants) et des acheteurs potentiels (Acquéreurs/Investisseurs).
+Contexte de l'application : L'application doit fonctionner comme un site de rencontre professionnel et hautement sécurisé pour la fusion-acquisition (M&A) de TPE/PME. La confidentialité des données est la priorité absolue, car les vendeurs ne veulent souvent pas que leurs employés ou concurrents sachent que l'entreprise est à vendre.
+Cibles :
+Les Cédants (Vendeurs) : Créent des annonces (teaser) anonymisées de leur entreprise avec des informations générales.
+Les Acquéreurs (Acheteurs) : Créent un profil avec leurs critères de recherche et leur capacité d'investissement.
+L’administrateurs (Courtier): Professionnels gérant un portefeuille de clients. Leur rôle central est de collecter, traiter et structurer les données brutes fournies par les vendeurs (bilans, données RH, juridiques) pour les transformer en annonces (teasers) anonymisées et attractives. Ils qualifient les acheteurs et gèrent les flux de communication. 
+Fonctionnalités clés attendues (MVP) :
+Onboarding & Authentification : Trois parcours distincts (Cédant, Acquéreur ou Courtier).
+Création d'annonces (Teasers) : Formulaire structuré pour les vendeurs Informations Generale  (Secteur d’activité primaire et secondaire, date de creation, Description de l’entreprise Localisation, clientèle , avantage, Raison de la vente)) Portrait financier (Chiffre d'Affaires, EBE/EBITDA, Prix demandé, Marge bénéficiaire) .Condition de vente et accompagnement ,  Possibilité de masquer le nom exact et la localisation précise.
+Espace de Collecte et Traitement (Intake collaboratif) : Un espace privé entre le vendeur et son courtier. Le vendeur y téléverse ses documents bruts (liasses fiscales, statuts). Le courtier dispose d'outils pour retraiter ces données, calculer les indicateurs (EBITDA, valorisation), et préparer le dossier de présentation (Mémorandum d'Information). 
+Moteur de recherche & Algorithme de Matching : Filtres multicritères pour les acheteurs. Système de recommandation (Matching) basé sur le secteur et la capacité financière.
+Workflow de mise en relation (NDA) : Lorsqu'un acheteur est intéressé, il fait une demande. Si le vendeur accepte, un Accord de Confidentialité (NDA) est généré et signé électroniquement avant de révéler l'identité de l'entreprise.
+Messagerie interne sécurisée : Espace pour échanger et partager des documents financiers (Data Room basique) une fois le NDA signé.
+Tableau de bord : Suivi des annonces, des demandes en cours, et des statistiques de vues.
+Contraintes techniques et sécurité :
+Stack technique suggérée : Laravel (Front-end), Php Laravel (Back-end), MariaDB (Base de données).
+Chiffrement des documents sensibles et des messages.
+Livrables attendus dans ta réponse :
+User Flow (Parcours Utilisateur) : Décris étape par étape le parcours d'un Vendeur et d'un Acheteur, de l'inscription jusqu'à la poignée de main virtuelle.
+Modèle de Base de données (Schéma relationnel) : Fournis les tables principales (Users, Listings, Matches, Messages) avec leurs attributs clés en format texte ou SQL.
+Architecture Technique : Recommande les meilleurs outils/librairies actuels pour gérer l'authentification, la signature électronique (ex: DocuSign API), et le stockage sécurisé.
+Plan d'action de développement : Découpe le projet en 4 phases (Sprints) pour arriver à un MVP fonctionnel.
+une application qui implémente toutes les Fonctionnalités clés attendues et qui est compatible avec les technologies suivante : mvc, mariadb, java jpa,jsf, tomcat 10 et  maven

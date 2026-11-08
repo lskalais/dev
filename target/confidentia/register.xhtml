@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <title>Créer un compte | Africa Legacy Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body class="auth-page">
+<main class="auth-card">
+    <button class="button outline small theme-toggle auth-theme-toggle" type="button" data-theme-toggle="true"
+            aria-pressed="false">Mode sombre</button>
+    <a class="brand" href="home.xhtml">Africa Legacy <span>Market</span></a>
+    <p class="eyebrow">REJOINDRE LE RÉSEAU</p>
+    <h1>Un espace adapté à votre rôle.</h1>
+    <h:form>
+        <h:messages globalOnly="false" styleClass="messages"/>
+        <label for="name">Nom complet</label>
+        <h:inputText id="name" value="#{marketplace.fullName}" required="true"/>
+        <label for="email">Adresse courriel</label>
+        <h:inputText id="email" value="#{marketplace.email}" required="true" autocomplete="username"/>
+        <label for="organization">Entreprise / cabinet (facultatif)</label>
+        <h:inputText id="organization" value="#{marketplace.organization}"/>
+        <label for="role">Je suis</label>
+        <h:selectOneMenu id="role" value="#{marketplace.role}">
+            <f:selectItem itemValue="BUYER" itemLabel="Acquéreur / investisseur"/>
+            <f:selectItem itemValue="SELLER" itemLabel="Cédant / propriétaire"/>
+            <f:selectItem itemValue="BROKER" itemLabel="Courtier / conseil M&amp;A"/>
+        </h:selectOneMenu>
+        <label for="password">Mot de passe (12 caractères minimum)</label>
+        <h:inputSecret id="password" value="#{marketplace.password}" required="true"
+                       autocomplete="new-password"/>
+        <p class="tiny">En créant un compte, vous acceptez de traiter confidentiellement les informations échangées.</p>
+        <h:commandButton value="Créer mon compte" action="#{marketplace.register}" styleClass="button primary full"/>
+    </h:form>
+    <p class="auth-switch">Déjà inscrit ? <a href="login.xhtml">Se connecter</a></p>
+</main>
+</h:body>
+</html>

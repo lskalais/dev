@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:pt="jakarta.faces.passthrough">
+<h:head>
+    <title>Administration des utilisateurs | Africa Legacy Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<header class="topbar">
+    <h:link outcome="app" styleClass="brand" value="Africa Legacy Market"/>
+    <div class="topbar-user">
+        <span>#{marketplace.user.name()} <small>#{marketplace.roleLabel}</small></span>
+        <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
+                aria-pressed="false">Mode sombre</button>
+        <h:form>
+            <h:commandButton value="Déconnexion" action="#{marketplace.logout}"
+                             styleClass="button outline small"/>
+        </h:form>
+    </div>
+</header>
+<main class="container">
+    <section class="welcome">
+        <div>
+            <span class="eyebrow">Espace sécurisé</span>
+            <h1>Administration des utilisateurs</h1>
+            <p>Créez des comptes et attribuez des mots de passe temporaires à usage unique.</p>
+        </div>
+        <h:link outcome="app" value="Retour au tableau de bord" styleClass="button outline"/>
+    </section>
+
+    <h:messages globalOnly="false" styleClass="flash-list" infoClass="flash success"
+                errorClass="flash error" warnClass="flash warning"/>
+    <section class="panel">
+        <h2>Créer un utilisateur</h2>
+        <h:form styleClass="form-grid">
+            <h:outputLabel for="email" value="Adresse courriel"/>
+            <h:inputText id="email" value="#{marketplace.email}" required="true"
+                         pt:type="email" pt:autocomplete="off"/>
+            <h:outputLabel for="fullName" value="Nom complet"/>
+            <h:inputText id="fullName" value="#{marketplace.fullName}" required="true"
+                         maxlength="180"/>
+            <h:outputLabel for="organization" value="Organisation"/>
+            <h:inputText id="organization" value="#{marketplace.organization}" maxlength="180"/>
+            <h:outputLabel for="role" value="Rôle"/>
+            <h:selectOneMenu id="role" value="#{marketplace.role}" required="true">
+                <f:selectItem itemValue="SELLER" itemLabel="Vendeur"/>
+                <f:selectItem itemValue="BUYER" itemLabel="Acquéreur / investisseur"/>
+                <f:selectItem itemValue="BROKER" itemLabel="Courtier"/>
+                <f:selectItem itemValue="SUPER" itemLabel="Super utilisateur"/>
+            </h:selectOneMenu>
+            <h:outputLabel for="password" value="Mot de passe temporaire"/>
+            <h:inputSecret id="password" value="#{marketplace.password}" required="true"
+                           pt:autocomplete="new-password"/>
+            <p class="muted">L'utilisateur devra choisir un nouveau mot de passe à sa première connexion.</p>
+            <h:commandButton value="Créer le compte" action="#{marketplace.createManagedUser}"
+                             styleClass="button primary"/>
+        </h:form>
+    </section>
+
+    <section class="panel">
+        <h2>Comptes existants</h2>
+        <div class="table-wrap">
+            <h:dataTable value="#{marketplace.adminUsers}" var="account" styleClass="data-table"
+                         rendered="#{not empty marketplace.adminUsers}">
+                <h:column>
+                    <f:facet name="header">Nom</f:facet>
+                    #{account.name()}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Courriel</f:facet>
+                    #{account.email()}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Rôle</f:facet>
+                    #{account.role()}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">État du mot de passe</f:facet>
+                    <h:outputText value="Changement obligatoire"
+                                  rendered="#{account.passwordChangeRequired()}"/>
+                    <h:outputText value="Actif" rendered="#{not account.passwordChangeRequired()}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Attribuer un mot de passe temporaire</f:facet>
+                    <h:form styleClass="inline-form">
+                        <h:inputSecret value="#{marketplace.temporaryPassword}" required="true"
+                                       pt:autocomplete="new-password"/>
+                        <h:commandButton value="Attribuer"
+                                         action="#{marketplace.assignTemporaryPassword(account.id())}"
+                                         styleClass="button outline small"/>
+                    </h:form>
+                </h:column>
+            </h:dataTable>
+            <h:panelGroup rendered="#{empty marketplace.adminUsers}" layout="block" styleClass="empty-state">
+                Aucun compte utilisateur.
+            </h:panelGroup>
+        </div>
+    </section>
+</main>
+</h:body>
+</html>

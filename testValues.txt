@@ -1,0 +1,70 @@
+marketplace
+
+
+/marketplace
+/marketplace/listings
+/marketplace/listings/{listing}
+/listings
+/listings/create
+/listings/{listing}
+/listings/{listing}/edit
+
+
+
+Identifiants par défaut de l’application :
+
+Email : test@example.com
+Mot de passe : password
+
+
+J’ai préparé un jeu de données de démonstration complet pour le marketplace avec :
+
+un compte vendeur : seller@marketplace.test
+un compte acheteur : buyer@marketplace.test
+un compte courtier : broker@marketplace.test
+un listing, un match, un NDA, des messages, et une préférence d’achat
+Mot de passe pour tous :
+
+password
+
+
+À essayer maintenant
+
+Connecte-toi avec seller@marketplace.test pour voir le dashboard cédant
+Connecte-toi avec buyer@marketplace.test pour voir le dashboard acquéreur
+Connecte-toi avec broker@marketplace.test pour voir le cockpit courtier
+Suite logique
+
+Ajouter un onboarding post-inscription spécifique à chaque rôle
+Rendre les pages matches, NDA et messages elles aussi role-based
+Ajouter un vrai moteur de matching basé sur BuyerPreference et scoring métier
+
+
+
+Ottobe!2012
+Valerie.201278
+
+ngrok config add-authtoken $YOUR_AUTHTOKEN
+ngrok config add-authtoken 3KymNPsFbQ8pkL21onzq7draTKR_6WmiwtMsLuqDU2LrWmQF8
+
+C:\Users\Jos\AppData\Local/ngrok/ngrok.yml
+
+motdepasse.12345
+Euro!0123456789
+APP_ENCRYPTION_KEY=LvYMw0cX2W2chMdqFvf56qRS0R2h4xdz8xyyNbFeGJo=  --a Parametrer dans un export APP_ENCRYPTION_KEY ou un set de l'environnement
+
+  - LOUIS SIMON KOUAKOU (Courtier) : lskalais@gmail.com
+  - Administrateur (SUPER) : admin@confidentia.com
+  - Emilie Robert (Acquéreur) : investisseur.demo@confidentia.local
+  - Marc Fontaine (Acquéreur) : acquereur.services@confidentia.local
+  - Sophie Laurent (Acquéreur) : sophie.laurent@confidentia.local
+  - Thomas Petit (Cédant) : cedant.tech@confidentia.local
+  - Nadia Bernard (Cédant) : cedant.services@confidentia.local
+  - Alexandre Dumas (Cédant) : cedant.industrie@confidentia.local
+  - Camille Moreau (Courtier) : courtier.demo@confidentia.local
+  cedent1@confidentia.local
+  cedent2@confidentia.local
+  
+  
+
+ngrok http 80 --url https://tributary-rework-defensive.ngrok-free.dev

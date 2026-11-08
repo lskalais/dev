@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html">
+<h:head>
+    <title>Connexion | Africa Legacy Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body class="auth-page">
+<main class="auth-card">
+    <button class="button outline small theme-toggle auth-theme-toggle" type="button" data-theme-toggle="true"
+            aria-pressed="false">Mode sombre</button>
+    <a class="brand" href="home.xhtml">Africa Legacy <span>Market</span></a>
+    <p class="eyebrow">TRANSACTIONS CONFIDENTIELLES</p>
+    <h1>Votre prochaine étape, en confiance.</h1>
+    <p class="muted">Connectez-vous à votre espace sécurisé de cession ou d'acquisition.</p>
+    <h:form>
+        <h:messages globalOnly="false" styleClass="messages"/>
+        <label for="email">Adresse courriel</label>
+        <h:inputText id="email" value="#{marketplace.email}" required="true"
+                     requiredMessage="Saisissez votre adresse courriel." autocomplete="username"/>
+        <label for="password">Mot de passe</label>
+        <h:inputSecret id="password" value="#{marketplace.password}" required="true"
+                       requiredMessage="Saisissez votre mot de passe." autocomplete="current-password"/>
+        <h:commandButton value="Se connecter" action="#{marketplace.login}" styleClass="button primary full"/>
+    </h:form>
+    <p class="auth-switch">Nouveau sur Africa Legacy Market ? <a href="register.xhtml">Créer un compte</a></p>
+    <p class="auth-switch"><a href="home.xhtml">Retour à l'accueil</a></p>
+    <p class="tiny">Vos données financières et vos documents ne sont jamais publics.</p>
+</main>
+</h:body>
+</html>
