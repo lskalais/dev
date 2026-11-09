@@ -4,6 +4,7 @@ fr\alp\confidentia\service\MarketplaceServiceTest$SuperUserCheck.class
 fr\alp\confidentia\service\MarketplaceServiceTest$Authenticate.class
 fr\alp\confidentia\model\DealRequestTest.class
 fr\alp\confidentia\web\AuthenticationFilterTest$UtilisateurAuthentifie.class
+fr\alp\confidentia\service\MarketplaceContentServiceTest.class
 fr\alp\confidentia\web\DocumentServletTest$Telechargement.class
 fr\alp\confidentia\service\MarketplaceServiceTest$BuyerCriteria.class
 fr\alp\confidentia\service\MarketplaceServiceTest$Register.class
@@ -12,7 +13,9 @@ fr\alp\confidentia\web\MarketplaceBeanTest$Authentification.class
 fr\alp\confidentia\security\CryptoServiceTest$ContenuIllisible.class
 fr\alp\confidentia\security\CryptoServiceTest$CleDeChiffrementInvalide.class
 fr\alp\confidentia\web\DocumentServletTest$Televersement.class
+fr\alp\confidentia\service\MarketCatalogTest.class
 fr\alp\confidentia\web\DocumentServletTest$ParametrageId.class
+fr\alp\confidentia\service\BuyerKycServiceTest.class
 fr\alp\confidentia\web\MarketplaceBeanTest$ActionsMetier.class
 fr\alp\confidentia\service\MarketplaceServiceListingTest$Consultation.class
 fr\alp\confidentia\web\MarketplaceBeanTest$Divers.class
@@ -28,11 +31,15 @@ fr\alp\confidentia\web\DocumentServletTest$1.class
 fr\alp\confidentia\model\RoleTest.class
 fr\alp\confidentia\web\MarketplaceBeanTest.class
 fr\alp\confidentia\service\MarketplaceServiceListingTest$SaveListing.class
+fr\alp\confidentia\service\ActivityTaxonomyTest.class
 fr\alp\confidentia\service\MarketplaceServiceListingTest.class
+fr\alp\confidentia\service\MarketplaceServiceTest$SellerVerificationWorkflow.class
 fr\alp\confidentia\service\MarketplaceServiceTest.class
 fr\alp\confidentia\web\AuthenticationFilterTest$CasParticuliers.class
+fr\alp\confidentia\service\MarketplaceServiceListingTest$SuiviCession.class
 fr\alp\confidentia\web\MarketplaceBeanTest$ChangementDeMotDePasse.class
 fr\alp\confidentia\web\AuthenticationFilterTest.class
+fr\alp\confidentia\service\MarketplaceServicePartnerTest.class
 fr\alp\confidentia\service\MarketplaceServiceListingTest$Messagerie.class
 fr\alp\confidentia\testsupport\MockJpa.class
 fr\alp\confidentia\service\MarketplaceServiceListingTest$Demandes.class

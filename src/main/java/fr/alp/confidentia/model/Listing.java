@@ -16,6 +16,12 @@ public class Listing {
 
     public Long brokerId;
 
+    @Column(length = 30)
+    public String sectorCategory;
+
+    @Column(length = 1000)
+    public String activityDomains;
+
     @Column(nullable = false, length = 120)
     public String sector;
 
@@ -23,6 +29,11 @@ public class Listing {
     public String secondarySector;
 
     public Integer foundedYear;
+
+    public Integer approximateEmployeeCount;
+
+    @Column(nullable = false)
+    public boolean publicRevenueRangeAllowed;
 
     @Column(nullable = false, length = 4000)
     public String description;
@@ -56,6 +67,10 @@ public class Listing {
 
     @Column(length = 500)
     public String supportPeriod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    public ListingTransactionType transactionType = ListingTransactionType.FULL_SALE;
 
     @Column(length = 2000)
     public String companyNameEncrypted;

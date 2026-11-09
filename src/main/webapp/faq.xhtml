@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>FAQ | Africa Legacy Partners</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="Réponses aux questions fréquentes sur la cession et la reprise d’entreprise avec Africa Legacy Partners."/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body class="public-page">
+<header class="public-header">
+    <a class="brand" href="home.xhtml">Africa Legacy <span>Partners</span></a>
+    <nav aria-label="Navigation principale">
+        <a class="button outline" href="home.xhtml">Accueil</a>
+        <a class="button outline" href="acheter.xhtml">Opportunités</a>
+        <a class="button primary" href="register.xhtml">Créer un compte</a>
+        <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
+                aria-pressed="false">Mode sombre</button>
+    </nav>
+</header>
+<main class="public-container">
+    <section class="public-page-heading">
+        <p class="eyebrow">AIDE ET INFORMATIONS</p>
+        <h1>Questions fréquentes</h1>
+        <p class="muted">Les réponses ci-dessous décrivent le fonctionnement actuel de la plateforme. Les conditions commerciales et les modalités d’accompagnement sont précisées avec ALP avant toute mission.</p>
+    </section>
+    <section class="faq-list" aria-label="Sept questions fréquentes">
+        <details class="panel faq-item">
+            <summary>Comment proposer mon entreprise à la cession ?</summary>
+            <p>Créez un compte en choisissant le profil « Cédant / propriétaire », puis décrivez votre entreprise dans l’espace dédié. L’annonce est présentée de façon anonymisée. Les informations précises et les documents sensibles ne doivent être partagés qu’avec les personnes autorisées dans le cadre du dossier.</p>
+        </details>
+        <details class="panel faq-item">
+            <summary>Faut-il un compte pour consulter la plateforme ?</summary>
+            <p>Les annonces publiques proposent un aperçu limité et anonymisé. Un compte acquéreur est nécessaire pour enregistrer un profil, demander une mise en relation et participer aux échanges réservés. La création d’un compte ne garantit pas l’accès à tous les renseignements d’une entreprise.</p>
+        </details>
+        <details class="panel faq-item">
+            <summary>Comment rechercher une entreprise à reprendre ?</summary>
+            <p>Créez un compte en sélectionnant « Acquéreur / investisseur » et renseignez vos critères de recherche. Les annonces disponibles peuvent être consultées selon les informations publiées. Les données détaillées et documents ne sont accessibles que dans les conditions prévues pour le dossier concerné.</p>
+        </details>
+        <details class="panel faq-item">
+            <summary>Comment fonctionne une mise en relation ?</summary>
+            <p>L’acquéreur peut soumettre une demande concernant une opportunité. Le cédant ou le courtier en charge peut l’accepter ou la refuser. Si les parties souhaitent poursuivre, l’accord de confidentialité doit être signé par les deux parties avant la révélation de l’identité et les échanges documentaires prévus par la plateforme.</p>
+        </details>
+        <details class="panel faq-item">
+            <summary>Comment mes informations et celles de l’entreprise sont-elles protégées ?</summary>
+            <p>Les annonces publiques sont anonymisées. Le nom de l’entreprise et sa localisation précise restent masqués avant la signature bilatérale de l’accord de confidentialité. L’accès aux messages et documents d’un dossier est limité aux participants autorisés. Consultez la <a href="legal.xhtml#confidentialite">notice de confidentialité</a> et la <a href="legal.xhtml#donnees-personnelles">notice relative aux données personnelles</a> pour le détail et les points encore à compléter.</p>
+        </details>
+        <details class="panel faq-item">
+            <summary>Quels sont les frais de cession ou de reprise ?</summary>
+            <p>Aucun tarif général n’est publié dans l’application. Les éventuels honoraires, frais, leur mode de calcul et leur exigibilité doivent être précisés dans une proposition ou un mandat écrit avant le début d’une mission. La création d’un compte seule ne constitue pas un engagement d’honoraires.</p>
+        </details>
+        <details class="panel faq-item">
+            <summary>Quelles sont les étapes habituelles d’une opération ?</summary>
+            <p>Le parcours peut comprendre la préparation du projet, la publication d’un aperçu anonymisé, les demandes de mise en relation, la signature d’un accord de confidentialité, l’échange d’informations autorisées et les négociations. Chaque opération dépend de la situation des parties et peut nécessiter l’intervention de professionnels indépendants. La plateforme ne garantit ni la conclusion ni le financement d’une transaction.</p>
+        </details>
+    </section>
+</main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
+</h:body>
+</html>

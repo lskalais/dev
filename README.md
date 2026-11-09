@@ -14,21 +14,35 @@ Marketplace confidentielle de mise en relation entre cédants, acquéreurs/inves
 ## Fonctionnalités livrées
 
 - Création de compte et authentification pour cédant, acquéreur et courtier; les mots de passe sont hachés avec BCrypt.
+- Inscription des acquéreurs comme personne physique ou personne morale, avec coordonnées, capacité indicative, secteurs recherchés ou renseignements d’immatriculation et de représentation.
 - Page d'accueil publique avec accès aux offres validées, informations pour les cédants et connexion.
+- Articles et actualités rédigés depuis l’administration, enregistrés en brouillon puis publiés sur le site.
+- Formulaire public de contact et de réclamation; les coordonnées et le contenu du message sont chiffrés au repos et consultables dans l’administration SUPER. Les conversations privées des transactions restent réservées à leurs participants; aucun courriel de réponse automatique n'est envoyé.
+- Administration des annonces : accès SUPER à l'ensemble des annonces, vérification des informations et pièces, publication ou suspension; un courtier mandaté peut gérer la publication de ses dossiers.
 - Basculement entre modes clair et sombre, avec préférence conservée dans le navigateur.
-- Teasers d'entreprises, données financières et zone géographique anonymisée.
+- Teasers publics limités aux informations non identifiantes : secteur, domaines, zone, ancienneté par tranche et effectif approximatif par tranche. La fourchette de chiffre d’affaires n’est affichée que si le cédant l’autorise; description libre, montant exact, identité et adresse précise restent masqués.
 - Publication immédiate des teasers anonymisés, même sans courtier correspondant; le cédant peut les modifier jusqu'à ce qu'un courtier accepte le dossier.
 - Prise en charge des dossiers publiés par un courtier mandaté ou par un courtier qui revendique un dossier sans attribution; l'acceptation verrouille les modifications du cédant.
 - Profil d'acquéreur, filtres par secteur/région/prix et classement selon la compatibilité des critères.
-- Demande d'introduction, acceptation/refus par le cédant ou le courtier, signatures bilatérales nominatives de l'accord de confidentialité.
-- Révélation du nom et de la localisation précise uniquement lorsque les deux parties ont signé.
-- Messagerie et partage de documents dans les dossiers signés.
-- Retraitement des chiffres par le courtier et estimation du prix à partir d'un EBITDA et d'un multiple explicitement fourni.
+- Recherche acquéreur par secteur, domaine, zone, budgets, chiffre d'affaires, rentabilité, ancienneté, effectif et type de transaction; les critères financiers ne produisent des résultats qu'après signature bilatérale du NDA.
+- Favoris privés des acquéreurs et notifications internes pour les opportunités compatibles, demandes de mise en relation et propositions/réponses de rendez-vous.
+- Demande d'introduction, acceptation/refus par le cédant ou le courtier, signatures bilatérales nominatives de l'accord de confidentialité; un acquéreur doit avoir un profil KYC validé pour signer.
+- Révélation des informations complémentaires, du nom et de la localisation précise uniquement après validation du profil acquéreur et signature bilatérale.
+- Messagerie et propositions de rendez-vous réservées aux parties des dossiers signés; un document de data room n’est accessible à l’acquéreur qu’après autorisation du cédant et validation du courtier mandaté ou d’un administrateur.
+- Le cédant fixe pour chaque document une durée d’accès de 1 à 365 jours; le délai commence après la dernière approbation. Les téléchargements sont horodatés et journalisés, et le cédant, le courtier mandaté et l’administration peuvent consulter l’historique.
+- Dépôt par les cédants de pièces justificatives de vérification du compte (RCCM, document fiscal, statuts, identité du représentant, mandat ou autre pièce), chiffrées et accessibles uniquement aux rôles autorisés.
+- Suivi de vérification du cédant : documents en attente, en vérification, pièces validées, complément demandé et compte validé; les courtiers et administrateurs disposent d'une file de revue pour consulter les pièces protégées, demander des corrections et valider les documents ou le compte.
+- KYC des acquéreurs personnes physiques et morales : dossier créé à l'inscription, dépôt chiffré des justificatifs (identité pour les personnes physiques; immatriculation, statuts, identité du représentant légal et pouvoirs pour les personnes morales), revue réservée aux courtiers et administrateurs, vérification manuelle du courriel et du téléphone. Les justificatifs d'origine des fonds et les informations sur les bénéficiaires effectifs ne sont exigés que si le réviseur l'indique. La vérification des coordonnées est manuelle dans cette version; aucun code OTP par courriel/SMS n'est envoyé.
+- Envoi de notifications par courriel facultatif via SMTP; sans SMTP configuré, les notifications restent disponibles dans l'application.
+- Diagnostic financier confidentiel du dossier (résultat net, actifs, dettes, immobilisations et perspectives), consultable après NDA; le courtier mandaté peut calculer une valorisation indicative à partir de l'EBITDA et d'un multiple explicite. Toute modification ultérieure des données du dossier invalide cette validation.
+- Suivi partagé du processus de cession par annonce, de l'inscription du cédant à la clôture post-cession; le cédant consulte l'étape et son historique, tandis que le courtier mandaté ou l'administration ALP fait avancer les étapes.
+- Annuaire des experts-comptables, avocats, notaires, conseillers fiscaux, évaluateurs, banques et consultants, géré par l'administration et réservé aux comptes validés; les fiches peuvent être suspendues sans suppression.
 - Chiffrement AES-256-GCM des messages, documents, noms de fichiers, identité et localisation précise; mots de passe BCrypt.
 - Autorisations contrôlées dans la couche service et documents stockés hors du répertoire web.
-- Administration des comptes réservée au rôle SUPER, avec création de comptes, attribution de mots de passe temporaires et changement obligatoire au prochain accès.
+- Administration des comptes réservée au rôle SUPER, avec création de comptes, attribution de mots de passe temporaires et changement obligatoire au prochain accès. La liste affiche aussi le type et le statut KYC des acquéreurs, sans exposer leurs pièces; la revue détaillée reste réservée aux rôles autorisés.
+- Tableau de bord administratif réservé au rôle SUPER : comptes, KYC acquéreurs et vérifications cédants à finaliser, annonces actives ou suspendues, opérations en cours et nouveaux messages à traiter.
 
-Les routes publiques sont `/confidentia/` (accueil), `/confidentia/acheter.xhtml`, `/confidentia/vendre.xhtml`, `/confidentia/login.xhtml` et `/confidentia/register.xhtml`. Un teaser enregistré est publié anonymement aux acquéreurs, même si le courriel de courtier est vide ou ne correspond à aucun courtier. Un courtier peut alors le prendre en charge; à partir de cette acceptation, seul le courtier mandaté peut gérer le dossier et le cédant ne peut plus modifier le teaser. Les annonces déjà publiées avant la migration historique peuvent rester en attente de validation jusqu'à leur acceptation par le courtier assigné.
+Les routes publiques sont `/confidentia/` (accueil), `/confidentia/acheter.xhtml`, `/confidentia/vendre.xhtml`, `/confidentia/login.xhtml`, `/confidentia/register.xhtml`, `/confidentia/faq.xhtml` et `/confidentia/legal.xhtml`. La page légale rassemble les conditions, notices de confidentialité et de données personnelles, mentions légales et informations sur la conservation des documents. Les coordonnées de l’éditeur, de l’hébergeur et les durées de conservation doivent être complétées et validées avant une ouverture au public. Un teaser enregistré est publié anonymement aux acquéreurs, même si le courriel de courtier est vide ou ne correspond à aucun courtier. Un courtier peut alors le prendre en charge; à partir de cette acceptation, seul le courtier mandaté peut gérer le dossier et le cédant ne peut plus modifier le teaser. Les annonces déjà publiées avant la migration historique peuvent rester en attente de validation jusqu'à leur acceptation par le courtier assigné.
 
 La signature MVP est un consentement électronique nominatif horodaté dans l'application. Elle ne constitue pas une signature électronique qualifiée et n'intègre pas encore DocuSign/Universign. Le branchement à un prestataire et l'audit de conformité juridique restent nécessaires avant une mise en production.
 
@@ -51,6 +65,12 @@ Les propriétés applicatives sont définies dans `src/main/webapp/META-INF/cont
 | `SUPER_ADMIN_EMAIL` | non défini | Adresse du compte SUPER initial |
 | `SUPER_ADMIN_PASSWORD` | non défini | Mot de passe initial, remplacé obligatoirement à la première connexion |
 | `SUPER_ADMIN_NAME` | `Administrateur` | Nom du compte SUPER initial |
+| `SMTP_HOST` | non défini | Hôte SMTP; requis pour activer l'envoi des courriels |
+| `SMTP_PORT` | `587` | Port SMTP |
+| `SMTP_FROM` | non défini | Adresse d'expédition; requise pour activer l'envoi |
+| `SMTP_USERNAME` | non défini | Identifiant SMTP facultatif |
+| `SMTP_PASSWORD` | non défini | Mot de passe SMTP, requis si `SMTP_USERNAME` est défini |
+| `SMTP_STARTTLS` | `true` | Active STARTTLS pour SMTP |
 
 Configurer `SUPER_ADMIN_EMAIL` et `SUPER_ADMIN_PASSWORD` ensemble dans l'environnement du processus Tomcat pour créer ou promouvoir le compte SUPER initial au démarrage. L'initialisation est appliquée une seule fois : les identifiants d'environnement ne réinitialisent pas le compte lors des redémarrages suivants. Le mot de passe initial et tout mot de passe temporaire attribué depuis l'administration doivent compter au moins 12 caractères et au plus 72 octets UTF-8. Les comptes temporaires sont forcés à choisir un nouveau mot de passe avant d'accéder au tableau de bord ou aux documents. Ne pas inscrire les mots de passe dans le dépôt ni dans les journaux.
 
@@ -139,4 +159,6 @@ Dans l'environnement local préparé pour ce projet, la base `confidentia` et l'
 
 Redémarrer le processus Tomcat (ou le terminal/IDE qui le lance) après cette configuration pour qu'il hérite des variables. Conserver `APP_ENCRYPTION_KEY` de façon durable : perdre ou remplacer cette clé rend les messages, identités et documents chiffrés illisibles.
 
-Pour un environnement de production, désactiver l'auto-évolution Hibernate (`DB_SCHEMA_MODE=validate`) et appliquer des migrations SQL versionnées, configurer TLS, limiter l'inscription de courtiers à un processus d'approbation, ajouter une analyse antivirus des fichiers et utiliser un gestionnaire de secrets. Le flux MVP n'inclut pas encore la récupération de mot de passe, MFA, notifications ni intégration de signature tierce.
+Pour un environnement de production, désactiver l'auto-évolution Hibernate (`DB_SCHEMA_MODE=validate`) et appliquer des migrations SQL versionnées, configurer TLS, limiter l'inscription de courtiers à un processus d'approbation, ajouter une analyse antivirus des fichiers et utiliser un gestionnaire de secrets. Le flux MVP n'inclut pas encore la récupération de mot de passe, MFA, notifications SMS ni intégration de signature tierce. Les rendez-vous saisis en `datetime-local` sont interprétés selon le fuseau horaire de la JVM Tomcat; configurer celui-ci conformément au fuseau d'exploitation.
+
+Après l’ajout de l’expiration de la data room, les anciens documents déjà approuvés mais dépourvus de date d’expiration ne sont plus téléchargeables par les acquéreurs. Le cédant doit renouveler l’autorisation avec une durée et obtenir une nouvelle validation ALP.

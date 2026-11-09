@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>KYC des acquéreurs | Africa Legacy Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<header class="topbar">
+    <h:link outcome="app" styleClass="brand" value="Africa Legacy Market"/>
+    <div class="topbar-user">
+        <span>#{marketplace.user.name()} <small>#{marketplace.roleLabel}</small></span>
+        <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
+                aria-pressed="false">Mode sombre</button>
+        <h:form>
+            <h:commandButton value="Déconnexion" action="#{marketplace.logout}"
+                             styleClass="button outline small"/>
+        </h:form>
+    </div>
+</header>
+<main class="container">
+    <section class="welcome">
+        <div>
+            <span class="eyebrow">Espace sécurisé</span>
+            <h1>Vérification KYC des acquéreurs</h1>
+            <p>Examinez les pièces justificatives des acquéreurs et confirmez manuellement les coordonnées des représentants.</p>
+        </div>
+        <h:link outcome="app" value="Retour au tableau de bord" styleClass="button outline"/>
+    </section>
+    <h:messages globalOnly="false" styleClass="flash-list" infoClass="flash success"
+                errorClass="flash error" warnClass="flash warning"/>
+    <ui:repeat value="#{marketplace.buyerKycQueue}" var="kyc">
+        <section class="panel verification-card">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">#{kyc.buyerType().name() eq 'COMPANY' ? 'Personne morale' : 'Personne physique'} · #{kyc.buyerId()}</p>
+                    <h2>#{empty kyc.organization() ? kyc.name() : kyc.organization()}</h2>
+                    <p class="muted">#{kyc.email()} · #{kyc.phone()}</p>
+                </div>
+                <strong class="status-badge">#{kyc.status().label()}</strong>
+            </div>
+            <ui:fragment rendered="#{kyc.buyerType().name() eq 'INDIVIDUAL'}">
+                <dl class="kyc-details">
+                    <div><dt>Nationalité</dt><dd>#{kyc.nationality()}</dd></div>
+                    <div><dt>Résidence</dt><dd>#{kyc.residence()}</dd></div>
+                    <div><dt>Profession</dt><dd>#{kyc.profession()}</dd></div>
+                    <div><dt>Capacité indicative</dt><dd>#{empty kyc.indicativeFinancialCapacity() ? 'Non renseignée' : marketplace.formatCurrency(kyc.indicativeFinancialCapacity(), kyc.financialCapacityCurrencyCode())}</dd></div>
+                </dl>
+            </ui:fragment>
+            <ui:fragment rendered="#{kyc.buyerType().name() eq 'COMPANY'}">
+                <dl class="kyc-details">
+                    <div><dt>Représentant légal</dt><dd>#{kyc.name()} · #{kyc.representativeFunction()}</dd></div>
+                    <div><dt>Forme juridique</dt><dd>#{kyc.legalForm()}</dd></div>
+                    <div><dt>Pays d’immatriculation</dt><dd>#{kyc.country()}</dd></div>
+                    <div><dt>RCCM / registre</dt><dd>#{kyc.registrationNumber()}</dd></div>
+                    <div><dt>Identifiant fiscal</dt><dd>#{kyc.taxIdentifier()}</dd></div>
+                    <div><dt>Siège social</dt><dd>#{kyc.headOffice()}</dd></div>
+                </dl>
+            </ui:fragment>
+            <h3>Pièces KYC</h3>
+            <ul class="document-list">
+                <ui:repeat value="#{kyc.documents()}" var="document">
+                    <li>
+                        <strong>#{marketplace.buyerKycDocumentTypeLabel(document.verificationType())}</strong>
+                        · <h:outputText value="#{document.name()}"
+                                        rendered="#{document.encryptedNameUnavailable()}"/>
+                        <h:outputLink value="documents?id=#{document.id()}"
+                                      rendered="#{not document.encryptedNameUnavailable()}">
+                            #{document.name()}
+                        </h:outputLink>
+                        · #{document.sizeBytes()} octets
+                    </li>
+                </ui:repeat>
+            </ul>
+            <h:panelGroup layout="block" styleClass="flash warning"
+                          rendered="#{not empty kyc.feedback()}">
+                Motif ou complément demandé : #{kyc.feedback()}
+            </h:panelGroup>
+            <h:form styleClass="workflow-actions">
+                <label>
+                    <h:selectBooleanCheckbox value="#{marketplace.buyerKycEmailVerified[kyc.buyerId()]}"/>
+                    Courriel vérifié manuellement
+                </label>
+                <label>
+                    <h:selectBooleanCheckbox value="#{marketplace.buyerKycPhoneVerified[kyc.buyerId()]}"/>
+                    Téléphone vérifié manuellement
+                </label>
+                <label>
+                    <h:selectBooleanCheckbox value="#{marketplace.buyerKycSourceOfFundsRequired[kyc.buyerId()]}"/>
+                    Exiger le justificatif d’origine des fonds si requis par la réglementation applicable
+                </label>
+                <h:panelGroup rendered="#{kyc.buyerType().name() eq 'COMPANY'}">
+                    <label>
+                        <h:selectBooleanCheckbox value="#{marketplace.buyerKycBeneficialOwnersRequired[kyc.buyerId()]}"/>
+                        Exiger les informations sur les bénéficiaires effectifs si nécessaires
+                    </label>
+                </h:panelGroup>
+                <h:inputTextarea value="#{marketplace.buyerKycFeedback[kyc.buyerId()]}"
+                                 rows="2" maxlength="1000"
+                                 rendered="#{kyc.status().name() eq 'UNDER_REVIEW'}"/>
+                <h:panelGroup rendered="#{kyc.status().name() eq 'DOCUMENTS_PENDING'}">
+                    <h:commandButton value="Commencer la vérification"
+                                     action="#{marketplace.startBuyerKycReview(kyc.buyerId())}"
+                                     styleClass="button outline small"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{kyc.status().name() eq 'UNDER_REVIEW'}">
+                    <h:commandButton value="Demander un complément"
+                                     action="#{marketplace.requestBuyerKycCorrections(kyc.buyerId())}"
+                                     styleClass="button outline small"/>
+                    <h:commandButton value="Valider le profil KYC"
+                                     action="#{marketplace.validateBuyerKyc(kyc.buyerId())}"
+                                     styleClass="button primary small"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{kyc.status().name() eq 'NEEDS_CORRECTION'}">
+                    <span class="muted">En attente du dépôt de pièces complémentaires par l’acquéreur.</span>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{kyc.status().name() eq 'VALIDATED'}">
+                    <span class="muted">Coordonnées vérifiées · courriel : #{kyc.emailVerified()} · téléphone : #{kyc.phoneVerified()}</span>
+                </h:panelGroup>
+            </h:form>
+        </section>
+    </ui:repeat>
+    <h:panelGroup rendered="#{empty marketplace.buyerKycQueue}" layout="block"
+                  styleClass="empty-state">
+        Aucun acquéreur à vérifier.
+    </h:panelGroup>
+</main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
+</h:body>
+</html>

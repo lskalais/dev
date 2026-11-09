@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>Contenus et messages | Africa Legacy Partners</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<header class="topbar">
+    <h:link outcome="app" styleClass="brand" value="Africa Legacy Partners"/>
+    <div class="topbar-user">
+        <span>#{marketplace.user.name()} <small>#{marketplace.roleLabel}</small></span>
+        <h:link outcome="admin-users" value="Comptes" styleClass="button outline small"/>
+        <h:link outcome="app" value="Tableau de bord" styleClass="button outline small"/>
+    </div>
+</header>
+<main class="container">
+    <section class="welcome">
+        <div>
+            <p class="eyebrow">ADMINISTRATION</p>
+            <h1>Articles, contacts et réclamations</h1>
+            <p class="muted">Les messages de contact sont chiffrés au repos. Les conversations privées des dossiers restent réservées à leurs participants.</p>
+        </div>
+    </section>
+    <h:messages globalOnly="false" styleClass="messages"/>
+    <section class="panel">
+        <div class="section-heading">
+            <div><p class="eyebrow">PUBLICATION</p><h2>Rédiger un article ou une actualité</h2></div>
+            <h:form><h:commandButton value="Nouvel article" action="#{marketplace.startNewArticle}"
+                                     styleClass="button outline small"/></h:form>
+        </div>
+        <h:form styleClass="form-grid">
+            <div class="span-2">
+                <h:outputLabel for="article-title" value="Titre"/>
+                <h:inputText id="article-title" value="#{marketplace.articleTitle}" required="true" maxlength="180"/>
+            </div>
+            <div>
+                <h:outputLabel for="article-category" value="Thème"/>
+                <h:selectOneMenu id="article-category" value="#{marketplace.articleCategory}" required="true">
+                    <f:selectItem itemValue="CESSION / TRANSMISSION" itemLabel="Cession et transmission"/>
+                    <f:selectItem itemValue="REPRISE DE PME" itemLabel="Reprise de PME"/>
+                    <f:selectItem itemValue="ENTREPRENEURIAT" itemLabel="Entrepreneuriat"/>
+                    <f:selectItem itemValue="ÉCONOMIE ET FINANCE" itemLabel="Économie et finance"/>
+                </h:selectOneMenu>
+            </div>
+            <div class="span-2">
+                <h:outputLabel for="article-summary" value="Résumé public"/>
+                <h:inputTextarea id="article-summary" value="#{marketplace.articleSummary}" required="true"
+                                 maxlength="500" rows="3"/>
+            </div>
+            <div class="span-2">
+                <h:outputLabel for="article-content" value="Contenu (texte brut)"/>
+                <h:inputTextarea id="article-content" value="#{marketplace.articleContent}" required="true"
+                                 maxlength="20000" rows="10"/>
+            </div>
+            <div class="span-2">
+                <h:commandButton value="Enregistrer le brouillon" action="#{marketplace.saveArticle}"
+                                 styleClass="button primary"/>
+            </div>
+        </h:form>
+    </section>
+    <section class="panel">
+        <h2>Articles</h2>
+        <div class="table-wrap">
+            <h:dataTable value="#{marketplace.articlesForAdministration}" var="article" styleClass="data-table"
+                         rendered="#{not empty marketplace.articlesForAdministration}">
+                <h:column>
+                    <f:facet name="header">Titre</f:facet>
+                    #{article.title()}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Thème / statut</f:facet>
+                    #{article.category()} · #{article.status()}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Actions</f:facet>
+                    <h:form styleClass="inline-form">
+                        <h:commandButton value="Modifier" action="#{marketplace.loadArticleForEdit(article.id())}"
+                                         styleClass="button outline small"/>
+                        <h:commandButton value="Dépublier"
+                                         action="#{marketplace.setArticlePublished(article.id(), false)}"
+                                         rendered="#{article.status() eq 'PUBLISHED'}"
+                                         styleClass="button danger small"/>
+                        <h:commandButton value="Publier"
+                                         action="#{marketplace.setArticlePublished(article.id(), true)}"
+                                         rendered="#{article.status() ne 'PUBLISHED'}"
+                                         styleClass="button primary small"/>
+                    </h:form>
+                </h:column>
+            </h:dataTable>
+            <h:panelGroup layout="block" styleClass="empty-state"
+                          rendered="#{empty marketplace.articlesForAdministration}">
+                Aucun article. Les brouillons et les articles publiés apparaîtront ici.
+            </h:panelGroup>
+        </div>
+    </section>
+    <section class="panel">
+        <h2>Messages de contact et réclamations</h2>
+        <p class="muted">Les messages ne sont pas envoyés par courriel; utilisez les coordonnées fournies pour répondre hors plateforme.</p>
+        <div class="table-wrap">
+            <h:dataTable value="#{marketplace.contactMessages}" var="entry" styleClass="data-table"
+                         rendered="#{not empty marketplace.contactMessages}">
+                <h:column>
+                    <f:facet name="header">Reçu</f:facet>
+                    #{entry.createdAt()}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Type / demandeur</f:facet>
+                    #{entry.type()} · #{entry.senderName()}<br/>
+                    <h:outputText value="#{entry.senderEmail()}"/>
+                    <h:panelGroup rendered="#{not empty entry.senderPhone()}">
+                        <br/><h:outputText value="#{entry.senderPhone()}"/>
+                    </h:panelGroup>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Message</f:facet>
+                    <strong><h:outputText value="#{entry.subject()}"/></strong>
+                    <p><h:outputText value="#{entry.messageText()}" escape="true"/></p>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Suivi</f:facet>
+                    <h:form>
+                        <h:selectOneMenu value="#{marketplace.contactMessageStatuses[entry.id()]}">
+                            <f:selectItem itemValue="NEW" itemLabel="Nouveau"/>
+                            <f:selectItem itemValue="IN_PROGRESS" itemLabel="En cours"/>
+                            <f:selectItem itemValue="RESOLVED" itemLabel="Résolu"/>
+                        </h:selectOneMenu>
+                        <h:inputTextarea value="#{marketplace.contactMessageNotes[entry.id()]}"
+                                         maxlength="3000" rows="2" pt:placeholder="Note interne (facultatif)"
+                                         xmlns:pt="jakarta.faces.passthrough"/>
+                        <h:commandButton value="Enregistrer le suivi"
+                                         action="#{marketplace.updateContactMessage(entry.id())}"
+                                         styleClass="button outline small"/>
+                    </h:form>
+                </h:column>
+            </h:dataTable>
+            <h:panelGroup layout="block" styleClass="empty-state"
+                          rendered="#{empty marketplace.contactMessages}">
+                Aucun message de contact ni réclamation reçus.
+            </h:panelGroup>
+        </div>
+    </section>
+</main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
+</h:body>
+</html>

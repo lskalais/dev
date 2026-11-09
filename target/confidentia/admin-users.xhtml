@@ -29,13 +29,22 @@
         <div>
             <span class="eyebrow">Espace sécurisé</span>
             <h1>Administration des utilisateurs</h1>
-            <p>Créez des comptes et attribuez des mots de passe temporaires à usage unique.</p>
+            <p>Créez des comptes, attribuez des mots de passe temporaires et suivez le statut KYC des acquéreurs.</p>
         </div>
         <h:link outcome="app" value="Retour au tableau de bord" styleClass="button outline"/>
     </section>
 
     <h:messages globalOnly="false" styleClass="flash-list" infoClass="flash success"
                 errorClass="flash error" warnClass="flash warning"/>
+    <section class="metrics" aria-label="Indicateurs de suivi administratif">
+        <article class="metric"><span>Comptes</span><strong>#{marketplace.adminDashboard.totalUsers()}</strong></article>
+        <article class="metric"><span>KYC acquéreurs à finaliser</span><strong>#{marketplace.adminDashboard.buyerKycToReview()}</strong></article>
+        <article class="metric"><span>Vérifications cédants à finaliser</span><strong>#{marketplace.adminDashboard.sellerVerificationsToReview()}</strong></article>
+        <article class="metric"><span>Annonces actives</span><strong>#{marketplace.adminDashboard.publishedListings()}</strong></article>
+        <article class="metric"><span>Annonces suspendues</span><strong>#{marketplace.adminDashboard.suspendedListings()}</strong></article>
+        <article class="metric"><span>Opérations en cours</span><strong>#{marketplace.adminDashboard.activeDealRequests()}</strong></article>
+        <article class="metric"><span>Nouveaux messages à traiter</span><strong>#{marketplace.adminDashboard.newContactMessages()}</strong></article>
+    </section>
     <section class="panel">
         <h2>Créer un utilisateur</h2>
         <h:form styleClass="form-grid">
@@ -81,6 +90,27 @@
                     #{account.role()}
                 </h:column>
                 <h:column>
+                    <f:facet name="header">Type d’acquéreur</f:facet>
+                    <h:outputText value="Personne physique"
+                                  rendered="#{not empty account.buyerType() and account.buyerType().name() eq 'INDIVIDUAL'}"/>
+                    <h:outputText value="Personne morale"
+                                  rendered="#{not empty account.buyerType() and account.buyerType().name() eq 'COMPANY'}"/>
+                    <h:outputText value="À préciser"
+                                  rendered="#{account.role() eq 'BUYER' and empty account.buyerType()}"/>
+                    <h:outputText value="—" rendered="#{account.role() ne 'BUYER'}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Statut KYC</f:facet>
+                    <h:outputText value="#{account.buyerKycStatus().label()}"
+                                  rendered="#{not empty account.buyerKycStatus()}"/>
+                    <h:outputText value="Profil à compléter"
+                                  rendered="#{account.role() eq 'BUYER' and empty account.buyerKycStatus()}"/>
+                    <h:outputText value="—" rendered="#{account.role() ne 'BUYER'}"/>
+                    <br/>
+                    <h:link outcome="buyer-kyc" value="Ouvrir la revue KYC"
+                            rendered="#{account.role() eq 'BUYER' and not empty account.buyerKycStatus()}"/>
+                </h:column>
+                <h:column>
                     <f:facet name="header">État du mot de passe</f:facet>
                     <h:outputText value="Changement obligatoire"
                                   rendered="#{account.passwordChangeRequired()}"/>
@@ -103,5 +133,6 @@
         </div>
     </section>
 </main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
 </h:body>
 </html>

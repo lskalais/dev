@@ -1,15 +1,29 @@
 package fr.alp.confidentia.service;
 
 import fr.alp.confidentia.model.DealRequest;
+import fr.alp.confidentia.model.DealAppointment;
+import fr.alp.confidentia.model.AppointmentStatus;
+import fr.alp.confidentia.model.BuyerFavorite;
+import fr.alp.confidentia.model.DataRoomAccessLog;
 import fr.alp.confidentia.model.Listing;
+import fr.alp.confidentia.model.ListingFinancialDiagnosis;
+import fr.alp.confidentia.model.ListingSaleProcess;
+import fr.alp.confidentia.model.ListingSaleProcessHistory;
+import fr.alp.confidentia.model.SaleProcessStage;
+import fr.alp.confidentia.model.ListingTransactionType;
+import fr.alp.confidentia.model.BuyerKyc;
+import fr.alp.confidentia.model.BuyerKycStatus;
 import fr.alp.confidentia.model.Role;
+import fr.alp.confidentia.model.SellerDocumentType;
 import fr.alp.confidentia.model.SecureDocument;
 import fr.alp.confidentia.model.UserAccount;
 import fr.alp.confidentia.security.CryptoService;
 import fr.alp.confidentia.service.ViewModels.DealView;
 import fr.alp.confidentia.service.ViewModels.ListingEditView;
 import fr.alp.confidentia.service.ViewModels.ListingSaveResult;
+import fr.alp.confidentia.service.ViewModels.ListingSearchFilters;
 import fr.alp.confidentia.service.ViewModels.ListingView;
+import fr.alp.confidentia.service.ViewModels.PublicListingView;
 import fr.alp.confidentia.service.ViewModels.UserView;
 import fr.alp.confidentia.testsupport.MockJpa;
 import fr.alp.confidentia.testsupport.TestSupport;
@@ -19,10 +33,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.MockedStatic;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
 
@@ -34,8 +52,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -60,6 +78,8 @@ class MarketplaceServiceListingTest {
     private final MarketplaceService service = new MarketplaceService();
     private MockJpa jpa;
     private MockedStatic<CryptoService> crypto;
+    @TempDir
+    private Path temporaryDirectory;
 
     private final UserView seller = new UserView(10L, "s@alp.fr", "Cédant", "ALP", "SELLER", false);
     private final UserView buyer = new UserView(20L, "b@alp.fr", "Acheteur", "ALP", "BUYER", false);
@@ -149,6 +169,18 @@ class MarketplaceServiceListingTest {
         return listing;
     }
 
+    private ListingFinancialDiagnosis diagnosis(Long id, Long listingId) {
+        ListingFinancialDiagnosis diagnosis = MockJpa.newEntity(ListingFinancialDiagnosis.class);
+        diagnosis.id = id;
+        diagnosis.listingId = listingId;
+        diagnosis.netIncome = new BigDecimal("80000");
+        diagnosis.totalAssets = new BigDecimal("900000");
+        diagnosis.totalDebts = new BigDecimal("250000");
+        diagnosis.fixedAssets = new BigDecimal("300000");
+        diagnosis.financialOutlook = "Croissance régionale";
+        return diagnosis;
+    }
+
     private DealRequest deal(Long id, Long listingId, Long buyerId, boolean buyerSigned, boolean sellerSigned) {
         DealRequest request = MockJpa.newEntity(DealRequest.class);
         request.id = id;
@@ -170,6 +202,14 @@ class MarketplaceServiceListingTest {
     private void prepareDealAccess(Listing listing, DealRequest request) {
         doReturn(request).when(em()).find(DealRequest.class, request.id);
         doReturn(listing).when(em()).find(Listing.class, listing.id);
+        stubValidatedBuyerKyc();
+    }
+
+    private void stubValidatedBuyerKyc() {
+        BuyerKyc kyc = MockJpa.newEntity(BuyerKyc.class);
+        kyc.userId = 20L;
+        kyc.status = BuyerKycStatus.VALIDATED;
+        MockJpa.query(em(), "select k from BuyerKyc k where k.userId = :id", List.of(kyc));
     }
 
     // =============================================================================================
@@ -184,8 +224,9 @@ class MarketplaceServiceListingTest {
 
         private ListingSaveResult call(String sector, String region, String description,
                 Integer foundedYear, BigDecimal revenue) {
-            return service.saveListing(seller, null, null, sector, null, foundedYear, description,
-                    region, null, null, null, revenue, null, null, null, null, null, null, null);
+            return service.saveListing(seller, null, null, "PRIMARY", List.of("agriculture"),
+                    sector, null, foundedYear, description, region, null, null, null, revenue,
+                    null, null, null, null, null, null, null);
         }
 
         @Test
@@ -194,7 +235,8 @@ class MarketplaceServiceListingTest {
             MockJpa.query(em(), SECTOR_QUERY, List.of());
             org.mockito.ArgumentCaptor<Listing> captor = org.mockito.ArgumentCaptor.forClass(Listing.class);
 
-            ListingSaveResult result = service.saveListing(seller, null, null, "  Agro  ", "  Distribution  ",
+            ListingSaveResult result = service.saveListing(seller, null, null, "SECONDARY",
+                    List.of("agro_processing", "manufacturing"), "  Agro  ", "  Distribution  ",
                     2010, "Description", " Abidjan ", "PME", "Marque", "Retraite",
                     new BigDecimal("1000000"), new BigDecimal("100000"), new BigDecimal("500000"),
                     new BigDecimal("10"), "Conditions", "12 mois", "Société Secrète", "Rue 12");
@@ -203,6 +245,8 @@ class MarketplaceServiceListingTest {
             verify(em()).persist(captor.capture());
             Listing saved = captor.getValue();
             assertEquals(10L, saved.sellerId);
+            assertEquals("SECONDARY", saved.sectorCategory);
+            assertEquals("agro_processing,manufacturing", saved.activityDomains);
             assertEquals("Agro", saved.sector);
             assertEquals("Distribution", saved.secondarySector);
             assertEquals("Abidjan", saved.region);
@@ -210,6 +254,39 @@ class MarketplaceServiceListingTest {
             assertEquals(0, saved.views);
             assertEquals("enc:Société Secrète", saved.companyNameEncrypted, "L'identité doit être chiffrée");
             assertEquals("enc:Rue 12", saved.exactLocationEncrypted);
+        }
+
+        @Test
+        @DisplayName("saveListing : conserve les indicateurs du diagnostic financier")
+        void saveListing_persistsFinancialDiagnosis() {
+            MockJpa.query(em(), SECTOR_QUERY, List.of());
+            service.saveListing(seller, null, null, "PRIMARY", List.of("agriculture"),
+                    "Agro", null, 2010, "Description", "Abidjan", null, null, null,
+                    new BigDecimal("1000000"), new BigDecimal("100000"), new BigDecimal("500000"),
+                    new BigDecimal("10"), null, null, null, null, null, false,
+                    fr.alp.confidentia.model.ListingTransactionType.FULL_SALE,
+                    new BigDecimal("80000"), new BigDecimal("900000"), new BigDecimal("250000"),
+                    new BigDecimal("300000"), "Croissance régionale");
+
+            verify(em(), atLeastOnce()).persist(org.mockito.ArgumentMatchers.argThat(entity ->
+                    entity instanceof ListingFinancialDiagnosis diagnosis
+                            && new BigDecimal("80000").equals(diagnosis.netIncome)
+                            && new BigDecimal("900000").equals(diagnosis.totalAssets)
+                            && new BigDecimal("250000").equals(diagnosis.totalDebts)
+                            && new BigDecimal("300000").equals(diagnosis.fixedAssets)
+                            && "Croissance régionale".equals(diagnosis.financialOutlook)));
+        }
+
+        @Test
+        @DisplayName("saveListing : secteur et domaines incohérents -> refusés")
+        void saveListing_domaineHorsSecteur_refuse() {
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> service.saveListing(seller, null, null, "PRIMARY", List.of("finance"),
+                            "Agro", null, null, "Description", "Abidjan", null, null, null,
+                            null, null, null, null, null, null, null, null));
+
+            assertEquals("Sélectionnez un grand secteur et au moins un domaine d'activité correspondant.",
+                    exception.getMessage());
         }
 
         @Test
@@ -316,7 +393,8 @@ class MarketplaceServiceListingTest {
         @DisplayName("saveListing : le teaser contient le nom réel (même ponctué/cassé) -> refusé")
         void saveListing_teaserReprendLeNomNormalise_refuse() {
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                    () -> service.saveListing(seller, null, null, "Agro", null, null,
+                    () -> service.saveListing(seller, null, null, "PRIMARY", List.of("agriculture"),
+                            "Agro", null, null,
                             "Rachat de la société société secrète et cie", "Abidjan", null, null, null,
                             null, null, null, null, null, null, "Société Secrète", null));
 
@@ -329,7 +407,8 @@ class MarketplaceServiceListingTest {
             // La localisation exacte est chiffrée puis comparée au teaser après normalisation
             // (minuscules + suppression de tout caractère non alphanumérique).
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                    () -> service.saveListing(seller, null, null, "Agro", null, null,
+                    () -> service.saveListing(seller, null, null, "PRIMARY", List.of("agriculture"),
+                            "Agro", null, null,
                             "Sur la commune de cocody, quartier calme", "Abidjan", null, null, null,
                             null, null, null, null, null, null, null, "Commune de Cocody"));
 
@@ -343,7 +422,8 @@ class MarketplaceServiceListingTest {
             // ne doit pas déclencher de refus, la publication reste possible.
             MockJpa.query(em(), SECTOR_QUERY, List.of());
 
-            ListingSaveResult result = service.saveListing(seller, null, null, "Agro", null, null,
+            ListingSaveResult result = service.saveListing(seller, null, null, "PRIMARY", List.of("agriculture"),
+                    "Agro", null, null,
                     "Description", "Abidjan", null, null, null, null, null, null, null,
                     null, null, "AB", null);
 
@@ -355,7 +435,8 @@ class MarketplaceServiceListingTest {
         @DisplayName("saveListing : rôle non cédant -> SecurityException")
         void saveListing_roleNonCedant_refuse() {
             SecurityException exception = assertThrows(SecurityException.class,
-                    () -> service.saveListing(buyer, null, null, "Agro", null, null, "Description",
+                    () -> service.saveListing(buyer, null, null, "PRIMARY", List.of("agriculture"),
+                            "Agro", null, null, "Description",
                             "Abidjan", null, null, null, null, null, null, null,
                             null, null, null, null));
 
@@ -368,7 +449,8 @@ class MarketplaceServiceListingTest {
             doReturn(listing(5L, 10L, 30L, "BROKER_ACCEPTED")).when(em()).find(Listing.class, 5L);
 
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                    () -> service.saveListing(seller, 5L, null, "Agro", null, null, "Description",
+                    () -> service.saveListing(seller, 5L, null, "PRIMARY", List.of("agriculture"),
+                            "Agro", null, null, "Description",
                             "Abidjan", null, null, null, null, null, null, null,
                             null, null, null, null));
 
@@ -381,7 +463,8 @@ class MarketplaceServiceListingTest {
             doReturn(listing(5L, 99L, null, "PUBLISHED")).when(em()).find(Listing.class, 5L);
 
             SecurityException exception = assertThrows(SecurityException.class,
-                    () -> service.saveListing(seller, 5L, null, "Agro", null, null, "Description",
+                    () -> service.saveListing(seller, 5L, null, "PRIMARY", List.of("agriculture"),
+                            "Agro", null, null, "Description",
                             "Abidjan", null, null, null, null, null, null, null,
                             null, null, null, null));
 
@@ -394,7 +477,8 @@ class MarketplaceServiceListingTest {
             doReturn(null).when(em()).find(Listing.class, 777L);
 
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                    () -> service.saveListing(seller, 777L, null, "Agro", null, null, "Description",
+                    () -> service.saveListing(seller, 777L, null, "PRIMARY", List.of("agriculture"),
+                            "Agro", null, null, "Description",
                             "Abidjan", null, null, null, null, null, null, null,
                             null, null, null, null));
 
@@ -406,7 +490,8 @@ class MarketplaceServiceListingTest {
         void saveListing_avecCourtier_affecteLeCourtier() {
             MockJpa.query(em(), SECTOR_QUERY, List.of(account(30L, Role.BROKER)));
 
-            ListingSaveResult result = service.saveListing(seller, null, "c@alp.fr", "Agro", null, null,
+            ListingSaveResult result = service.saveListing(seller, null, "c@alp.fr", "PRIMARY", List.of("agriculture"),
+                    "Agro", null, null,
                     "Description", "Abidjan", null, null, null, null, null, null, null,
                     null, null, null, null);
 
@@ -418,7 +503,8 @@ class MarketplaceServiceListingTest {
         void saveListing_courtierInconnu_publieSansCourtier() {
             MockJpa.query(em(), SECTOR_QUERY, List.of());
 
-            assertFalse(service.saveListing(seller, null, "inconnu@alp.fr", "Agro", null, null,
+            assertFalse(service.saveListing(seller, null, "inconnu@alp.fr", "PRIMARY", List.of("agriculture"),
+                    "Agro", null, null,
                     "Description", "Abidjan", null, null, null, null, null, null, null,
                     null, null, null, null)
                     .brokerAssigned());
@@ -437,13 +523,25 @@ class MarketplaceServiceListingTest {
         @DisplayName("listingForEditing : cédant propriétaire -> champs déchiffrés")
         void listingForEditing_proprietaire_retourneLeFormulaire() {
             Listing stored = listing(5L, 10L, null, "PUBLISHED");
+            stored.sectorCategory = "TERTIARY";
+            stored.activityDomains = "commerce,finance";
+            ListingFinancialDiagnosis diagnosis = diagnosis(1L, 5L);
+            MockJpa.query(em(), "select d from ListingFinancialDiagnosis d where d.listingId = :listingId",
+                    List.of(diagnosis));
             doReturn(stored).when(em()).find(Listing.class, 5L);
 
             ListingEditView view = service.listingForEditing(seller, 5L);
 
+            assertEquals("TERTIARY", view.sectorCategory());
+            assertEquals(List.of("commerce", "finance"), view.activityDomains());
             assertEquals("Agroalimentaire", view.sector());
             assertEquals("Société Secrète", view.companyName());
             assertEquals("Rue 12, Cocody", view.exactLocation());
+            assertEquals(new BigDecimal("80000"), view.netIncome());
+            assertEquals(new BigDecimal("900000"), view.totalAssets());
+            assertEquals(new BigDecimal("250000"), view.totalDebts());
+            assertEquals(new BigDecimal("300000"), view.fixedAssets());
+            assertEquals("Croissance régionale", view.financialOutlook());
             assertNull(view.brokerEmail());
         }
 
@@ -497,11 +595,67 @@ class MarketplaceServiceListingTest {
                     "select l from Listing l where l.status in ('PUBLISHED', 'BROKER_ACCEPTED') order by l.createdAt desc",
                     List.of(matching, wrongSector, tooExpensive));
             MockJpa.query(em(), "select p from BuyerProfile p where p.userId = :id", List.of());
+            MockJpa.query(em(),
+                    "select d from DealRequest d where d.buyerId = :buyerId "
+                            + "and d.buyerSignedAt is not null and d.sellerSignedAt is not null",
+                    List.of(deal(11L, 1L, buyer.id(), true, true)));
 
             List<ListingView> views = service.listingsFor(buyer, "agro", "abidjan", new BigDecimal("600000"));
 
             assertEquals(1, views.size());
             assertEquals(1L, views.get(0).id());
+        }
+
+        @Test
+        @DisplayName("listingsFor (acheteur) : applique domaine, ancienneté, effectif et transaction")
+        void listingsFor_acheteur_appliqueLesFiltresEtendus() {
+            Listing matching = listing(1L, 10L, null, "PUBLISHED");
+            matching.activityDomains = "agriculture,logistique";
+            matching.foundedYear = 2012;
+            matching.approximateEmployeeCount = 34;
+            matching.transactionType = ListingTransactionType.PARTIAL_SALE;
+            Listing wrongDomain = listing(2L, 10L, null, "PUBLISHED");
+            wrongDomain.activityDomains = "santé";
+            MockJpa.query(em(),
+                    "select l from Listing l where l.status in ('PUBLISHED', 'BROKER_ACCEPTED') order by l.createdAt desc",
+                    List.of(matching, wrongDomain));
+            MockJpa.query(em(), "select p from BuyerProfile p where p.userId = :id", List.of());
+
+            ListingSearchFilters filters = new ListingSearchFilters(null, "logistique", "Abidjan",
+                    null, null, null, null, null, 2010, 2015, 10, 50,
+                    ListingTransactionType.PARTIAL_SALE);
+            List<ListingView> views = service.listingsFor(buyer, filters, false);
+
+            assertEquals(1, views.size());
+            assertEquals(1L, views.get(0).id());
+            assertEquals(ListingTransactionType.PARTIAL_SALE, views.get(0).transactionType());
+        }
+
+        @Test
+        @DisplayName("toggleFavorite : ajoute une annonce publiée aux favoris")
+        void toggleFavorite_ajouteLeFavori() {
+            Listing listing = listing(5L, 10L, null, "PUBLISHED");
+            doReturn(listing).when(em()).find(Listing.class, 5L);
+            MockJpa.query(em(),
+                    "select f from BuyerFavorite f where f.buyerId = :buyerId and f.listingId = :listingId",
+                    List.of());
+
+            boolean added = service.toggleFavorite(buyer, 5L);
+
+            assertTrue(added);
+            org.mockito.ArgumentCaptor<BuyerFavorite> captor =
+                    org.mockito.ArgumentCaptor.forClass(BuyerFavorite.class);
+            verify(em()).persist(captor.capture());
+            assertEquals(buyer.id(), captor.getValue().buyerId);
+            assertEquals(5L, captor.getValue().listingId);
+        }
+
+        @Test
+        @DisplayName("toggleFavorite : refuse une annonce suspendue")
+        void toggleFavorite_refuseUneAnnonceSuspendue() {
+            doReturn(listing(5L, 10L, null, "SUSPENDED")).when(em()).find(Listing.class, 5L);
+
+            assertThrows(IllegalArgumentException.class, () -> service.toggleFavorite(buyer, 5L));
         }
 
         @Test
@@ -553,6 +707,17 @@ class MarketplaceServiceListingTest {
 
             assertNull(view.companyName());
             assertNull(view.exactLocation());
+            assertNull(view.foundedYear());
+            assertNull(view.revenue());
+            assertNull(view.ebitda());
+            assertNull(view.askingPrice());
+            assertNull(view.netIncome());
+            assertNull(view.totalAssets());
+            assertNull(view.totalDebts());
+            assertNull(view.fixedAssets());
+            assertNull(view.financialOutlook());
+            assertFalse(view.professionalValuationValidated());
+            assertTrue(view.description().contains("validation du profil"));
         }
 
         @Test
@@ -568,14 +733,36 @@ class MarketplaceServiceListingTest {
         @Test
         @DisplayName("publicListings : mappe les annonces sans profil acheteur")
         void publicListings_retourneLesAnnoncesPubliees() {
+            Listing published = listing(1L, 10L, null, "PUBLISHED");
+            published.sectorCategory = "PRIMARY";
+            published.activityDomains = "agriculture";
+            published.foundedYear = Year.now().getValue() - 12;
+            published.approximateEmployeeCount = 34;
+            published.publicRevenueRangeAllowed = true;
+            published.revenue = new BigDecimal("1500000");
             MockJpa.query(em(),
                     "select l from Listing l where l.status in ('PUBLISHED', 'BROKER_ACCEPTED') order by l.createdAt desc",
-                    List.of(listing(1L, 10L, null, "PUBLISHED")));
+                    List.of(published));
 
-            List<ListingView> views = service.publicListings();
+            List<PublicListingView> views = service.publicListings();
 
             assertEquals(1, views.size());
-            assertEquals(0, views.get(0).matchPercent());
+            assertEquals("Agroalimentaire", views.get(0).sector());
+            assertEquals("11 à 20 ans", views.get(0).experienceRange());
+            assertEquals("11 à 50", views.get(0).employeeRange());
+            assertEquals("500 000 à 1 999 999", views.get(0).revenueRange());
+        }
+
+        @Test
+        @DisplayName("publicListings : masque la fourchette de CA si le cédant ne l’autorise pas")
+        void publicListings_masqueLeChiffreAffairesSansAutorisation() {
+            Listing published = listing(1L, 10L, null, "PUBLISHED");
+            published.publicRevenueRangeAllowed = false;
+            MockJpa.query(em(),
+                    "select l from Listing l where l.status in ('PUBLISHED', 'BROKER_ACCEPTED') order by l.createdAt desc",
+                    List.of(published));
+
+            assertNull(service.publicListings().get(0).revenueRange());
         }
 
         @Test
@@ -584,11 +771,18 @@ class MarketplaceServiceListingTest {
             Listing stored = listing(5L, 10L, 30L, "PUBLISHED");
             stored.profitMargin = null;
             doReturn(stored).when(em()).find(Listing.class, 5L);
+            MockJpa.query(em(), "select d from ListingFinancialDiagnosis d where d.listingId = :listingId",
+                    List.of());
 
             service.processFinancials(broker, 5L, new BigDecimal("1000"), new BigDecimal("100"), new BigDecimal("5"));
 
             assertEquals(new BigDecimal("10.00"), stored.profitMargin);
             assertEquals(new BigDecimal("500.00"), stored.askingPrice);
+            verify(em(), atLeastOnce()).persist(org.mockito.ArgumentMatchers.argThat(entity ->
+                    entity instanceof ListingFinancialDiagnosis diagnosis
+                            && new BigDecimal("5").equals(diagnosis.valuationMultiple)
+                            && broker.id().equals(diagnosis.valuationValidatedBy)
+                            && diagnosis.valuationValidatedAt != null));
         }
 
         @Test
@@ -821,6 +1015,18 @@ class MarketplaceServiceListingTest {
         }
 
         @Test
+        @DisplayName("signNda : profil acquéreur non validé -> signature refusée")
+        void signNda_profilNonValide_refuseLaSignature() {
+            DealRequest pending = deal(7L, 5L, 20L, false, true);
+            pending.status = "NDA_PENDING";
+            treatAsPublished(pending);
+            MockJpa.query(em(), "select k from BuyerKyc k where k.userId = :id", List.of());
+
+            assertThrows(SecurityException.class, () -> service.signNda(buyer, 7L, "Acheteur Signataire"));
+            assertNull(pending.buyerSignedAt);
+        }
+
+        @Test
         @DisplayName("signNda : cédant -> signature cédant enregistrée")
         void signNda_cedant_enregistreLaSignatureCedant() {
             DealRequest pending = deal(7L, 5L, 20L, true, false);
@@ -902,11 +1108,39 @@ class MarketplaceServiceListingTest {
             doReturn(stored).when(em()).find(Listing.class, 5L);
             doReturn(account(20L, Role.BUYER)).when(em()).find(UserAccount.class, 20L);
             doReturn(account(10L, Role.SELLER)).when(em()).find(UserAccount.class, 10L);
+            stubValidatedBuyerKyc();
 
             DealView view = service.dealsFor(buyer).get(0);
 
             assertTrue(view.encryptedIdentityUnavailable());
             assertEquals(UNAVAILABLE, view.companyName());
+        }
+
+        @Test
+        @DisplayName("dealsFor (administrateur) : voit les dossiers pour revue ALP")
+        void dealsFor_administrateurVoitLesDossiersPourRevue() {
+            DealRequest request = deal(7L, 5L, 20L, true, true);
+            MockJpa.query(em(), "select d from DealRequest d order by d.createdAt desc", List.of(request));
+            doReturn(listing(5L, 10L, 30L, "PUBLISHED")).when(em()).find(Listing.class, 5L);
+            doReturn(account(20L, Role.BUYER)).when(em()).find(UserAccount.class, 20L);
+            doReturn(account(10L, Role.SELLER)).when(em()).find(UserAccount.class, 10L);
+            UserView reviewer = new UserView(99L, "admin@alp.fr", "Admin", "ALP", "SUPER", false);
+
+            assertEquals(1, service.dealsFor(reviewer).size());
+        }
+
+        @Test
+        @DisplayName("decideIntroduction : l'administrateur peut traiter une demande")
+        void decideIntroduction_administrateurPeutTraiterLaDemande() {
+            DealRequest request = deal(7L, 5L, 20L, false, false);
+            request.status = "PENDING";
+            prepareDealAccess(listing(5L, 10L, 30L, "PUBLISHED"), request);
+            UserView reviewer = new UserView(99L, "admin@alp.fr", "Admin", "ALP", "SUPER", false);
+
+            service.decideIntroduction(reviewer, 7L, true);
+
+            assertEquals("NDA_PENDING", request.status);
+            assertEquals("MVP-1.0", request.ndaVersion);
         }
     }
 
@@ -917,6 +1151,7 @@ class MarketplaceServiceListingTest {
     private void treatAsPublished(DealRequest request) {
         doReturn(request).when(em()).find(DealRequest.class, request.id);
         doReturn(listing(5L, 10L, null, "PUBLISHED")).when(em()).find(Listing.class, 5L);
+        stubValidatedBuyerKyc();
     }
 
     // =============================================================================================
@@ -1024,6 +1259,48 @@ class MarketplaceServiceListingTest {
         }
 
         @Test
+        @DisplayName("proposeAppointment : participant avec NDA signé -> proposition persistée")
+        void proposeAppointment_participantCreeUneProposition() {
+            prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), deal(7L, 5L, 20L, true, true));
+            org.mockito.ArgumentCaptor<DealAppointment> captor =
+                    org.mockito.ArgumentCaptor.forClass(DealAppointment.class);
+
+            service.proposeAppointment(buyer, 7L, LocalDateTime.now().plusDays(2));
+
+            verify(em()).persist(captor.capture());
+            assertEquals(7L, captor.getValue().requestId);
+            assertEquals(buyer.id(), captor.getValue().proposedBy);
+            assertEquals(AppointmentStatus.PENDING, captor.getValue().status);
+        }
+
+        @Test
+        @DisplayName("proposeAppointment : tiers refusé")
+        void proposeAppointment_tiersRefuse() {
+            prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), deal(7L, 5L, 20L, true, true));
+
+            assertThrows(SecurityException.class,
+                    () -> service.proposeAppointment(anotherBroker, 7L, LocalDateTime.now().plusDays(2)));
+        }
+
+        @Test
+        @DisplayName("respondToAppointment : autre participant confirme la proposition")
+        void respondToAppointment_autreParticipantConfirme() {
+            Listing listing = listing(5L, 10L, null, "PUBLISHED");
+            DealRequest request = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing, request);
+            DealAppointment appointment = MockJpa.newEntity(DealAppointment.class);
+            appointment.id = 9L;
+            appointment.requestId = 7L;
+            appointment.proposedBy = buyer.id();
+            appointment.status = AppointmentStatus.PENDING;
+            doReturn(appointment).when(em()).find(DealAppointment.class, 9L);
+
+            service.respondToAppointment(seller, 9L, true);
+
+            assertEquals(AppointmentStatus.CONFIRMED, appointment.status);
+        }
+
+        @Test
         @DisplayName("messages : corps illisible (ancienne clé) -> message d'indisponibilité")
         void messages_corpsIllisible_messageDIndisponibilite() {
             DealRequest signed = deal(7L, 5L, 20L, true, true);
@@ -1049,6 +1326,89 @@ class MarketplaceServiceListingTest {
     @Nested
     @DisplayName("Documents sécurisés")
     class Documents {
+
+        @Test
+        @DisplayName("storeSellerVerificationDocument : type invalide -> refusé")
+        void storeSellerVerificationDocument_typeInvalide_refuse() {
+            assertThrows(IllegalArgumentException.class,
+                    () -> service.storeSellerVerificationDocument(seller, "UNKNOWN",
+                            "rccm.pdf", "application/pdf", new byte[] { 1 }));
+        }
+
+        @Test
+        @DisplayName("storeSellerVerificationDocument : réservé au cédant")
+        void storeSellerVerificationDocument_nonCedant_refuse() {
+            assertThrows(SecurityException.class,
+                    () -> service.storeSellerVerificationDocument(buyer, "RCCM",
+                            "rccm.pdf", "application/pdf", new byte[] { 1 }));
+        }
+
+        @Test
+        @DisplayName("storeSellerVerificationDocument : stocke la pièce chiffrée hors dossier de cession")
+        void storeSellerVerificationDocument_valide_persisteLaPiece() {
+            String previousStorageDirectory = System.getProperty("PRIVATE_STORAGE_DIR");
+            System.setProperty("PRIVATE_STORAGE_DIR", temporaryDirectory.toString());
+            try {
+                org.mockito.ArgumentCaptor<SecureDocument> captor =
+                        org.mockito.ArgumentCaptor.forClass(SecureDocument.class);
+
+                var view = service.storeSellerVerificationDocument(seller, "RCCM",
+                        "rccm.pdf", "application/pdf", new byte[] { 1, 2, 3 });
+
+                verify(em()).persist(captor.capture());
+                SecureDocument saved = captor.getValue();
+                assertNull(saved.listingId);
+                assertNull(saved.requestId);
+                assertEquals(seller.id(), saved.uploadedBy);
+                assertEquals("SELLER_VERIFICATION", saved.documentPurpose);
+                assertEquals(SellerDocumentType.RCCM.name(), saved.verificationType);
+                assertEquals("enc:rccm.pdf", saved.originalName);
+                assertEquals(SellerDocumentType.RCCM.name(), view.verificationType());
+            } finally {
+                if (previousStorageDirectory == null) {
+                    System.clearProperty("PRIVATE_STORAGE_DIR");
+                } else {
+                    System.setProperty("PRIVATE_STORAGE_DIR", previousStorageDirectory);
+                }
+            }
+
+        }
+
+        @Test
+        @DisplayName("readDocument : un acquéreur ne peut pas lire une pièce de vérification")
+        void readDocument_acquereurNePeutPasLirePieceDeVerification() {
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 7L;
+            document.documentPurpose = "SELLER_VERIFICATION";
+            document.uploadedBy = seller.id();
+            doReturn(document).when(em()).find(SecureDocument.class, 7L);
+
+            assertThrows(SecurityException.class, () -> service.readDocument(buyer, 7L));
+        }
+
+        @Test
+        @DisplayName("sellerVerificationDocuments : ne retourne que les pièces du cédant")
+        void sellerVerificationDocuments_retourneLesPiecesDuCedant() {
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.uploadedBy = seller.id();
+            document.documentPurpose = "SELLER_VERIFICATION";
+            document.verificationType = "RCCM";
+            document.originalName = "enc:rccm.pdf";
+            document.contentType = "application/pdf";
+            document.sizeBytes = 10;
+            document.uploadedAt = Instant.now();
+            MockJpa.query(em(),
+                    "select d from SecureDocument d where d.documentPurpose = 'SELLER_VERIFICATION' "
+                            + "and d.uploadedBy = :id order by d.uploadedAt desc",
+                    List.of(document));
+
+            var documents = service.sellerVerificationDocuments(seller);
+
+            assertEquals(1, documents.size());
+            assertEquals("RCCM", documents.get(0).verificationType());
+            assertEquals("rccm.pdf", documents.get(0).name());
+        }
 
         @Test
         @DisplayName("storeDocument : fichier vide -> refusé")
@@ -1173,7 +1533,8 @@ class MarketplaceServiceListingTest {
             document.sizeBytes = 10;
             document.uploadedAt = Instant.now();
             MockJpa.query(em(),
-                    "select d from SecureDocument d where d.listingId = :id and d.requestId is null order by d.uploadedAt desc",
+                    "select d from SecureDocument d where d.listingId = :id and d.requestId is null "
+                            + "and d.documentPurpose is null order by d.uploadedAt desc",
                     List.of(document));
 
             var views = service.documentsFor(seller, 5L);
@@ -1192,7 +1553,8 @@ class MarketplaceServiceListingTest {
             document.originalName = "old:abc";
             document.contentType = "application/pdf";
             MockJpa.query(em(),
-                    "select d from SecureDocument d where d.listingId = :id and d.requestId is null order by d.uploadedAt desc",
+                    "select d from SecureDocument d where d.listingId = :id and d.requestId is null "
+                            + "and d.documentPurpose is null order by d.uploadedAt desc",
                     List.of(document));
 
             var view = service.documentsFor(seller, 5L).get(0);
@@ -1213,10 +1575,241 @@ class MarketplaceServiceListingTest {
         @DisplayName("dealDocuments : NDA signé -> liste des documents de la demande")
         void dealDocuments_ndaSigne_retourneLaListe() {
             prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), deal(7L, 5L, 20L, true, true));
+            SecureDocument approved = MockJpa.newEntity(SecureDocument.class);
+            approved.id = 1L;
+            approved.requestId = 7L;
+            approved.originalName = "enc:memorandum.pdf";
+            approved.sellerAuthorized = true;
+            approved.alpValidated = true;
+            SecureDocument awaitingApproval = MockJpa.newEntity(SecureDocument.class);
+            awaitingApproval.id = 2L;
+            awaitingApproval.requestId = 7L;
+            awaitingApproval.originalName = "enc:contrat.pdf";
             MockJpa.query(em(), "select d from SecureDocument d where d.requestId = :id order by d.uploadedAt desc",
-                    List.of());
+                    List.of(approved, awaitingApproval));
 
-            assertTrue(service.dealDocuments(buyer, 7L).isEmpty());
+            var documents = service.dealDocuments(buyer, 7L);
+
+            assertEquals(1, documents.size());
+            assertEquals("memorandum.pdf", documents.get(0).name());
+            assertTrue(documents.get(0).sellerAuthorized());
+            assertTrue(documents.get(0).alpValidated());
+        }
+
+        @Test
+        @DisplayName("authorizeDealDocument : cédant propriétaire -> accès autorisé")
+        void authorizeDealDocument_cedantAutoriseLePartage() {
+            DealRequest signed = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), signed);
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.listingId = 5L;
+            document.requestId = 7L;
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+
+            service.authorizeDealDocument(seller, 8L, 45);
+
+            assertTrue(document.sellerAuthorized);
+            assertEquals(10L, document.sellerAuthorizedBy);
+            assertNotNull(document.sellerAuthorizedAt);
+            assertEquals(45, document.accessDurationDays);
+            assertNull(document.accessExpiresAt);
+        }
+
+        @Test
+        @DisplayName("authorizeDealDocument : durée hors limites -> refusée")
+        void authorizeDealDocument_dureeHorsLimites_refusee() {
+            assertThrows(IllegalArgumentException.class,
+                    () -> service.authorizeDealDocument(seller, 8L, 366));
+        }
+
+        @Test
+        @DisplayName("validateDealDocument : le cédant doit d’abord autoriser le partage")
+        void validateDealDocument_sansAutorisationCedant_refuse() {
+            DealRequest signed = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing(5L, 10L, 30L, "PUBLISHED"), signed);
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.listingId = 5L;
+            document.requestId = 7L;
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+            UserView reviewer = new UserView(99L, "admin@alp.fr", "Admin", "ALP", "SUPER", false);
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> service.validateDealDocument(reviewer, 8L));
+            assertFalse(document.alpValidated);
+        }
+
+        @Test
+        @DisplayName("validateDealDocument : administrateur -> document validé par ALP")
+        void validateDealDocument_administrateurValideLePartage() {
+            DealRequest signed = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing(5L, 10L, 30L, "PUBLISHED"), signed);
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.requestId = 7L;
+            document.sellerAuthorized = true;
+            document.accessDurationDays = 30;
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+            MockJpa.query(em(), "select d from SecureDocument d where d.requestId = :id order by d.uploadedAt desc",
+                    List.of(document));
+            UserView reviewer = new UserView(99L, "admin@alp.fr", "Admin", "ALP", "SUPER", false);
+
+            assertEquals(1, service.dealDocuments(reviewer, 7L).size());
+            service.validateDealDocument(reviewer, 8L);
+
+            assertTrue(document.alpValidated);
+            assertEquals(99L, document.alpValidatedBy);
+            assertNotNull(document.alpValidatedAt);
+            assertEquals(30, document.accessDurationDays);
+            assertEquals(document.alpValidatedAt.plusSeconds(30L * 24 * 60 * 60), document.accessExpiresAt);
+        }
+
+        @Test
+        @DisplayName("validateDealDocument : ne prolonge pas une fenêtre encore active")
+        void validateDealDocument_fenetreActive_nePeutPasEtreProlongee() {
+            prepareDealAccess(listing(5L, 10L, 30L, "PUBLISHED"), deal(7L, 5L, 20L, true, true));
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.requestId = 7L;
+            document.sellerAuthorized = true;
+            document.alpValidated = true;
+            document.accessDurationDays = 30;
+            Instant expiresAt = Instant.now().plusSeconds(30L * 24 * 60 * 60);
+            document.accessExpiresAt = expiresAt;
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+            UserView reviewer = new UserView(99L, "admin@alp.fr", "Admin", "ALP", "SUPER", false);
+
+            assertThrows(IllegalArgumentException.class, () -> service.validateDealDocument(reviewer, 8L));
+            assertEquals(expiresAt, document.accessExpiresAt);
+        }
+
+        @Test
+        @DisplayName("validateDealDocument : durée expirée -> nouvelle autorisation du cédant requise")
+        void validateDealDocument_fenetreExpiree_exigeRenouvellementCedant() {
+            prepareDealAccess(listing(5L, 10L, 30L, "PUBLISHED"), deal(7L, 5L, 20L, true, true));
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.requestId = 7L;
+            document.sellerAuthorized = true;
+            document.alpValidated = true;
+            document.accessDurationDays = 30;
+            document.accessExpiresAt = Instant.now().minusSeconds(1);
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+            UserView reviewer = new UserView(99L, "admin@alp.fr", "Admin", "ALP", "SUPER", false);
+
+            assertThrows(IllegalArgumentException.class, () -> service.validateDealDocument(reviewer, 8L));
+            assertTrue(document.alpValidated);
+        }
+
+        @Test
+        @DisplayName("readDocument : document non approuvé -> acheteur refusé")
+        void readDocument_documentNonApprouve_refuseAcheteur() {
+            DealRequest signed = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), signed);
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.listingId = 5L;
+            document.requestId = 7L;
+            document.originalName = "enc:contrat.pdf";
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+
+            assertThrows(SecurityException.class, () -> service.readDocument(buyer, 8L));
+        }
+
+        @Test
+        @DisplayName("readDocument : fenêtre expirée -> acheteur refusé")
+        void readDocument_fenetreExpiree_refuseAcheteur() {
+            DealRequest signed = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), signed);
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.listingId = 5L;
+            document.requestId = 7L;
+            document.originalName = "enc:contrat.pdf";
+            document.sellerAuthorized = true;
+            document.alpValidated = true;
+            document.accessExpiresAt = Instant.now().minusSeconds(1);
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+
+            assertThrows(SecurityException.class, () -> service.readDocument(buyer, 8L));
+        }
+
+        @Test
+        @DisplayName("readDocument : accès valide -> téléchargement journalisé")
+        void readDocument_accesValide_journaliseLeTelechargement() throws Exception {
+            String previousStorageDirectory = System.getProperty("PRIVATE_STORAGE_DIR");
+            System.setProperty("PRIVATE_STORAGE_DIR", temporaryDirectory.toString());
+            try {
+                DealRequest signed = deal(7L, 5L, 20L, true, true);
+                prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), signed);
+                SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+                document.id = 8L;
+                document.listingId = 5L;
+                document.requestId = 7L;
+                document.originalName = "enc:contrat.pdf";
+                document.storageKey = "data-room-file";
+                document.contentType = "application/pdf";
+                document.sellerAuthorized = true;
+                document.alpValidated = true;
+                document.accessDurationDays = 30;
+                document.accessExpiresAt = Instant.now().plusSeconds(30L * 24 * 60 * 60);
+                doReturn(document).when(em()).find(SecureDocument.class, 8L);
+                Files.write(temporaryDirectory.resolve("data-room-file.bin"),
+                        CryptoService.encrypt(new byte[] { 1, 2, 3 }));
+
+                var download = service.readDocument(buyer, 8L);
+
+                assertEquals("contrat.pdf", download.name());
+                assertTrue(java.util.Arrays.equals(new byte[] { 1, 2, 3 }, download.bytes()));
+                org.mockito.ArgumentCaptor<DataRoomAccessLog> captor =
+                        org.mockito.ArgumentCaptor.forClass(DataRoomAccessLog.class);
+                verify(em()).persist(captor.capture());
+                assertEquals(8L, captor.getValue().documentId);
+                assertEquals(7L, captor.getValue().requestId);
+                assertEquals(20L, captor.getValue().accessedBy);
+                assertEquals("b@alp.fr", captor.getValue().accessedByEmail);
+                assertNotNull(captor.getValue().accessedAt);
+            } finally {
+                if (previousStorageDirectory == null) {
+                    System.clearProperty("PRIVATE_STORAGE_DIR");
+                } else {
+                    System.setProperty("PRIVATE_STORAGE_DIR", previousStorageDirectory);
+                }
+            }
+        }
+
+        @Test
+        @DisplayName("dataRoomAccessLogs : cédant propriétaire -> historique du dossier")
+        void dataRoomAccessLogs_cedantConsulteHistorique() {
+            prepareDealAccess(listing(5L, 10L, 30L, "PUBLISHED"), deal(7L, 5L, 20L, true, true));
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.originalName = "enc:contrat.pdf";
+            doReturn(document).when(em()).find(SecureDocument.class, 8L);
+            DataRoomAccessLog access = MockJpa.newEntity(DataRoomAccessLog.class);
+            access.documentId = 8L;
+            access.requestId = 7L;
+            access.accessedByEmail = "b@alp.fr";
+            access.accessedAt = Instant.now();
+            MockJpa.query(em(),
+                    "select a from DataRoomAccessLog a where a.requestId = :requestId "
+                            + "order by a.accessedAt desc",
+                    List.of(access));
+
+            var history = service.dataRoomAccessLogs(seller, 7L);
+
+            assertEquals(1, history.size());
+            assertEquals("contrat.pdf", history.get(0).documentName());
+            assertEquals("b@alp.fr", history.get(0).accessedByEmail());
+        }
+
+        @Test
+        @DisplayName("dataRoomAccessLogs : acquéreur non autorisé à consulter l’historique global")
+        void dataRoomAccessLogs_acheteur_refuse() {
+            prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), deal(7L, 5L, 20L, true, true));
+
+            assertThrows(SecurityException.class, () -> service.dataRoomAccessLogs(buyer, 7L));
         }
 
         @Test
@@ -1241,6 +1834,58 @@ class MarketplaceServiceListingTest {
             doReturn(listing(5L, 10L, null, "PUBLISHED")).when(em()).find(Listing.class, 5L);
 
             assertThrows(SecurityException.class, () -> service.readDocument(buyer, 4L));
+        }
+    }
+
+    @Nested
+    @DisplayName("Suivi du processus de cession")
+    class SuiviCession {
+
+        @Test
+        @DisplayName("avance d'une étape : courtier mandaté actualise le suivi partagé")
+        void avanceEtape_courtierMandate_enregistreLaTransition() {
+            Listing listing = listing(5L, 10L, 30L, "PUBLISHED");
+            ListingSaleProcess process = new ListingSaleProcess();
+            process.listingId = listing.id;
+            process.stage = SaleProcessStage.LISTING_PUBLICATION.name();
+            process.updatedAt = Instant.now();
+            doReturn(listing).when(em()).find(Listing.class, listing.id);
+            MockJpa.query(em(), "select p from ListingSaleProcess p where p.listingId = :listingId",
+                    List.of(process));
+
+            service.advanceListingSaleProcess(broker, listing.id);
+
+            assertEquals(SaleProcessStage.BUYER_INTEREST.name(), process.stage);
+            assertEquals(broker.id(), process.updatedBy);
+            verify(em()).persist(org.mockito.ArgumentMatchers.argThat(entity ->
+                    entity instanceof ListingSaleProcessHistory history
+                            && SaleProcessStage.LISTING_PUBLICATION.name().equals(history.fromStage)
+                            && SaleProcessStage.BUYER_INTEREST.name().equals(history.toStage)
+                            && broker.id().equals(history.changedBy)));
+        }
+
+        @Test
+        @DisplayName("avance d'une étape : cédant en consultation seule")
+        void avanceEtape_cedant_refuse() {
+            assertThrows(SecurityException.class,
+                    () -> service.advanceListingSaleProcess(seller, 5L));
+        }
+
+        @Test
+        @DisplayName("avance d'une étape : processus clôturé non modifiable")
+        void avanceEtape_processusCloture_refuse() {
+            Listing listing = listing(5L, 10L, 30L, "PUBLISHED");
+            ListingSaleProcess process = new ListingSaleProcess();
+            process.listingId = listing.id;
+            process.stage = SaleProcessStage.COMPLETED.name();
+            process.updatedAt = Instant.now();
+            doReturn(listing).when(em()).find(Listing.class, listing.id);
+            MockJpa.query(em(), "select p from ListingSaleProcess p where p.listingId = :listingId",
+                    List.of(process));
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> service.advanceListingSaleProcess(broker, listing.id));
+            assertEquals(SaleProcessStage.COMPLETED.name(), process.stage);
         }
     }
 }

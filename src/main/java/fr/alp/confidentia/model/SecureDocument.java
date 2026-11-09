@@ -15,6 +15,12 @@ public class SecureDocument {
     @Column(name = "request_id")
     public Long requestId;
 
+    @Column(name = "document_purpose", length = 32)
+    public String documentPurpose;
+
+    @Column(name = "verification_type", length = 48)
+    public String verificationType;
+
     @Column(name = "uploaded_by", nullable = false)
     public Long uploadedBy;
 
@@ -32,4 +38,24 @@ public class SecureDocument {
 
     @Column(nullable = false)
     public Instant uploadedAt;
+
+    @Column(nullable = false)
+    public boolean sellerAuthorized;
+
+    public Long sellerAuthorizedBy;
+
+    public Instant sellerAuthorizedAt;
+
+    @Column(nullable = false)
+    public boolean alpValidated;
+
+    public Long alpValidatedBy;
+
+    public Instant alpValidatedAt;
+
+    @Column(name = "access_duration_days")
+    public Integer accessDurationDays;
+
+    @Column(name = "access_expires_at")
+    public Instant accessExpiresAt;
 }

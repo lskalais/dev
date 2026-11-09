@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <div class="site-footer-brand">
+                <a class="brand" href="home.xhtml">Africa Legacy <span>Partners</span></a>
+                <p>#{msg['footer.tagline']}</p>
+            </div>
+            <nav class="site-footer-links" aria-label="#{msg['footer.navigation']}">
+                <a href="faq.xhtml">#{msg['common.faq']}</a>
+                <a href="contact.xhtml">#{msg['common.contact']}</a>
+                <a href="legal.xhtml#conditions">#{msg['common.terms']}</a>
+                <a href="legal.xhtml#confidentialite">#{msg['common.privacy']}</a>
+                <a href="legal.xhtml#donnees-personnelles">#{msg['common.personalData']}</a>
+                <a href="legal.xhtml#mentions-legales">#{msg['common.legalNotice']}</a>
+                <a href="legal.xhtml#conservation">#{msg['common.documentRetention']}</a>
+            </nav>
+            <address class="site-footer-contact">
+                <strong>#{msg['footer.contact']}</strong>
+                <span>#{msg['footer.businessEmail']}</span>
+                <span>#{msg['footer.headOffice']}</span>
+                <span>#{msg['footer.social']}</span>
+            </address>
+            <h:form styleClass="language-form">
+                <h:outputLabel for="language" value="#{msg['language.label']}" />
+                <h:selectOneMenu id="language" value="#{marketplace.language}">
+                    <f:selectItem itemValue="fr" itemLabel="#{msg['language.french']}" />
+                    <f:selectItem itemValue="en" itemLabel="#{msg['language.english']}" />
+                </h:selectOneMenu>
+                <h:commandButton value="#{msg['language.apply']}" action="#{marketplace.applyLanguage}" />
+            </h:form>
+        </div>
+    </footer>
+</ui:composition>

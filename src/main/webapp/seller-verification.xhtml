@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:pt="jakarta.faces.passthrough">
+<h:head>
+    <title>Vérification des cédants | Africa Legacy Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<header class="topbar">
+    <h:link outcome="app" styleClass="brand" value="Africa Legacy Market"/>
+    <div class="topbar-user">
+        <span>#{marketplace.user.name()} <small>#{marketplace.roleLabel}</small></span>
+        <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
+                aria-pressed="false">Mode sombre</button>
+        <h:form>
+            <h:commandButton value="Déconnexion" action="#{marketplace.logout}"
+                             styleClass="button outline small"/>
+        </h:form>
+    </div>
+</header>
+<main class="container">
+    <section class="welcome">
+        <div>
+            <span class="eyebrow">Espace sécurisé</span>
+            <h1>Vérification des comptes cédants</h1>
+            <p>Consultez les pièces confidentielles et faites progresser les dossiers étape par étape.</p>
+        </div>
+        <h:link outcome="app" value="Retour au tableau de bord" styleClass="button outline"/>
+    </section>
+    <h:messages globalOnly="false" styleClass="flash-list" infoClass="flash success"
+                errorClass="flash error" warnClass="flash warning"/>
+    <ui:repeat value="#{marketplace.sellerVerificationQueue}" var="verification">
+        <section class="panel verification-card">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">#{verification.organization()}</p>
+                    <h2>#{verification.name()}</h2>
+                    <p class="muted">#{verification.email()}</p>
+                </div>
+                <strong class="status-badge">#{verification.status().label()}</strong>
+            </div>
+            <h:panelGroup layout="block" styleClass="flash warning"
+                          rendered="#{not empty verification.feedback()}">
+                Motif ou complément demandé : #{verification.feedback()}
+            </h:panelGroup>
+            <h3>Pièces justificatives</h3>
+            <ul class="document-list">
+                <ui:repeat value="#{verification.documents()}" var="document">
+                    <li>
+                        <strong>#{marketplace.sellerDocumentTypeLabel(document.verificationType())}</strong>
+                        · <h:outputText value="#{document.name()}"
+                                        rendered="#{document.encryptedNameUnavailable()}"/>
+                        <h:outputLink value="documents?id=#{document.id()}"
+                                      rendered="#{not document.encryptedNameUnavailable()}">
+                            #{document.name()}
+                        </h:outputLink>
+                        · #{document.sizeBytes()} octets
+                    </li>
+                </ui:repeat>
+            </ul>
+            <h:panelGroup layout="block" styleClass="workflow-actions">
+                <h:form rendered="#{verification.status().name() eq 'DOCUMENTS_PENDING'}">
+                    <h:commandButton value="Commencer la vérification"
+                                     action="#{marketplace.startSellerVerification(verification.sellerId())}"
+                                     styleClass="button outline small"/>
+                </h:form>
+                <h:form rendered="#{verification.status().name() eq 'UNDER_REVIEW'}">
+                    <h:inputTextarea value="#{marketplace.verificationFeedback}"
+                                     rows="2" maxlength="1000"
+                                     pt:placeholder="Pièces manquantes ou corrections attendues"/>
+                    <h:commandButton value="Demander un complément"
+                                     action="#{marketplace.requestSellerCorrections(verification.sellerId())}"
+                                     styleClass="button outline small"/>
+                    <h:commandButton value="Valider les pièces"
+                                     action="#{marketplace.validateSellerDocuments(verification.sellerId())}"
+                                     styleClass="button primary small"/>
+                </h:form>
+                <h:form rendered="#{verification.status().name() eq 'DOCUMENTS_VALIDATED'}">
+                    <h:commandButton value="Valider le compte cédant"
+                                     action="#{marketplace.validateSellerAccount(verification.sellerId())}"
+                                     styleClass="button primary small"/>
+                </h:form>
+            </h:panelGroup>
+        </section>
+    </ui:repeat>
+    <h:panelGroup rendered="#{empty marketplace.sellerVerificationQueue}" layout="block"
+                  styleClass="empty-state">
+        Aucun compte cédant à vérifier.
+    </h:panelGroup>
+</main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
+</h:body>
+</html>

@@ -59,10 +59,15 @@
                         <span class="tiny">Opportunité confidentielle</span>
                     </div>
                     <h3>Entreprise confidentielle</h3>
+                    <p class="tiny">#{listing.sector()}</p>
                     <dl class="listing-facts">
                         <div>
+                            <dt>Secteur</dt>
+                            <dd>#{empty listing.sectorCategory() ? 'À préciser' : listing.sectorCategory()}</dd>
+                        </div>
+                        <div>
                             <dt>Domaine</dt>
-                            <dd>#{empty listing.secondarySector() ? 'À préciser' : listing.secondarySector()}</dd>
+                            <dd>#{empty listing.activityDomains() ? 'À préciser' : listing.activityDomains()}</dd>
                         </div>
                         <div>
                             <dt>Localisation</dt>
@@ -70,18 +75,19 @@
                         </div>
                         <div>
                             <dt>Ancienneté</dt>
-                            <dd>
-                                <ui:fragment rendered="#{not empty listing.foundedYear()}">Depuis #{listing.foundedYear()}</ui:fragment>
-                                <ui:fragment rendered="#{empty listing.foundedYear()}">À préciser</ui:fragment>
-                            </dd>
+                            <dd>#{listing.experienceRange()}</dd>
                         </div>
                         <div>
                             <dt>Taille</dt>
-                            <dd>À confirmer</dd>
+                            <dd>#{listing.employeeRange()}</dd>
+                        </div>
+                        <div>
+                            <dt>Chiffre d’affaires</dt>
+                            <dd>#{empty listing.revenueRange() ? 'Non communiqué' : listing.revenueRange()}</dd>
                         </div>
                     </dl>
                     <div class="card-footer">
-                        <span class="tiny">Identité et données financières protégées</span>
+                        <span class="tiny">Identité protégée · fourchette de CA affichée si autorisée</span>
                         <a class="button outline small" href="register.xhtml">En savoir plus</a>
                     </div>
                 </article>
@@ -142,21 +148,17 @@
             </div>
         </div>
         <div class="home-insight-grid">
-            <article class="panel home-insight-card">
-                <p class="insight-category">TRANSMISSION D’ENTREPRISE</p>
-                <h3>Anticiper la cession : les premières étapes de préparation</h3>
-                <p class="muted">Identifier ses objectifs, organiser les informations clés et préparer un dialogue serein avec les repreneurs.</p>
-            </article>
-            <article class="panel home-insight-card">
-                <p class="insight-category">REPRISE DE PME</p>
-                <h3>Reprendre une PME : transformer une opportunité en projet</h3>
-                <p class="muted">De la définition des critères à l’analyse d’une entreprise, les points de repère pour avancer avec méthode.</p>
-            </article>
-            <article class="panel home-insight-card">
-                <p class="insight-category">ÉCONOMIE &amp; ENTREPRENEURIAT</p>
-                <h3>Entreprendre et investir dans les économies africaines</h3>
-                <p class="muted">Suivre les évolutions économiques et financières qui façonnent les opportunités des entreprises.</p>
-            </article>
+            <ui:repeat value="#{marketplace.publishedArticles}" var="article">
+                <article class="panel home-insight-card">
+                    <p class="insight-category">#{article.category()}</p>
+                    <h3>#{article.title()}</h3>
+                    <p class="muted">#{article.summary()}</p>
+                    <a class="button outline small" href="article.xhtml?id=#{article.id()}">Lire l’article</a>
+                </article>
+            </ui:repeat>
+            <h:panelGroup layout="block" rendered="#{empty marketplace.publishedArticles}">
+                <p class="muted">Les prochains articles et actualités seront publiés ici.</p>
+            </h:panelGroup>
         </div>
     </section>
 
@@ -173,9 +175,6 @@
         </div>
     </section>
 </main>
-<footer class="home-footer">
-    <a class="brand" href="home.xhtml">Africa Legacy <span>Partners</span></a>
-    <p>Africa Legacy Partners · La transmission d’entreprise en confiance.</p>
-</footer>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
 </h:body>
 </html>

@@ -1,7 +1,15 @@
 package fr.alp.confidentia.service;
 
 import fr.alp.confidentia.model.Listing;
+import fr.alp.confidentia.model.BuyerKyc;
+import fr.alp.confidentia.model.BuyerKycStatus;
+import fr.alp.confidentia.model.BuyerProfile;
+import fr.alp.confidentia.model.BuyerType;
+import fr.alp.confidentia.model.SecureDocument;
+import fr.alp.confidentia.model.SellerVerification;
+import fr.alp.confidentia.model.SellerVerificationStatus;
 import fr.alp.confidentia.model.UserAccount;
+import fr.alp.confidentia.service.ViewModels.BuyerRegistration;
 import fr.alp.confidentia.service.ViewModels.UserView;
 import fr.alp.confidentia.testsupport.MockJpa;
 import fr.alp.confidentia.testsupport.TestSupport;
@@ -13,16 +21,20 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -46,6 +58,7 @@ class MarketplaceServiceTest {
     private final UserView superUser = TestSupport.superUser(1L);
     private final UserView seller = TestSupport.seller(10L);
     private final UserView buyer = TestSupport.buyer(20L);
+    private final UserView broker = TestSupport.broker(30L);
 
     @BeforeEach
     void setUp() {
@@ -193,6 +206,261 @@ class MarketplaceServiceTest {
             verify(em()).persist(any(fr.alp.confidentia.model.UserAccount.class));
             verify(em()).persist(any(fr.alp.confidentia.model.BuyerProfile.class));
         }
+
+        @Test
+        @DisplayName("inscription personne physique -> coordonnées et critères enregistrés")
+        void register_acheteurPersonnePhysique_persisteSonProfil() {
+            MockJpa.query(em(), COUNTER_QUERY, List.of(0L));
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.INDIVIDUAL,
+                    "+2250102030405", "Ivoirienne", "Côte d’Ivoire", "Entrepreneure",
+                    new BigDecimal("250000000"), "Agriculture, industrie", null, null,
+                    null, null, null, null);
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.BuyerProfile> captor =
+                    org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.BuyerProfile.class);
+
+            service.register("alice@alp.fr", TestSupport.VALID_PASSWORD, "Alice", null,
+                    fr.alp.confidentia.model.Role.BUYER, registration);
+
+            verify(em()).persist(captor.capture());
+            fr.alp.confidentia.model.BuyerProfile profile = captor.getValue();
+            assertEquals(BuyerType.INDIVIDUAL, profile.buyerType);
+            assertEquals("+2250102030405", profile.phone);
+            assertEquals("Ivoirienne", profile.nationality);
+            assertEquals("Côte d’Ivoire", profile.residence);
+            assertEquals("Entrepreneure", profile.profession);
+            assertEquals(new BigDecimal("250000000"), profile.indicativeFinancialCapacity);
+            assertEquals("Agriculture, industrie", profile.sectors);
+        }
+
+        @Test
+        @DisplayName("inscription personne morale -> représentant et immatriculation enregistrés")
+        void register_acheteurPersonneMorale_persisteSonProfil() {
+            MockJpa.query(em(), COUNTER_QUERY, List.of(0L));
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.COMPANY,
+                    "+225 0102030405", null, null, null, null, "Industrie", "SARL", "Côte d’Ivoire",
+                    "CI-ABJ-2026-B-12345", "1234567A", "Abidjan, Plateau", "Directrice générale");
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.BuyerProfile> captor =
+                    org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.BuyerProfile.class);
+            org.mockito.ArgumentCaptor<UserAccount> accountCaptor =
+                    org.mockito.ArgumentCaptor.forClass(UserAccount.class);
+
+            service.register("contact@entreprise.ci", TestSupport.VALID_PASSWORD, "Awa Koné",
+                    "Entreprise Exemple SA", fr.alp.confidentia.model.Role.BUYER, registration);
+
+            verify(em()).persist(accountCaptor.capture());
+            verify(em()).persist(captor.capture());
+            assertEquals("Entreprise Exemple SA", accountCaptor.getValue().organization);
+            fr.alp.confidentia.model.BuyerProfile profile = captor.getValue();
+            assertEquals(BuyerType.COMPANY, profile.buyerType);
+            assertEquals("+225 0102030405", profile.phone);
+            assertEquals("SARL", profile.legalForm);
+            assertEquals("Côte d’Ivoire", profile.country);
+            assertEquals("CI-ABJ-2026-B-12345", profile.registrationNumber);
+            assertEquals("1234567A", profile.taxIdentifier);
+            assertEquals("Abidjan, Plateau", profile.headOffice);
+            assertEquals("Directrice générale", profile.representativeFunction);
+        }
+
+        @Test
+        @DisplayName("inscription personne physique sans téléphone -> refusée avant création du compte")
+        void register_acheteurPersonnePhysique_sansTelephoneRefuse() {
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.INDIVIDUAL,
+                    " ", "Ivoirienne", "Côte d’Ivoire", "Entrepreneure", null,
+                    null, null, null, null, null, null, null);
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> service.register("alice@alp.fr", TestSupport.VALID_PASSWORD, "Alice", null,
+                            fr.alp.confidentia.model.Role.BUYER, registration));
+
+            assertEquals("Le téléphone est obligatoire.", exception.getMessage());
+            verify(em(), never()).persist(any());
+        }
+
+        @Test
+        @DisplayName("inscription personne morale sans dénomination -> refusée")
+        void register_acheteurPersonneMorale_sansDenominationRefuse() {
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.COMPANY,
+                    null, null, null, null, null, null, "SARL", "Côte d’Ivoire",
+                    "CI-123", "123", "Abidjan", "Gérante");
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> service.register("contact@entreprise.ci", TestSupport.VALID_PASSWORD,
+                            "Awa Koné", " ", fr.alp.confidentia.model.Role.BUYER, registration));
+
+            assertEquals("La dénomination sociale est obligatoire.", exception.getMessage());
+            verify(em(), never()).persist(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Vérification des comptes cédants")
+    class SellerVerificationWorkflow {
+
+        private static final String STATUS_QUERY =
+                "select v from SellerVerification v where v.userId = :id";
+        private static final String DOCUMENT_COUNT_QUERY =
+                "select count(d) from SecureDocument d where d.documentPurpose = 'SELLER_VERIFICATION' "
+                        + "and d.uploadedBy = :id";
+        private static final String DOCUMENTS_QUERY =
+                "select d from SecureDocument d where d.documentPurpose = 'SELLER_VERIFICATION' "
+                        + "and d.uploadedBy = :id order by d.uploadedAt desc";
+        private static final String SELLERS_QUERY =
+                "select u from UserAccount u where u.role = :role order by u.createdAt desc, u.id desc";
+        private static final String VERIFICATIONS_QUERY = "select v from SellerVerification v";
+        private static final String ALL_VERIFICATION_DOCUMENTS_QUERY =
+                "select d from SecureDocument d where d.documentPurpose = 'SELLER_VERIFICATION' "
+                        + "order by d.uploadedAt desc";
+
+        private SellerVerification verification(SellerVerificationStatus status) {
+            SellerVerification verification = MockJpa.newEntity(SellerVerification.class);
+            verification.userId = seller.id();
+            verification.status = status;
+            verification.updatedAt = java.time.Instant.parse("2026-11-01T10:00:00Z");
+            MockJpa.query(em(), STATUS_QUERY, List.of(verification));
+            UserAccount account = account(seller.id(), "hash", false);
+            account.role = fr.alp.confidentia.model.Role.SELLER;
+            doReturn(account).when(em()).find(UserAccount.class, seller.id());
+            MockJpa.query(em(), DOCUMENT_COUNT_QUERY, List.of(1L));
+            return verification;
+        }
+
+        @Test
+        @DisplayName("inscription cédant -> statut initial documents en attente")
+        void register_cedant_creeLeSuiviDocumentsEnAttente() {
+            MockJpa.query(em(), COUNTER_QUERY, List.of(0L));
+            org.mockito.ArgumentCaptor<SellerVerification> captor =
+                    org.mockito.ArgumentCaptor.forClass(SellerVerification.class);
+
+            service.register("vendeur@alp.fr", TestSupport.VALID_PASSWORD, "Vendeur", null,
+                    fr.alp.confidentia.model.Role.SELLER);
+
+            verify(em()).persist(captor.capture());
+            assertNotNull(captor.getValue().userId);
+            assertEquals(SellerVerificationStatus.DOCUMENTS_PENDING, captor.getValue().status);
+            assertNotNull(captor.getValue().updatedAt);
+        }
+
+        @Test
+        @DisplayName("un acquéreur ne peut pas modifier le workflow")
+        void updateSellerVerification_nonReviewer_refuse() {
+            assertThrows(SecurityException.class,
+                    () -> service.updateSellerVerification(buyer, seller.id(), "UNDER_REVIEW", null));
+        }
+
+        @Test
+        @DisplayName("courtier : accès aux pièces et demande de correction autorisés")
+        void broker_consulteLesPiecesEtDemandeUneCorrection() {
+            SellerVerification verification = verification(SellerVerificationStatus.UNDER_REVIEW);
+            SecureDocument document = verificationDocument();
+            MockJpa.query(em(), DOCUMENTS_QUERY, List.of(document));
+
+            var documents = service.sellerVerificationDocuments(broker, seller.id());
+            service.updateSellerVerification(broker, seller.id(), "NEEDS_CORRECTION",
+                    "Merci de compléter le mandat.");
+
+            assertEquals(1, documents.size());
+            assertEquals("RCCM", documents.get(0).verificationType());
+            assertEquals(SellerVerificationStatus.NEEDS_CORRECTION, verification.status);
+            assertEquals("Merci de compléter le mandat.", verification.feedback);
+            assertEquals(broker.id(), verification.updatedBy);
+        }
+
+        @Test
+        @DisplayName("administrateur : accès aux pièces justificatives autorisé")
+        void superUser_consulteLesPiecesDuCedant() {
+            MockJpa.query(em(), DOCUMENTS_QUERY, List.of(verificationDocument()));
+
+            var documents = service.sellerVerificationDocuments(superUser, seller.id());
+
+            assertEquals(1, documents.size());
+            assertEquals("RCCM", documents.get(0).verificationType());
+        }
+
+        @Test
+        @DisplayName("file de revue : les pièces du cédant sont incluses dans le dossier")
+        void sellerVerificationQueue_inclutLesPiecesDuCedant() {
+            UserAccount sellerAccount = account(seller.id(), "hash", false);
+            sellerAccount.role = fr.alp.confidentia.model.Role.SELLER;
+            MockJpa.query(em(), SELLERS_QUERY, List.of(sellerAccount));
+            MockJpa.query(em(), VERIFICATIONS_QUERY, List.of());
+            MockJpa.query(em(), ALL_VERIFICATION_DOCUMENTS_QUERY, List.of(verificationDocument()));
+
+            var queue = service.sellerVerificationQueue(broker);
+
+            assertEquals(1, queue.size());
+            assertEquals(seller.id(), queue.get(0).sellerId());
+            assertEquals(1, queue.get(0).documents().size());
+            assertEquals("RCCM", queue.get(0).documents().get(0).verificationType());
+        }
+
+        @Test
+        @DisplayName("acquéreur : consultation des pièces justificatives interdite")
+        void sellerVerificationDocuments_nonReviewer_refuse() {
+            assertThrows(SecurityException.class,
+                    () -> service.sellerVerificationDocuments(buyer, seller.id()));
+        }
+
+        private SecureDocument verificationDocument() {
+            SecureDocument document = MockJpa.newEntity(SecureDocument.class);
+            document.id = 8L;
+            document.uploadedBy = seller.id();
+            document.documentPurpose = "SELLER_VERIFICATION";
+            document.verificationType = "RCCM";
+            document.originalName = fr.alp.confidentia.security.CryptoService.encrypt("rccm.pdf");
+            document.contentType = "application/pdf";
+            document.sizeBytes = 10;
+            document.uploadedAt = java.time.Instant.parse("2026-11-01T10:00:00Z");
+            return document;
+        }
+
+        @Test
+        @DisplayName("démarrer une vérification sans pièce -> refusé")
+        void updateSellerVerification_sansPieceRefuse() {
+            verification(SellerVerificationStatus.DOCUMENTS_PENDING);
+            MockJpa.query(em(), DOCUMENT_COUNT_QUERY, List.of(0L));
+
+            assertTrue(assertThrows(IllegalArgumentException.class,
+                    () -> service.updateSellerVerification(superUser, seller.id(), "UNDER_REVIEW", null))
+                    .getMessage().contains("au moins une pièce"));
+        }
+
+        @Test
+        @DisplayName("workflow autorisé : attente, vérification, pièces validées, compte validé")
+        void updateSellerVerification_transitionsAutorisees() {
+            SellerVerification verification = verification(SellerVerificationStatus.DOCUMENTS_PENDING);
+
+            service.updateSellerVerification(superUser, seller.id(), "UNDER_REVIEW", null);
+            assertEquals(SellerVerificationStatus.UNDER_REVIEW, verification.status);
+            assertEquals(superUser.id(), verification.updatedBy);
+
+            service.updateSellerVerification(superUser, seller.id(), "DOCUMENTS_VALIDATED", null);
+            assertEquals(SellerVerificationStatus.DOCUMENTS_VALIDATED, verification.status);
+
+            service.updateSellerVerification(superUser, seller.id(), "ACCOUNT_VALIDATED", null);
+            assertEquals(SellerVerificationStatus.ACCOUNT_VALIDATED, verification.status);
+            assertNotNull(verification.updatedAt);
+        }
+
+        @Test
+        @DisplayName("demande de complément sans motif -> refusée")
+        void updateSellerVerification_demandeCorrectionSansMotifRefusee() {
+            SellerVerification verification = verification(SellerVerificationStatus.UNDER_REVIEW);
+
+            assertTrue(assertThrows(IllegalArgumentException.class,
+                    () -> service.updateSellerVerification(superUser, seller.id(), "NEEDS_CORRECTION", " "))
+                    .getMessage().contains("Précisez"));
+            assertEquals(SellerVerificationStatus.UNDER_REVIEW, verification.status);
+        }
+
+        @Test
+        @DisplayName("étape incohérente -> refusée")
+        void updateSellerVerification_transitionIncoherenteRefusee() {
+            SellerVerification verification = verification(SellerVerificationStatus.DOCUMENTS_PENDING);
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> service.updateSellerVerification(superUser, seller.id(), "ACCOUNT_VALIDATED", null));
+            assertEquals(SellerVerificationStatus.DOCUMENTS_PENDING, verification.status);
+        }
     }
 
     // =============================================================================================
@@ -204,11 +472,41 @@ class MarketplaceServiceTest {
     class Administration {
 
         private static final String LIST_QUERY = "select u from UserAccount u order by u.createdAt desc, u.id desc";
+        private static final String BUYER_PROFILES_QUERY =
+                "select p from BuyerProfile p where p.userId in :ids";
+        private static final String BUYER_KYC_QUERY =
+                "select k from BuyerKyc k where k.userId in :ids";
 
         @Test
         @DisplayName("usersForAdministration : non super utilisateur -> SecurityException")
         void usersForAdministration_nonSuper_refuse() {
             assertThrows(SecurityException.class, () -> service.usersForAdministration(seller));
+        }
+
+        @Test
+        @DisplayName("adminDashboardFor : non super utilisateur -> SecurityException")
+        void adminDashboardFor_nonSuper_refuse() {
+            assertThrows(SecurityException.class, () -> service.adminDashboardFor(seller));
+            verify(em(), never()).createQuery(anyString());
+        }
+
+        @Test
+        @DisplayName("adminDashboardFor : super utilisateur -> indicateurs agrégés")
+        void adminDashboardFor_superRetourneLesIndicateurs() {
+            jakarta.persistence.Query countQuery = mock(jakarta.persistence.Query.class);
+            doReturn(1L).when(countQuery).getSingleResult();
+            doReturn(countQuery).when(countQuery).setParameter(anyString(), any());
+            doReturn(countQuery).when(em()).createQuery(anyString());
+
+            var dashboard = service.adminDashboardFor(superUser);
+
+            assertEquals(1L, dashboard.totalUsers());
+            assertEquals(1L, dashboard.buyerKycToReview());
+            assertEquals(1L, dashboard.sellerVerificationsToReview());
+            assertEquals(1L, dashboard.publishedListings());
+            assertEquals(1L, dashboard.suspendedListings());
+            assertEquals(1L, dashboard.activeDealRequests());
+            assertEquals(1L, dashboard.newContactMessages());
         }
 
         @Test
@@ -221,6 +519,39 @@ class MarketplaceServiceTest {
             assertEquals(1, users.size());
             assertEquals(5L, users.get(0).id());
             assertTrue(users.get(0).passwordChangeRequired());
+        }
+
+        @Test
+        @DisplayName("usersForAdministration : expose le statut KYC sans les documents sensibles")
+        void usersForAdministration_super_includesBuyerKycStatus() {
+            UserAccount companyAccount = account(5L, "hash", false);
+            companyAccount.organization = "Entreprise Exemple";
+            UserAccount individualAccount = account(6L, "hash", false);
+            MockJpa.query(em(), LIST_QUERY, List.of(companyAccount, individualAccount));
+
+            BuyerProfile companyProfile = MockJpa.newEntity(BuyerProfile.class);
+            companyProfile.userId = 5L;
+            companyProfile.buyerType = BuyerType.COMPANY;
+            BuyerProfile individualProfile = MockJpa.newEntity(BuyerProfile.class);
+            individualProfile.userId = 6L;
+            individualProfile.buyerType = BuyerType.INDIVIDUAL;
+            MockJpa.query(em(), BUYER_PROFILES_QUERY, List.of(companyProfile, individualProfile));
+
+            BuyerKyc companyKyc = MockJpa.newEntity(BuyerKyc.class);
+            companyKyc.userId = 5L;
+            companyKyc.status = BuyerKycStatus.NEEDS_CORRECTION;
+            companyKyc.updatedAt = Instant.parse("2026-11-08T10:00:00Z");
+            MockJpa.query(em(), BUYER_KYC_QUERY, List.of(companyKyc));
+
+            var users = service.usersForAdministration(superUser);
+
+            assertEquals(2, users.size());
+            assertEquals(BuyerType.COMPANY, users.get(0).buyerType());
+            assertEquals(BuyerKycStatus.NEEDS_CORRECTION, users.get(0).buyerKycStatus());
+            assertEquals(companyKyc.updatedAt, users.get(0).buyerKycUpdatedAt());
+            assertEquals(BuyerType.INDIVIDUAL, users.get(1).buyerType());
+            assertEquals(BuyerKycStatus.DOCUMENTS_PENDING, users.get(1).buyerKycStatus());
+            assertNull(users.get(1).buyerKycUpdatedAt());
         }
 
         @Test
@@ -481,8 +812,53 @@ class MarketplaceServiceTest {
             var views = service.publicListings();
 
             assertEquals(1, views.size());
-            assertNull(views.get(0).companyName());
-            assertNull(views.get(0).exactLocation());
+            List<String> publicFields = java.util.Arrays.stream(views.get(0).getClass().getRecordComponents())
+                    .map(java.lang.reflect.RecordComponent::getName)
+                    .toList();
+            assertFalse(publicFields.contains("companyName"));
+            assertFalse(publicFields.contains("exactLocation"));
+            assertFalse(publicFields.contains("askingPrice"));
+        }
+
+        @Test
+        @DisplayName("listingsFor (administrateur) : voit toutes les annonces")
+        void listingsFor_administrateurVoitToutesLesAnnonces() {
+            Listing listing = MockJpa.newEntity(Listing.class);
+            listing.id = 5L;
+            listing.status = "SUSPENDED";
+            MockJpa.query(em(), "select l from Listing l order by l.createdAt desc", List.of(listing));
+
+            assertEquals(1, service.listingsFor(superUser).size());
+        }
+
+        @Test
+        @DisplayName("publication : l'administrateur suspend puis republie une annonce")
+        void setListingPublished_administrateurSuspendEtPublie() {
+            Listing listing = MockJpa.newEntity(Listing.class);
+            listing.id = 5L;
+            listing.status = "BROKER_ACCEPTED";
+            listing.brokerId = 10L;
+            doReturn(listing).when(em()).find(Listing.class, 5L);
+
+            service.setListingPublished(superUser, 5L, false);
+            assertEquals("SUSPENDED", listing.status);
+
+            service.setListingPublished(superUser, 5L, true);
+            assertEquals("BROKER_ACCEPTED", listing.status);
+        }
+
+        @Test
+        @DisplayName("publication : un courtier non mandaté ne peut pas suspendre")
+        void setListingPublished_courtierNonMandateRefuse() {
+            Listing listing = MockJpa.newEntity(Listing.class);
+            listing.id = 5L;
+            listing.status = "PUBLISHED";
+            listing.brokerId = 10L;
+            doReturn(listing).when(em()).find(Listing.class, 5L);
+
+            assertThrows(SecurityException.class,
+                    () -> service.setListingPublished(broker, 5L, false));
+            assertEquals("PUBLISHED", listing.status);
         }
     }
 }

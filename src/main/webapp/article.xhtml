@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>Article | Africa Legacy Partners</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<f:metadata>
+    <f:viewParam name="id" value="#{marketplace.publicArticleId}"/>
+</f:metadata>
+<header class="topbar">
+    <h:link outcome="home" styleClass="brand" value="Africa Legacy Partners"/>
+    <h:link outcome="acheter" value="Opportunités" styleClass="button outline small"/>
+</header>
+<main class="public-container">
+    <h:panelGroup layout="block" styleClass="panel article-detail" rendered="#{not empty marketplace.publicArticle}">
+        <p class="eyebrow">#{marketplace.publicArticle.category()}</p>
+        <h1>#{marketplace.publicArticle.title()}</h1>
+        <p class="muted">#{marketplace.publicArticle.summary()}</p>
+        <p><h:outputText value="#{marketplace.publicArticle.content()}" escape="true" styleClass="article-body"/></p>
+    </h:panelGroup>
+    <h:panelGroup layout="block" styleClass="panel" rendered="#{empty marketplace.publicArticle}">
+        <h1>Article indisponible</h1>
+        <p class="muted">Cet article n’existe pas ou n’est plus publié.</p>
+    </h:panelGroup>
+    <p><h:link outcome="home" value="Retour à l’accueil" styleClass="button outline"/></p>
+</main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
+</h:body>
+</html>

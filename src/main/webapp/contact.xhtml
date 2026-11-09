@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>Contact et réclamations | Africa Legacy Partners</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<header class="topbar">
+    <h:link outcome="home" styleClass="brand" value="Africa Legacy Partners"/>
+    <nav class="topbar-user">
+        <button class="button outline small theme-toggle" type="button" data-theme-toggle="true"
+                aria-pressed="false">Mode sombre</button>
+        <h:link outcome="login" value="Se connecter" styleClass="button outline small"/>
+    </nav>
+</header>
+<main class="public-container">
+    <section class="public-page-heading">
+        <p class="eyebrow">CONTACT ALP</p>
+        <h1>Nous écrire</h1>
+        <p class="muted">Transmettez une question ou une réclamation. Votre message est conservé de façon confidentielle et traité par l’équipe ALP. Aucun message n’est envoyé automatiquement par courriel.</p>
+    </section>
+    <section class="panel">
+        <h:messages globalOnly="false" styleClass="messages"/>
+        <h:form styleClass="form-grid">
+            <div>
+                <h:outputLabel for="contact-type" value="Motif"/>
+                <h:selectOneMenu id="contact-type" value="#{marketplace.contactType}" required="true">
+                    <f:selectItem itemValue="CONTACT" itemLabel="Demande de contact"/>
+                    <f:selectItem itemValue="COMPLAINT" itemLabel="Réclamation"/>
+                </h:selectOneMenu>
+            </div>
+            <div>
+                <h:outputLabel for="contact-name" value="Nom"/>
+                <h:inputText id="contact-name" value="#{marketplace.contactName}" required="true" maxlength="160"/>
+            </div>
+            <div>
+                <h:outputLabel for="contact-email" value="Adresse courriel"/>
+                <h:inputText id="contact-email" value="#{marketplace.contactEmail}" required="true"
+                             maxlength="254" pt:type="email" xmlns:pt="jakarta.faces.passthrough"/>
+            </div>
+            <div>
+                <h:outputLabel for="contact-phone" value="Téléphone (facultatif)"/>
+                <h:inputText id="contact-phone" value="#{marketplace.contactPhone}" maxlength="40"/>
+            </div>
+            <div class="span-2">
+                <h:outputLabel for="contact-subject" value="Objet"/>
+                <h:inputText id="contact-subject" value="#{marketplace.contactSubject}" required="true"
+                             maxlength="180"/>
+            </div>
+            <div class="span-2">
+                <h:outputLabel for="contact-body" value="Message"/>
+                <h:inputTextarea id="contact-body" value="#{marketplace.contactBody}" required="true"
+                                 maxlength="10000" rows="8"/>
+            </div>
+            <div class="span-2">
+                <h:commandButton value="Envoyer à ALP" action="#{marketplace.submitContactMessage}"
+                                 styleClass="button primary"/>
+            </div>
+        </h:form>
+    </section>
+</main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
+</h:body>
+</html>

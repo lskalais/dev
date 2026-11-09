@@ -70,11 +70,13 @@ class ViewModelsTest {
     @Test
     @DisplayName("ListingView : les champs de l'annonce sont transmis tels quels")
     void listingView_champsPresents() {
-        ListingView view = new ListingView(3L, "Agro", "Cultures vivrières", 2010,
-                "Abidjan", "Desc",
+        ListingView view = new ListingView(3L, "Primaire", "Agriculture et cultures",
+                "Agro", "Cultures vivrières", 2010, "Abidjan", "Desc",
                 new BigDecimal("1000.00"), new BigDecimal("150.00"), new BigDecimal("900.00"),
                 42L, 66, "Société X", "Rue Y", "PUBLISHED");
 
+        assertEquals("Primaire", view.sectorCategory());
+        assertEquals("Agriculture et cultures", view.activityDomains());
         assertEquals("Cultures vivrières", view.secondarySector());
         assertEquals(2010, view.foundedYear());
         assertEquals(42L, view.views());
@@ -102,6 +104,7 @@ class ViewModelsTest {
 
         assertEquals(true, view.encryptedNameUnavailable());
         assertEquals(null, view.requestId());
+        assertEquals(null, view.verificationType());
     }
 
     @Test

@@ -3,7 +3,12 @@ C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\model\DealRequestTest.jav
 C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\model\RoleTest.java
 C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\persistence\JpaTest.java
 C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\security\CryptoServiceTest.java
+C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\ActivityTaxonomyTest.java
+C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\BuyerKycServiceTest.java
+C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\MarketCatalogTest.java
+C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\MarketplaceContentServiceTest.java
 C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\MarketplaceServiceListingTest.java
+C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\MarketplaceServicePartnerTest.java
 C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\MarketplaceServiceTest.java
 C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\service\ViewModelsTest.java
 C:\devtool\projet\alp\src\test\java\fr\alp\confidentia\testsupport\MockJpa.java

@@ -18,7 +18,9 @@ public class AuthenticationFilter implements Filter {
         if (path.startsWith("/jakarta.faces.resource/")
                 || path.endsWith("/home.xhtml") || path.endsWith("/acheter.xhtml")
                 || path.endsWith("/vendre.xhtml") || path.endsWith("/login.xhtml")
-                || path.endsWith("/register.xhtml")) {
+                || path.endsWith("/register.xhtml") || path.endsWith("/faq.xhtml")
+                || path.endsWith("/legal.xhtml") || path.endsWith("/contact.xhtml")
+                || path.endsWith("/article.xhtml")) {
             chain.doFilter(request, response);
             return;
         }
@@ -34,6 +36,25 @@ public class AuthenticationFilter implements Filter {
         }
         if (path.endsWith("/admin-users.xhtml") && !Role.SUPER.name().equals(authenticatedView.role())) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Accès réservé aux super utilisateurs.");
+            return;
+        }
+        if (path.endsWith("/content-admin.xhtml")
+                && !Role.SUPER.name().equals(authenticatedView.role())) {
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Accès réservé aux super utilisateurs.");
+            return;
+        }
+        if (path.endsWith("/seller-verification.xhtml")
+                && !(Role.SUPER.name().equals(authenticatedView.role())
+                || Role.BROKER.name().equals(authenticatedView.role()))) {
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "Accès réservé aux courtiers et aux administrateurs.");
+            return;
+        }
+        if (path.endsWith("/buyer-kyc.xhtml")
+                && !(Role.SUPER.name().equals(authenticatedView.role())
+                || Role.BROKER.name().equals(authenticatedView.role()))) {
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "Accès réservé aux courtiers et aux administrateurs.");
             return;
         }
         if (authenticatedView.passwordChangeRequired() && !path.endsWith("/change-password.xhtml")) {

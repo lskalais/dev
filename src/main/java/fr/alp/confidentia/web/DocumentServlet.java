@@ -45,8 +45,34 @@ public class DocumentServlet extends HttpServlet {
             }
             Long listingId = optionalLong(request.getParameter("listingId"));
             Long requestId = optionalLong(request.getParameter("requestId"));
-            service.storeDocument(user, listingId, requestId,
-                    file.getSubmittedFileName(), file.getContentType(), file.getInputStream().readAllBytes());
+            String verificationType = request.getParameter("verificationType");
+            String buyerKycType = request.getParameter("buyerKycType");
+            if (verificationType != null && !verificationType.isBlank()
+                    && buyerKycType != null && !buyerKycType.isBlank()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                        "Choisissez un seul type de document de vérification.");
+                return;
+            }
+            if (verificationType != null && !verificationType.isBlank()) {
+                if (listingId != null || requestId != null) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                            "Un document de vérification ne peut être associé à un dossier de cession.");
+                    return;
+                }
+                service.storeSellerVerificationDocument(user, verificationType,
+                        file.getSubmittedFileName(), file.getContentType(), file.getInputStream().readAllBytes());
+            } else if (buyerKycType != null && !buyerKycType.isBlank()) {
+                if (listingId != null || requestId != null) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                            "Un document KYC ne peut être associé à un dossier de cession.");
+                    return;
+                }
+                service.storeBuyerKycDocument(user, buyerKycType,
+                        file.getSubmittedFileName(), file.getContentType(), file.getInputStream().readAllBytes());
+            } else {
+                service.storeDocument(user, listingId, requestId,
+                        file.getSubmittedFileName(), file.getContentType(), file.getInputStream().readAllBytes());
+            }
             response.sendRedirect(request.getContextPath() + "/app.xhtml?upload=success&faces-redirect=true");
         } catch (IllegalArgumentException exception) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());

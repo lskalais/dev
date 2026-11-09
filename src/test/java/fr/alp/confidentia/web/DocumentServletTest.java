@@ -243,6 +243,43 @@ class DocumentServletTest {
         }
 
         @Test
+        @DisplayName("pièce de vérification du cédant : catégorie transmise au service")
+        void doPost_pieceVerification_transmetLaCategorie() throws Exception {
+            csrfMatches();
+            byte[] content = "%PDF-1.7 contenu".getBytes();
+            when(request.getPart("file")).thenReturn(validPart("rccm.pdf", "application/pdf", content));
+            when(request.getParameter("verificationType")).thenReturn("RCCM");
+            when(request.getParameter("listingId")).thenReturn(null);
+            when(request.getParameter("requestId")).thenReturn(null);
+
+            servlet.doPost(request, response);
+
+            verify(service).storeSellerVerificationDocument(user, "RCCM",
+                    "rccm.pdf", "application/pdf", content);
+            verify(service, never()).storeDocument(any(), any(), any(), any(), any(), any());
+            verify(response).sendRedirect(CONTEXT + "/app.xhtml?upload=success&faces-redirect=true");
+        }
+
+        @Test
+        @DisplayName("pièce KYC acquéreur : catégorie transmise au service")
+        void doPost_pieceBuyerKyc_transmetLaCategorie() throws Exception {
+            csrfMatches();
+            user = new UserView(1L, "u@alp.fr", "Utilisateur", "ALP", "BUYER", false);
+            when(session.getAttribute("authenticatedUser")).thenReturn(user);
+            byte[] content = "%PDF-1.7 contenu".getBytes();
+            when(request.getPart("file")).thenReturn(validPart("identite.pdf", "application/pdf", content));
+            when(request.getParameter("buyerKycType")).thenReturn("IDENTITY_DOCUMENT");
+            when(request.getParameter("listingId")).thenReturn(null);
+            when(request.getParameter("requestId")).thenReturn(null);
+
+            servlet.doPost(request, response);
+
+            verify(service).storeBuyerKycDocument(user, "IDENTITY_DOCUMENT",
+                    "identite.pdf", "application/pdf", content);
+            verify(response).sendRedirect(CONTEXT + "/app.xhtml?upload=success&faces-redirect=true");
+        }
+
+        @Test
         @DisplayName("identifiants vides : transmis comme null au service (page de collecte)")
         void doPost_identifiantsVides_transmetNull() throws Exception {
             csrfMatches();

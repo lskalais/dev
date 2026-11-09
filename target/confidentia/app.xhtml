@@ -23,6 +23,13 @@
                 aria-pressed="false">Mode sombre</button>
         <h:link outcome="admin-users" value="Administration" styleClass="button outline small"
                 rendered="#{marketplace.superUser}"/>
+        <h:link outcome="content-admin" value="Contenus et messages" styleClass="button outline small"
+                rendered="#{marketplace.superUser}"/>
+        <h:link outcome="seller-verification" value="Vérification des cédants"
+                styleClass="button outline small" rendered="#{marketplace.verificationReviewer}"/>
+        <h:link outcome="buyer-kyc" value="KYC acquéreurs"
+                styleClass="button outline small" rendered="#{marketplace.verificationReviewer}"/>
+        <h:link outcome="partners" value="Partenaires" styleClass="button outline small"/>
         <h:form><h:commandButton value="Déconnexion" action="#{marketplace.logout}" styleClass="button outline small"/></h:form>
     </div>
 </header>
@@ -37,6 +44,98 @@
     </section>
 
     <h:messages globalOnly="false" styleClass="messages"/>
+
+    <h:panelGroup layout="block" rendered="#{not empty marketplace.notifications}">
+        <section class="panel">
+            <div class="section-heading">
+                <div><p class="eyebrow">ALERTES</p><h2>Notifications récentes</h2></div>
+                <span class="muted">Les alertes par courriel sont envoyées si SMTP est configuré.</span>
+            </div>
+            <ul class="document-list">
+                <ui:repeat value="#{marketplace.notifications}" var="notification">
+                    <li>
+                        <strong>#{notification.title()}</strong>
+                        · #{notification.body()}
+                        · <time>#{notification.createdAt()}</time>
+                        <h:form rendered="#{not notification.read()}">
+                            <h:commandButton value="Marquer comme lue"
+                                             action="#{marketplace.markNotificationRead(notification.id())}"
+                                             styleClass="button outline small"/>
+                        </h:form>
+                        <h:panelGroup styleClass="tiny" rendered="#{notification.read()}">Lue</h:panelGroup>
+                    </li>
+                </ui:repeat>
+            </ul>
+        </section>
+    </h:panelGroup>
+
+    <h:panelGroup layout="block" rendered="#{marketplace.seller}">
+        <section class="panel verification-status">
+            <p class="eyebrow">SUIVI DE VOTRE COMPTE</p>
+            <h2>#{marketplace.sellerVerificationStatus.status.label()}</h2>
+            <p class="muted">Après l’envoi de vos pièces, un courtier ou un administrateur examinera votre dossier. Une demande de complément sera affichée ici.</p>
+            <h:panelGroup layout="block" styleClass="flash warning"
+                          rendered="#{not empty marketplace.sellerVerificationStatus.feedback}">
+                #{marketplace.sellerVerificationStatus.feedback}
+            </h:panelGroup>
+        </section>
+    </h:panelGroup>
+
+    <h:panelGroup layout="block" rendered="#{not empty marketplace.buyerKycStatus}">
+        <section class="panel verification-status">
+            <p class="eyebrow">VÉRIFICATION DE VOTRE PROFIL</p>
+            <h2>#{marketplace.buyerKycStatus.status.label()}</h2>
+            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType.name() eq 'INDIVIDUAL'}">
+                <p class="muted">Déposez une pièce d’identité lisible. Un courtier ou un administrateur vérifiera vos coordonnées; aucun justificatif d’origine des fonds n’est demandé sauf si ALP vous l’indique.</p>
+            </ui:fragment>
+            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType.name() eq 'COMPANY'}">
+                <p class="muted">Déposez les pièces d’immatriculation, les statuts, l’identité du représentant légal et ses pouvoirs. ALP pourra demander les informations sur les bénéficiaires effectifs si nécessaire.</p>
+            </ui:fragment>
+            <h:panelGroup layout="block" styleClass="flash warning"
+                          rendered="#{not empty marketplace.buyerKycStatus.feedback}">
+                #{marketplace.buyerKycStatus.feedback}
+            </h:panelGroup>
+            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType.name() eq 'COMPANY'}">
+                <dl class="kyc-details">
+                    <div><dt>Dénomination sociale</dt><dd>#{marketplace.buyerKycStatus.organization}</dd></div>
+                    <div><dt>Forme juridique</dt><dd>#{marketplace.buyerKycStatus.legalForm}</dd></div>
+                    <div><dt>Pays d’immatriculation</dt><dd>#{marketplace.buyerKycStatus.country}</dd></div>
+                    <div><dt>RCCM / registre</dt><dd>#{marketplace.buyerKycStatus.registrationNumber}</dd></div>
+                    <div><dt>Identifiant fiscal</dt><dd>#{marketplace.buyerKycStatus.taxIdentifier}</dd></div>
+                    <div><dt>Siège social</dt><dd>#{marketplace.buyerKycStatus.headOffice}</dd></div>
+                    <div><dt>Fonction du représentant légal</dt><dd>#{marketplace.buyerKycStatus.representativeFunction}</dd></div>
+                </dl>
+            </ui:fragment>
+            <ul class="document-list">
+                <ui:repeat value="#{marketplace.buyerKycStatus.documents}" var="buyerKycDocument">
+                    <li>
+                        <strong>#{marketplace.buyerKycDocumentTypeLabel(buyerKycDocument.verificationType())}</strong>
+                        · <h:outputText value="#{buyerKycDocument.name()}"
+                                        rendered="#{buyerKycDocument.encryptedNameUnavailable()}"/>
+                        <h:outputLink value="documents?id=#{buyerKycDocument.id()}"
+                                      rendered="#{not buyerKycDocument.encryptedNameUnavailable()}">
+                            #{buyerKycDocument.name()}
+                        </h:outputLink>
+                        · #{buyerKycDocument.sizeBytes()} octets
+                    </li>
+                </ui:repeat>
+            </ul>
+            <form method="post" action="documents" enctype="multipart/form-data" class="upload-form">
+                <label for="buyer-kyc-type">Type de document</label>
+                <select id="buyer-kyc-type" name="buyerKycType" required="required">
+                    <option value="">Choisir une pièce</option>
+                    <ui:repeat value="#{marketplace.buyerKycDocumentTypeOptions}" var="buyerKycType">
+                        <option value="#{buyerKycType.value}">#{buyerKycType.label}</option>
+                    </ui:repeat>
+                </select>
+                <label for="buyer-kyc-file">Fichier (PDF, DOC, DOCX, XLS, XLSX, PNG ou JPEG)</label>
+                <input id="buyer-kyc-file" type="file" name="file"
+                       accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" required="required"/>
+                <input type="hidden" name="csrfToken" value="#{marketplace.csrfToken}"/>
+                <button class="button outline small" type="submit">Téléverser la pièce chiffrée</button>
+            </form>
+        </section>
+    </h:panelGroup>
 
     <section class="metrics">
         <article class="metric"><span>Annonces visibles / gérées</span><strong>#{marketplace.listings.size()}</strong></article>
@@ -53,10 +152,53 @@
         <h:form styleClass="criteria-grid">
             <div><label for="sectors">Secteurs recherchés</label><h:inputText id="sectors" value="#{marketplace.sectors}" placeholder="Industrie, santé, services"/></div>
             <div><label for="buyer-region">Région souhaitée</label><h:inputText id="buyer-region" value="#{marketplace.preferredRegion}"/></div>
-            <div><label for="min-investment">Investissement min. (€)</label><h:inputText id="min-investment" value="#{marketplace.minimumInvestment}"/></div>
-            <div><label for="max-investment">Investissement max. (€)</label><h:inputText id="max-investment" value="#{marketplace.maximumInvestment}"/></div>
+            <div>
+                <label for="investment-currency">Devise des critères</label>
+                <h:selectOneMenu id="investment-currency" value="#{marketplace.investmentCurrencyCode}" required="true">
+                    <f:selectItems value="#{marketplace.currencyOptions}"/>
+                </h:selectOneMenu>
+            </div>
+            <div><label for="min-investment">Investissement min. (#{marketplace.investmentCurrencyCode})</label><h:inputText id="min-investment" value="#{marketplace.minimumInvestment}"/></div>
+            <div><label for="max-investment">Investissement max. (#{marketplace.investmentCurrencyCode})</label><h:inputText id="max-investment" value="#{marketplace.maximumInvestment}"/></div>
             <h:commandButton value="Enregistrer mes critères" action="#{marketplace.saveCriteria}" styleClass="button primary"/>
         </h:form>
+    </section>
+    </h:panelGroup>
+
+    <h:panelGroup layout="block" rendered="#{marketplace.seller}">
+    <section class="panel">
+        <div class="section-heading">
+            <div><p class="eyebrow">VÉRIFICATION DU COMPTE</p><h2>Pièces justificatives du cédant</h2></div>
+            <span class="muted">Les fichiers sont chiffrés et réservés à votre compte, aux courtiers et aux administrateurs habilités.</span>
+        </div>
+        <ul class="document-list">
+            <ui:repeat value="#{marketplace.sellerVerificationDocuments}" var="verificationDocument">
+                <li>
+                    <strong>#{marketplace.sellerDocumentTypeLabel(verificationDocument.verificationType())}</strong>
+                    · <h:outputText value="#{verificationDocument.name()}"
+                                    rendered="#{verificationDocument.encryptedNameUnavailable()}"/>
+                    <h:outputLink value="documents?id=#{verificationDocument.id()}"
+                                  rendered="#{not verificationDocument.encryptedNameUnavailable()}">
+                        #{verificationDocument.name()}
+                    </h:outputLink>
+                    · #{verificationDocument.sizeBytes()} octets
+                </li>
+            </ui:repeat>
+        </ul>
+        <form method="post" action="documents" enctype="multipart/form-data" class="upload-form">
+            <label for="verification-type">Type de document</label>
+            <select id="verification-type" name="verificationType" required="required">
+                <option value="">Choisir une pièce</option>
+                <ui:repeat value="#{marketplace.sellerDocumentTypeOptions}" var="documentType">
+                    <option value="#{documentType.value}">#{documentType.label}</option>
+                </ui:repeat>
+            </select>
+            <label for="verification-file">Fichier (PDF, DOC, DOCX, XLS, XLSX, PNG ou JPEG)</label>
+            <input id="verification-file" type="file" name="file"
+                   accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" required="required"/>
+            <input type="hidden" name="csrfToken" value="#{marketplace.csrfToken}"/>
+            <button class="button outline small" type="submit">Téléverser la pièce chiffrée</button>
+        </form>
     </section>
     </h:panelGroup>
 
@@ -68,21 +210,76 @@
         </div>
         <h:form styleClass="listing-form">
             <div class="form-grid">
-                <div><label for="sector">Secteur primaire *</label><h:inputText id="sector" value="#{marketplace.sector}" required="true"/></div>
-                <div><label for="secondary">Secteur secondaire</label><h:inputText id="secondary" value="#{marketplace.secondarySector}"/></div>
+                <div>
+                    <label for="sector-category">Grand secteur *</label>
+                    <h:selectOneMenu id="sector-category" value="#{marketplace.sectorCategory}" required="true"
+                                     requiredMessage="Sélectionnez un grand secteur.">
+                        <f:selectItem itemValue="" itemLabel="Choisir un secteur" noSelectionOption="true"/>
+                        <f:selectItems value="#{marketplace.sectorCategoryOptions}"/>
+                        <f:ajax event="change" execute="@this" render="domainOptions"/>
+                    </h:selectOneMenu>
+                </div>
+                <fieldset class="domain-fieldset">
+                    <legend>Domaine(s) d’activité *</legend>
+                    <h:panelGroup id="domainOptions" layout="block">
+                        <h:selectManyCheckbox id="activity-domains" value="#{marketplace.activityDomains}"
+                                              layout="pageDirection" styleClass="domain-options"
+                                              required="true"
+                                              requiredMessage="Sélectionnez au moins un domaine d'activité.">
+                            <f:selectItems value="#{marketplace.activityDomainOptions}"/>
+                        </h:selectManyCheckbox>
+                        <h:panelGroup layout="block" styleClass="tiny"
+                                      rendered="#{empty marketplace.activityDomainOptions}">
+                            Choisissez d’abord un grand secteur pour afficher ses domaines.
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </fieldset>
+                <div><label for="sector">Activité principale / spécialité *</label><h:inputText id="sector" value="#{marketplace.sector}" required="true"/></div>
+                <div><label for="secondary">Précision complémentaire</label><h:inputText id="secondary" value="#{marketplace.secondarySector}"/></div>
                 <div><label for="year">Année de création</label><h:inputText id="year" value="#{marketplace.foundedYear}"/></div>
+                <div><label for="employees">Effectif approximatif</label><h:inputText id="employees" value="#{marketplace.approximateEmployeeCount}"/></div>
+                <div class="span-2">
+                    <h:selectBooleanCheckbox id="public-revenue-range" value="#{marketplace.publicRevenueRangeAllowed}"/>
+                    <label for="public-revenue-range">Autoriser l’affichage public d’une fourchette de chiffre d’affaires</label>
+                    <small>Seule une fourchette est montrée; le montant exact reste privé.</small>
+                </div>
                 <div><label for="region">Région affichée (pas d'adresse précise) *</label><h:inputText id="region" value="#{marketplace.region}" required="true"/></div>
+                <div>
+                    <label for="listing-country">Pays de l'entreprise *</label>
+                    <h:selectOneMenu id="listing-country" value="#{marketplace.listingCountryCode}" required="true"
+                                     requiredMessage="Sélectionnez le pays de l'entreprise.">
+                        <f:selectItem itemValue="" itemLabel="Choisir un pays" noSelectionOption="true"/>
+                        <f:selectItems value="#{marketplace.countryOptions}"/>
+                    </h:selectOneMenu>
+                </div>
                 <div class="span-2"><label for="description">Description anonymisée (sans nom, adresse ni indice identifiant) *</label><h:inputTextarea id="description" value="#{marketplace.description}" required="true" rows="4"/></div>
                 <div><label for="customers">Clientèle</label><h:inputTextarea id="customers" value="#{marketplace.customerSummary}" rows="3"/></div>
                 <div><label for="advantages">Avantages concurrentiels</label><h:inputTextarea id="advantages" value="#{marketplace.advantages}" rows="3"/></div>
                 <div><label for="sale-reason">Raison de la vente</label><h:inputTextarea id="sale-reason" value="#{marketplace.saleReason}" rows="2"/></div>
                 <div><label for="sale-conditions">Conditions de cession</label><h:inputTextarea id="sale-conditions" value="#{marketplace.saleConditions}" rows="2"/></div>
                 <div><label for="support-period">Accompagnement envisagé</label><h:inputText id="support-period" value="#{marketplace.supportPeriod}"/></div>
+                <div>
+                    <label for="transaction-type">Type de transaction</label>
+                    <h:selectOneMenu id="transaction-type" value="#{marketplace.transactionType}">
+                        <f:selectItems value="#{marketplace.transactionTypeOptions}"/>
+                    </h:selectOneMenu>
+                </div>
                 <div><label for="broker">Courriel du courtier (facultatif)</label><h:inputText id="broker" value="#{marketplace.brokerEmail}"/><small>Si aucun courtier actif ne correspond, le teaser sera publié sans attribution et un courtier pourra le prendre en charge.</small></div>
-                <div><label for="revenue">Chiffre d'affaires (€)</label><h:inputText id="revenue" value="#{marketplace.revenue}"/></div>
-                <div><label for="ebitda">EBE / EBITDA (€)</label><h:inputText id="ebitda" value="#{marketplace.ebitda}"/></div>
-                <div><label for="asking-price">Prix demandé (€)</label><h:inputText id="asking-price" value="#{marketplace.askingPrice}"/></div>
+                <div>
+                    <label for="listing-currency">Devise des données financières</label>
+                    <h:selectOneMenu id="listing-currency" value="#{marketplace.listingCurrencyCode}" required="true">
+                        <f:selectItems value="#{marketplace.currencyOptions}"/>
+                    </h:selectOneMenu>
+                </div>
+                <div><label for="revenue">Chiffre d'affaires (#{marketplace.listingCurrencyCode})</label><h:inputText id="revenue" value="#{marketplace.revenue}"/></div>
+                <div><label for="ebitda">EBE / EBITDA (#{marketplace.listingCurrencyCode})</label><h:inputText id="ebitda" value="#{marketplace.ebitda}"/></div>
+                <div><label for="asking-price">Prix demandé (#{marketplace.listingCurrencyCode})</label><h:inputText id="asking-price" value="#{marketplace.askingPrice}"/></div>
                 <div><label for="margin">Marge bénéficiaire (%)</label><h:inputText id="margin" value="#{marketplace.profitMargin}"/></div>
+                <div><label for="net-income">Résultat net (#{marketplace.listingCurrencyCode})</label><h:inputText id="net-income" value="#{marketplace.netIncome}"/></div>
+                <div><label for="total-assets">Actifs (#{marketplace.listingCurrencyCode})</label><h:inputText id="total-assets" value="#{marketplace.totalAssets}"/></div>
+                <div><label for="total-debts">Dettes (#{marketplace.listingCurrencyCode})</label><h:inputText id="total-debts" value="#{marketplace.totalDebts}"/></div>
+                <div><label for="fixed-assets">Immobilisations (#{marketplace.listingCurrencyCode})</label><h:inputText id="fixed-assets" value="#{marketplace.fixedAssets}"/></div>
+                <div class="span-2"><label for="financial-outlook">Perspectives et éléments de diagnostic</label><h:inputTextarea id="financial-outlook" value="#{marketplace.financialOutlook}" rows="3" maxlength="2000"/></div>
                 <div><label for="company">Nom réel de l'entreprise (privé)</label><h:inputText id="company" value="#{marketplace.companyName}"/></div>
                 <div><label for="exact-location">Localisation exacte (privée)</label><h:inputText id="exact-location" value="#{marketplace.exactLocation}"/></div>
             </div>
@@ -103,25 +300,78 @@
         <h:panelGroup layout="block" rendered="#{marketplace.buyer}">
             <h:form styleClass="criteria-grid search-filters">
                 <div><label for="filter-sector">Filtrer par secteur</label><h:inputText id="filter-sector" value="#{marketplace.sectorFilter}"/></div>
-                <div><label for="filter-region">Filtrer par région</label><h:inputText id="filter-region" value="#{marketplace.regionFilter}"/></div>
-                <div><label for="filter-price">Prix maximum (€)</label><h:inputText id="filter-price" value="#{marketplace.maximumPriceFilter}"/></div>
-                <h:commandButton value="Appliquer les filtres" action="#{marketplace.refresh}" styleClass="button outline"/>
+                <div><label for="filter-domain">Domaine</label><h:inputText id="filter-domain" value="#{marketplace.domainFilter}"/></div>
+                <div><label for="filter-region">Pays / ville / zone</label><h:inputText id="filter-region" value="#{marketplace.regionFilter}"/></div>
+                <div>
+                    <label for="filter-country">Pays</label>
+                    <h:selectOneMenu id="filter-country" value="#{marketplace.countryFilter}">
+                        <f:selectItem itemValue="" itemLabel="Tous les pays" noSelectionOption="true"/>
+                        <f:selectItems value="#{marketplace.countryOptions}"/>
+                    </h:selectOneMenu>
+                </div>
+                <div>
+                    <label for="filter-currency">Devise des filtres financiers</label>
+                    <h:selectOneMenu id="filter-currency" value="#{marketplace.currencyFilter}">
+                        <f:selectItem itemValue="" itemLabel="Toutes les devises" noSelectionOption="true"/>
+                        <f:selectItems value="#{marketplace.currencyOptions}"/>
+                    </h:selectOneMenu>
+                </div>
+                <div><label for="filter-min-price">Budget minimum</label><h:inputText id="filter-min-price" value="#{marketplace.minimumPriceFilter}"/></div>
+                <div><label for="filter-price">Budget maximum</label><h:inputText id="filter-price" value="#{marketplace.maximumPriceFilter}"/></div>
+                <div><label for="filter-min-revenue">CA minimum</label><h:inputText id="filter-min-revenue" value="#{marketplace.minimumRevenueFilter}"/></div>
+                <div><label for="filter-max-revenue">CA maximum</label><h:inputText id="filter-max-revenue" value="#{marketplace.maximumRevenueFilter}"/></div>
+                <div><label for="filter-margin">Rentabilité minimale (%)</label><h:inputText id="filter-margin" value="#{marketplace.minimumProfitMarginFilter}"/></div>
+                <div><label for="filter-founded-after">Créée après</label><h:inputText id="filter-founded-after" value="#{marketplace.foundedAfterFilter}"/></div>
+                <div><label for="filter-founded-before">Créée avant</label><h:inputText id="filter-founded-before" value="#{marketplace.foundedBeforeFilter}"/></div>
+                <div><label for="filter-min-employees">Effectif minimum</label><h:inputText id="filter-min-employees" value="#{marketplace.minimumEmployeesFilter}"/></div>
+                <div><label for="filter-max-employees">Effectif maximum</label><h:inputText id="filter-max-employees" value="#{marketplace.maximumEmployeesFilter}"/></div>
+                <div>
+                    <label for="filter-transaction-type">Type de transaction</label>
+                    <h:selectOneMenu id="filter-transaction-type" value="#{marketplace.transactionTypeFilter}">
+                        <f:selectItem itemValue="#{null}" itemLabel="Tous les types" noSelectionOption="true"/>
+                        <f:selectItems value="#{marketplace.transactionTypeOptions}"/>
+                    </h:selectOneMenu>
+                </div>
+                <h:commandButton value="Appliquer" action="#{marketplace.applyListingSearch}" styleClass="button outline"/>
+                <h:commandButton value="Réinitialiser" action="#{marketplace.clearListingSearch}" immediate="true"
+                                 styleClass="button outline"/>
+                <h:commandButton value="#{marketplace.favoritesOnly ? 'Voir toutes les annonces' : 'Afficher mes favoris'}"
+                                 action="#{marketplace.toggleFavoritesOnly}" immediate="true"
+                                 styleClass="button outline"/>
             </h:form>
+            <p class="tiny">Les filtres financiers exacts ne s'appliquent qu'aux dossiers pour lesquels l'accord de confidentialité est signé par les deux parties.</p>
         </h:panelGroup>
         <div class="listing-grid">
             <ui:repeat value="#{marketplace.listings}" var="listing">
                 <article class="listing-card">
-                    <div class="card-topline"><span class="tag">#{listing.sector()}</span><h:panelGroup rendered="#{marketplace.buyer}" styleClass="match">#{listing.matchPercent()} % match</h:panelGroup></div>
-                    <h3>PME confidentielle · #{listing.region()}</h3>
+                    <div class="card-topline"><span class="tag">#{empty listing.sectorCategory() ? 'À classifier' : listing.sectorCategory()}</span><h:panelGroup rendered="#{marketplace.buyer}" styleClass="match">#{listing.matchPercent()} % match</h:panelGroup></div>
+                    <h3>#{listing.sector()} · #{listing.region()}</h3>
+                    <p class="tiny">Domaines : #{empty listing.activityDomains() ? 'À préciser' : listing.activityDomains()}</p>
+                    <p class="tiny">Transaction : #{listing.transactionType()}</p>
                     <p class="muted">#{listing.description()}</p>
-                    <div class="financials">
-                        <div><span>CA</span><strong>#{listing.revenue() == null ? 'Sur demande' : listing.revenue()}</strong></div>
-                        <div><span>EBE</span><strong>#{listing.ebitda() == null ? 'Sur demande' : listing.ebitda()}</strong></div>
-                        <div><span>Prix</span><strong>#{listing.askingPrice() == null ? 'Sur demande' : listing.askingPrice()}</strong></div>
-                    </div>
+                    <h:panelGroup layout="block" rendered="#{marketplace.buyer}" styleClass="tiny">
+                        Informations détaillées disponibles après vérification du profil et signature des accords requis.
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="financials"
+                                  rendered="#{not marketplace.buyer or not empty listing.revenue()}">
+                        <div><span>CA</span><strong>#{listing.revenue() == null ? 'Sur demande' : marketplace.formatCurrency(listing.revenue(), listing.currencyCode())}</strong></div>
+                        <div><span>EBE</span><strong>#{listing.ebitda() == null ? 'Sur demande' : marketplace.formatCurrency(listing.ebitda(), listing.currencyCode())}</strong></div>
+                        <div><span>Prix</span><strong>#{listing.askingPrice() == null ? 'Sur demande' : marketplace.formatCurrency(listing.askingPrice(), listing.currencyCode())}</strong></div>
+                        <div><span>Résultat net</span><strong>#{listing.netIncome() == null ? 'Sur demande' : marketplace.formatCurrency(listing.netIncome(), listing.currencyCode())}</strong></div>
+                        <div><span>Actifs</span><strong>#{listing.totalAssets() == null ? 'Sur demande' : marketplace.formatCurrency(listing.totalAssets(), listing.currencyCode())}</strong></div>
+                        <div><span>Dettes</span><strong>#{listing.totalDebts() == null ? 'Sur demande' : marketplace.formatCurrency(listing.totalDebts(), listing.currencyCode())}</strong></div>
+                        <div><span>Immobilisations</span><strong>#{listing.fixedAssets() == null ? 'Sur demande' : marketplace.formatCurrency(listing.fixedAssets(), listing.currencyCode())}</strong></div>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="tiny"
+                                  rendered="#{listing.professionalValuationValidated()}">
+                        Valorisation indicative validée par le courtier mandaté; elle ne constitue pas une garantie de prix.
+                    </h:panelGroup>
                     <div class="card-footer">
                         <span class="tiny">#{listing.views()} vues · identité protégée</span>
                         <h:form rendered="#{marketplace.buyer}">
+                            <h:commandButton value="#{marketplace.favoriteListingIds.contains(listing.id()) ? 'Retirer des favoris' : 'Ajouter aux favoris'}"
+                                             action="#{marketplace.toggleFavorite(listing.id())}"
+                                             styleClass="button outline small"/>
                             <h:commandButton value="Demander une introduction" action="#{marketplace.requestIntroduction(listing.id())}" styleClass="button primary small"/>
                         </h:form>
                         <h:form rendered="#{marketplace.seller and listing.status() ne 'BROKER_ACCEPTED'}">
@@ -130,7 +380,18 @@
                         <h:form rendered="#{marketplace.broker and (listing.status() eq 'PUBLISHED' or listing.status() eq 'PENDING_BROKER_APPROVAL')}">
                             <h:commandButton value="Accepter le dossier" action="#{marketplace.acceptListing(listing.id())}" styleClass="button primary small"/>
                         </h:form>
+                        <h:form rendered="#{marketplace.superUser or (marketplace.broker and listing.status() eq 'BROKER_ACCEPTED')}">
+                            <h:commandButton value="Suspendre l'annonce" action="#{marketplace.suspendListing(listing.id())}"
+                                             rendered="#{listing.status() eq 'PUBLISHED' or listing.status() eq 'BROKER_ACCEPTED'}"
+                                             styleClass="button danger small"/>
+                            <h:commandButton value="Publier l'annonce" action="#{marketplace.publishListing(listing.id())}"
+                                             rendered="#{listing.status() eq 'SUSPENDED' or listing.status() eq 'PENDING_BROKER_APPROVAL'}"
+                                             styleClass="button primary small"/>
+                        </h:form>
                     </div>
+                    <h:panelGroup rendered="#{marketplace.superUser}">
+                        <p class="tiny">Dénomination : #{listing.companyName()} · Localisation exacte : #{listing.exactLocation()}</p>
+                    </h:panelGroup>
                     <h:panelGroup layout="block" styleClass="tiny pending-approval"
                                   rendered="#{marketplace.seller and listing.status() ne 'BROKER_ACCEPTED'}">
                         Publié anonymement · modifiable jusqu'à la prise en charge par un courtier.
@@ -140,7 +401,7 @@
                         Dossier pris en charge par le courtier.
                     </h:panelGroup>
                     <h:panelGroup layout="block" styleClass="tiny pending-approval" rendered="#{listing.status() eq 'PENDING_BROKER_APPROVAL'}">En attente de validation par le courtier mandaté.</h:panelGroup>
-                    <h:panelGroup rendered="#{marketplace.seller or (marketplace.broker and listing.status() eq 'BROKER_ACCEPTED')}">
+                    <h:panelGroup rendered="#{marketplace.seller or (marketplace.broker and listing.status() eq 'BROKER_ACCEPTED') or marketplace.superUser}">
                         <h4>Documents du dossier</h4>
                         <ui:repeat value="#{marketplace.documentsFor(listing.id())}" var="doc">
                             <p class="tiny">
@@ -149,17 +410,19 @@
                                 · #{doc.sizeBytes()} octets
                             </p>
                         </ui:repeat>
-                        <form method="post" action="documents" enctype="multipart/form-data" class="upload-form">
-                            <input type="hidden" name="listingId" value="#{listing.id()}"/>
-                            <input type="hidden" name="csrfToken" value="#{marketplace.csrfToken}"/>
-                            <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" required="required"/>
-                            <button class="button outline small" type="submit">Téléverser en chiffré</button>
-                        </form>
-                        <h:form rendered="#{marketplace.broker}" styleClass="broker-tools">
+                        <h:panelGroup rendered="#{marketplace.seller or (marketplace.broker and listing.status() eq 'BROKER_ACCEPTED')}">
+                            <form method="post" action="documents" enctype="multipart/form-data" class="upload-form">
+                                <input type="hidden" name="listingId" value="#{listing.id()}"/>
+                                <input type="hidden" name="csrfToken" value="#{marketplace.csrfToken}"/>
+                                <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" required="required"/>
+                                <button class="button outline small" type="submit">Téléverser en chiffré</button>
+                            </form>
+                        </h:panelGroup>
+                        <h:form rendered="#{marketplace.broker and listing.status() eq 'BROKER_ACCEPTED'}" styleClass="broker-tools">
                             <h4>Retraitement financier · EBITDA × multiple</h4>
                             <div class="criteria-grid">
-                                <div><label for="processed-revenue">CA retraité (€)</label><h:inputText id="processed-revenue" value="#{marketplace.processedRevenue}"/></div>
-                                <div><label for="processed-ebitda">EBE / EBITDA retraité (€)</label><h:inputText id="processed-ebitda" value="#{marketplace.processedEbitda}"/></div>
+                                <div><label for="processed-revenue">CA retraité (#{listing.currencyCode()})</label><h:inputText id="processed-revenue" value="#{marketplace.processedRevenue}"/></div>
+                                <div><label for="processed-ebitda">EBE / EBITDA retraité (#{listing.currencyCode()})</label><h:inputText id="processed-ebitda" value="#{marketplace.processedEbitda}"/></div>
                                 <div><label for="multiple">Multiple (0 à 30)</label><h:inputText id="multiple" value="#{marketplace.valuationMultiple}"/></div>
                             </div>
                             <h:commandButton value="Enregistrer les indicateurs" action="#{marketplace.processFinancials(listing.id())}" styleClass="button outline small"/>
@@ -172,6 +435,41 @@
             <div class="empty-state">Aucune annonce pour le moment. Revenez bientôt ou complétez votre profil.</div>
         </h:panelGroup>
     </section>
+
+    <h:panelGroup rendered="#{marketplace.seller or marketplace.broker or marketplace.superUser}" layout="block">
+        <section class="panel">
+            <div class="section-heading">
+                <div><p class="eyebrow">SUIVI DE CESSION</p><h2>Parcours des annonces</h2></div>
+                <span class="muted">Une étape commune par annonce, visible par les parties autorisées.</span>
+            </div>
+            <div class="deal-list">
+                <c:forEach items="#{marketplace.listingSaleProcesses}" var="process">
+                    <article class="deal-card">
+                        <div class="deal-summary">
+                            <div>
+                                <span class="tag">#{process.stageLabel()}</span>
+                                <h3>#{process.sector()} · annonce ##{process.listingId()}</h3>
+                                <p class="tiny">Mis à jour : #{process.updatedAt()}</p>
+                                <ol class="sale-process-history">
+                                    <c:forEach items="#{process.history()}" var="step">
+                                        <li>#{step.stageLabel()} · #{step.changedAt()}</li>
+                                    </c:forEach>
+                                </ol>
+                            </div>
+                            <h:form rendered="#{process.canAdvance()}">
+                                <h:commandButton value="Passer à l'étape suivante"
+                                                 action="#{marketplace.advanceListingSaleProcess(process.listingId())}"
+                                                 styleClass="button outline small"/>
+                            </h:form>
+                        </div>
+                    </article>
+                </c:forEach>
+            </div>
+            <h:panelGroup rendered="#{empty marketplace.listingSaleProcesses}">
+                <div class="empty-state">Aucune annonce à suivre pour ce profil.</div>
+            </h:panelGroup>
+        </section>
+    </h:panelGroup>
 
     <section class="panel">
         <div class="section-heading">
@@ -186,13 +484,21 @@
                             <span class="tag">#{deal.status()}</span>
                             <h3>#{deal.sector()} · dossier ##{deal.id()}</h3>
                             <p class="muted">Acquéreur : #{deal.buyerName()} · Cédant : #{deal.sellerName()}</p>
-                            <h:panelGroup rendered="#{deal.ndaSigned()}">
+                            <h:panelGroup rendered="#{deal.sensitiveDetailsAvailable()}">
                                 <h:panelGroup rendered="#{deal.encryptedIdentityUnavailable()}">
                                     <p class="tiny">#{deal.companyName()}</p>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{not deal.encryptedIdentityUnavailable()}">
                                     <p class="revealed">Identité révélée : #{deal.companyName()} · #{deal.exactLocation()}</p>
                                 </h:panelGroup>
+                                <div class="financials">
+                                    <div><span>CA</span><strong>#{deal.revenue() == null ? 'Non communiqué' : marketplace.formatCurrency(deal.revenue(), deal.currencyCode())}</strong></div>
+                                    <div><span>EBE</span><strong>#{deal.ebitda() == null ? 'Non communiqué' : marketplace.formatCurrency(deal.ebitda(), deal.currencyCode())}</strong></div>
+                                    <div><span>Prix</span><strong>#{deal.askingPrice() == null ? 'Non communiqué' : marketplace.formatCurrency(deal.askingPrice(), deal.currencyCode())}</strong></div>
+                                </div>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{deal.ndaSigned() and not deal.sensitiveDetailsAvailable() and marketplace.buyer}">
+                                <p class="tiny">Les informations complémentaires restent masquées tant que le profil acquéreur n’est pas validé.</p>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{not deal.ndaSigned() and deal.status() ne 'PENDING' and deal.status() ne 'DECLINED'}">
                                 <p class="tiny">Signature acquéreur : #{deal.buyerSigned() ? 'reçue' : 'en attente'} · Signature cédant : #{deal.sellerSigned() ? 'reçue' : 'en attente'}</p>
@@ -212,8 +518,11 @@
                                 <h:inputText value="#{marketplace.signatureName}" required="true" styleClass="signature-input" pt:placeholder="Nom complet pour signer" xmlns:pt="jakarta.faces.passthrough"/>
                                 <h:commandButton value="Signer l'accord de confidentialité" action="#{marketplace.signNda(deal.id())}" styleClass="button primary small"/>
                             </h:form>
-                            <h:form rendered="#{deal.ndaSigned()}">
+                            <h:form rendered="#{deal.ndaSigned() and (marketplace.buyer or marketplace.seller)}">
                                 <h:commandButton value="Ouvrir la messagerie" action="#{marketplace.openDeal(deal.id())}" styleClass="button outline small"/>
+                            </h:form>
+                            <h:form rendered="#{deal.ndaSigned() and (marketplace.superUser or marketplace.broker)}">
+                                <h:commandButton value="Ouvrir la revue documentaire" action="#{marketplace.openDeal(deal.id())}" styleClass="button outline small"/>
                             </h:form>
                         </div>
                     </div>
@@ -228,28 +537,91 @@
     <h:panelGroup rendered="#{not empty marketplace.activeDealId}">
         <section class="panel">
             <div class="section-heading">
-                <div><p class="eyebrow">ESPACE APRÈS NDA</p><h2>Messagerie sécurisée</h2></div>
+                <div><p class="eyebrow">ESPACE APRÈS NDA</p><h2>#{marketplace.superUser or marketplace.broker ? 'Revue documentaire' : 'Messagerie sécurisée'}</h2></div>
                 <span class="privacy-badge"><span>●</span> Messages chiffrés au repos</span>
             </div>
-            <div class="message-list">
-                <ui:repeat value="#{marketplace.activeMessages}" var="line">
-                    <article class="message"><strong>#{line.sender()}</strong><p>#{line.body()}</p><time>#{line.sentAt()}</time></article>
-                </ui:repeat>
-            </div>
-            <h:form styleClass="message-compose">
-                <h:inputTextarea value="#{marketplace.message}" rows="3" required="true" maxlength="8000" pt:placeholder="Votre message confidentiel..." xmlns:pt="jakarta.faces.passthrough"/>
-                <div class="message-compose-actions">
-                    <h:commandButton value="Envoyer" action="#{marketplace.sendMessage(marketplace.activeDealId)}" styleClass="button primary"/>
+            <h:panelGroup rendered="#{marketplace.buyer or marketplace.seller}">
+                <h3>Rendez-vous</h3>
+                <ul class="document-list">
+                    <ui:repeat value="#{marketplace.appointmentsFor(marketplace.activeDealId)}" var="appointment">
+                        <li>
+                            #{appointment.appointmentAt()} · #{appointment.status()}
+                            <h:form rendered="#{appointment.status() eq 'PENDING' and appointment.proposedBy() ne marketplace.user.id()}">
+                                <h:commandButton value="Confirmer"
+                                                 action="#{marketplace.respondToAppointment(appointment.id(), true)}"
+                                                 styleClass="button primary small"/>
+                                <h:commandButton value="Refuser"
+                                                 action="#{marketplace.respondToAppointment(appointment.id(), false)}"
+                                                 styleClass="button outline small"/>
+                            </h:form>
+                        </li>
+                    </ui:repeat>
+                </ul>
+                <h:form styleClass="message-compose">
+                    <label for="appointment-time">Proposer une date et heure (heure locale)</label>
+                    <h:inputText id="appointment-time" value="#{marketplace.proposedAppointmentTime}"
+                                 pt:type="datetime-local" required="true"
+                                 xmlns:pt="jakarta.faces.passthrough"/>
+                    <h:commandButton value="Proposer le rendez-vous"
+                                     action="#{marketplace.proposeAppointment(marketplace.activeDealId)}"
+                                     styleClass="button outline"/>
+                </h:form>
+                <div class="message-list">
+                    <ui:repeat value="#{marketplace.activeMessages}" var="line">
+                        <article class="message"><strong>#{line.sender()}</strong><p>#{line.body()}</p><time>#{line.sentAt()}</time></article>
+                    </ui:repeat>
                 </div>
-            </h:form>
-            <h3>Data room basique</h3>
+                <h:form styleClass="message-compose">
+                    <h:inputTextarea value="#{marketplace.message}" rows="3" required="true" maxlength="8000" pt:placeholder="Votre message confidentiel..." xmlns:pt="jakarta.faces.passthrough"/>
+                    <div class="message-compose-actions">
+                        <h:commandButton value="Envoyer" action="#{marketplace.sendMessage(marketplace.activeDealId)}" styleClass="button primary"/>
+                    </div>
+                </h:form>
+            </h:panelGroup>
+            <h3>Data room</h3>
             <ui:repeat value="#{marketplace.activeDealDocuments}" var="doc">
                 <p>
-                    <h:outputText value="#{doc.name()}" rendered="#{doc.encryptedNameUnavailable()}"/>
-                    <h:outputLink value="documents?id=#{doc.id()}" rendered="#{not doc.encryptedNameUnavailable()}">#{doc.name()}</h:outputLink>
+                    <h:outputText value="#{doc.name()}" rendered="#{doc.encryptedNameUnavailable() or not doc.sellerAuthorized() or not doc.alpValidated() or (marketplace.buyer and not doc.accessActive())}"/>
+                    <h:outputLink value="documents?id=#{doc.id()}"
+                                  rendered="#{not doc.encryptedNameUnavailable() and doc.sellerAuthorized() and doc.alpValidated() and (not marketplace.buyer or doc.accessActive())}">#{doc.name()}</h:outputLink>
                     · #{doc.sizeBytes()} octets
+                    <h:panelGroup rendered="#{not doc.sellerAuthorized() or not doc.alpValidated()}">
+                        · En attente : <h:outputText value="autorisation du cédant " rendered="#{not doc.sellerAuthorized()}"/>
+                        <h:outputText value="validation ALP" rendered="#{not doc.alpValidated()}"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not empty doc.accessExpiresAt()}">
+                        · Accès valable jusqu’au #{doc.accessExpiresAt()}
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{marketplace.buyer and not doc.accessActive()}">
+                        · Fenêtre d’accès expirée ou non encore ouverte
+                    </h:panelGroup>
+                    <h:form styleClass="inline-form" rendered="#{marketplace.seller and not doc.accessActive()}">
+                        <label>Durée d’accès acquéreur (jours, 1 à 365)
+                            <h:inputText id="access-duration-#{doc.id()}" value="#{marketplace.dataRoomAccessDurationDays}"
+                                         required="true" pt:type="number" pt:min="1" pt:max="365"
+                                         xmlns:pt="jakarta.faces.passthrough">
+                                <f:validateLongRange minimum="1" maximum="365"/>
+                            </h:inputText>
+                        </label>
+                        <h:commandButton value="Autoriser le partage" action="#{marketplace.authorizeDealDocument(doc.id())}" styleClass="button outline small"/>
+                    </h:form>
+                    <h:form styleClass="inline-form"
+                            rendered="#{marketplace.verificationReviewer and doc.sellerAuthorized() and not doc.alpValidated()}">
+                        <h:commandButton value="Valider par ALP" action="#{marketplace.validateDealDocument(doc.id())}" styleClass="button primary small"/>
+                    </h:form>
                 </p>
             </ui:repeat>
+            <h:panelGroup layout="block" rendered="#{marketplace.seller or marketplace.verificationReviewer}">
+                <h4>Journal de consultation</h4>
+                <ul class="document-list">
+                    <ui:repeat value="#{marketplace.activeDealAccessLogs}" var="access">
+                        <li>#{access.documentName()} · consulté par #{access.accessedByEmail()} · #{access.accessedAt()}</li>
+                    </ui:repeat>
+                </ul>
+                <h:panelGroup rendered="#{empty marketplace.activeDealAccessLogs}">
+                    <p class="tiny">Aucune consultation enregistrée.</p>
+                </h:panelGroup>
+            </h:panelGroup>
             <form method="post" action="documents" enctype="multipart/form-data" class="upload-form">
                 <input type="hidden" name="requestId" value="#{marketplace.activeDealId}"/>
                 <input type="hidden" name="csrfToken" value="#{marketplace.csrfToken}"/>
@@ -259,7 +631,7 @@
         </section>
     </h:panelGroup>
 
-    <footer>Africa Legacy Market · Les données de transaction sont strictement réservées aux participants autorisés.</footer>
 </main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
 </h:body>
 </html>

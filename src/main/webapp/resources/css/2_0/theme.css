@@ -1,3 +1,4 @@
+/* Keep theme styles in the same versioned JSF library as app.css. */
 :root[data-theme="dark"] {
     color-scheme: dark;
     --ink: #e6eee9;

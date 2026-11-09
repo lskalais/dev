@@ -1,7 +1,10 @@
 package fr.alp.confidentia.web;
 
 import fr.alp.confidentia.service.MarketplaceService;
+import fr.alp.confidentia.model.BuyerType;
+import fr.alp.confidentia.service.ViewModels.BuyerRegistration;
 import fr.alp.confidentia.service.ViewModels.ListingEditView;
+import fr.alp.confidentia.service.ViewModels.ListingSearchFilters;
 import fr.alp.confidentia.service.ViewModels.ListingSaveResult;
 import fr.alp.confidentia.service.ViewModels.UserView;
 import jakarta.faces.application.FacesMessage;
@@ -30,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -134,8 +138,18 @@ class MarketplaceBeanTest {
             bean.setFullName("Alice");
             bean.setOrganization("ALP");
             bean.setRole("BUYER");
+            bean.setBuyerType("INDIVIDUAL");
+            bean.setBuyerPhone("+2250102030405");
+            bean.setBuyerNationality("Ivoirienne");
+            bean.setBuyerResidence("Côte d’Ivoire");
+            bean.setBuyerProfession("Entrepreneure");
+            bean.setIndicativeFinancialCapacity(new BigDecimal("250000000"));
+            bean.setBuyerSectors("Agriculture");
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.INDIVIDUAL,
+                    "+2250102030405", "Ivoirienne", "Côte d’Ivoire", "Entrepreneure",
+                    new BigDecimal("250000000"), "Agriculture", null, null, null, null, null, null);
             when(service.register("a@alp.fr", "MotDePasse!2026", "Alice", "ALP",
-                    fr.alp.confidentia.model.Role.BUYER)).thenReturn(created);
+                    fr.alp.confidentia.model.Role.BUYER, registration)).thenReturn(created);
 
             String outcome = bean.register();
 
@@ -144,6 +158,22 @@ class MarketplaceBeanTest {
             verify(request).changeSessionId(); // anti fixation de session
             verify(session).setAttribute("authenticatedUser", created);
             assertEquals("", bean.getPassword(), "Le mot de passe ne doit pas rester en mémoire");
+            verify(service).register("a@alp.fr", "MotDePasse!2026", "Alice", "ALP",
+                    fr.alp.confidentia.model.Role.BUYER, registration);
+            assertNull(bean.getBuyerPhone(), "Les coordonnées ne doivent pas rester dans le bean de session.");
+            assertNull(bean.getIndicativeFinancialCapacity());
+        }
+
+        @Test
+        @DisplayName("register : type d'acquéreur invalide -> message d'erreur, pas d'appel au service")
+        void register_typeAcheteurInconnu_afficheUneErreur() {
+            bean.setRole("BUYER");
+            bean.setBuyerType("UNKNOWN");
+
+            assertNull(bean.register());
+
+            assertError("Choisissez le type de compte acquéreur.");
+            verify(service, never()).register(any(), any(), any(), any(), any(), any());
         }
 
         @Test
@@ -172,7 +202,7 @@ class MarketplaceBeanTest {
         @DisplayName("register : règle métier violée par le service -> message d'erreur affiché")
         void register_serviceRefuse_afficheLErreurDuService() {
             bean.setRole("BUYER");
-            when(service.register(any(), any(), any(), any(), any()))
+            when(service.register(any(), any(), any(), any(), any(), any()))
                     .thenThrow(new IllegalArgumentException("Cette adresse courriel est déjà utilisée."));
 
             assertNull(bean.register());
@@ -330,6 +360,19 @@ class MarketplaceBeanTest {
         }
 
         @Test
+        @DisplayName("authorizeDealDocument : transmet la durée choisie par le cédant")
+        void authorizeDealDocument_transmetLaDureeChoisie() throws Exception {
+            UserView seller = new UserView(2L, "s@alp.fr", "S", null, "SELLER", false);
+            connecter(seller);
+            bean.setDataRoomAccessDurationDays(75);
+
+            bean.authorizeDealDocument(8L);
+
+            verify(service).authorizeDealDocument(seller, 8L, 75);
+            assertInfo("La durée d’accès a été définie; la fenêtre démarrera après la validation ALP.");
+        }
+
+        @Test
         @DisplayName("sendMessage : succès -> message vidé et dossier actif défini")
         void sendMessage_succes_videLeMessageEtOuvreLeDossier() throws Exception {
             connecter(new UserView(1L, "b@alp.fr", "B", null, "BUYER", false));
@@ -424,11 +467,15 @@ class MarketplaceBeanTest {
         void saveListing_succesAvecCourtier_brokerAssigned() throws Exception {
             connecter(new UserView(2L, "s@alp.fr", "S", null, "SELLER", false));
             bean.setBrokerEmail("c@alp.fr");
+            bean.setSectorCategory("TERTIARY");
+            bean.setActivityDomains(List.of("commerce"));
             bean.setSector("Agro");
             bean.setRegion("Abidjan");
+            bean.setListingCountryCode("CI");
             bean.setDescription("Boulangerie rentable");
             when(service.saveListing(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),
-                    any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                    any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), any(),
+                    any(), any(), any(), any(), any(), any(), any()))
                     .thenReturn(new ListingSaveResult(55L, true));
 
             bean.saveListing();
@@ -443,7 +490,8 @@ class MarketplaceBeanTest {
         void saveListing_succesSansCourtier_brokerNotAssigned() throws Exception {
             connecter(new UserView(2L, "s@alp.fr", "S", null, "SELLER", false));
             when(service.saveListing(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),
-                    any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                    any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), any(),
+                    any(), any(), any(), any(), any(), any(), any()))
                     .thenReturn(new ListingSaveResult(56L, false));
 
             bean.saveListing();
@@ -458,7 +506,8 @@ class MarketplaceBeanTest {
         void saveListing_erreurDeValidation_afficheUneErreur() throws Exception {
             connecter(new UserView(2L, "s@alp.fr", "S", null, "SELLER", false));
             when(service.saveListing(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),
-                    any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                    any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), any(),
+                    any(), any(), any(), any(), any(), any(), any()))
                     .thenThrow(
                             new IllegalArgumentException("Le secteur, la description et la région sont obligatoires."));
 
@@ -473,7 +522,8 @@ class MarketplaceBeanTest {
         void saveListing_erreurDeChiffrement_afficheUneErreur() throws Exception {
             connecter(new UserView(2L, "s@alp.fr", "S", null, "SELLER", false));
             when(service.saveListing(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(),
-                    any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                    any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), any(),
+                    any(), any(), any(), any(), any(), any(), any()))
                     .thenThrow(new IllegalStateException(
                             "La variable APP_ENCRYPTION_KEY (clé Base64 de 32 octets) est requise."));
 
@@ -486,7 +536,8 @@ class MarketplaceBeanTest {
         @DisplayName("loadListingForEdit : copie tous les champs du formulaire")
         void loadListingForEdit_copieLesChamps() throws Exception {
             connecter(new UserView(2L, "s@alp.fr", "S", null, "SELLER", false));
-            ListingEditView view = new ListingEditView(10L, "c@alp.fr", "Agro", "Tech", 1990,
+            ListingEditView view = new ListingEditView(10L, "c@alp.fr", "TERTIARY", List.of("commerce"),
+                    "Agro", "Tech", 1990, 42, true,
                     "Desc", "Abidjan", "PME", "Marque", "Retraite", new BigDecimal("1000"),
                     new BigDecimal("100"), new BigDecimal("900"), new BigDecimal("10"),
                     "Conditions", "12 mois", "Société X", "Rue Y");
@@ -496,9 +547,13 @@ class MarketplaceBeanTest {
 
             assertEquals(10L, bean.getSelectedListingId());
             assertEquals("c@alp.fr", bean.getBrokerEmail());
+            assertEquals("TERTIARY", bean.getSectorCategory());
+            assertEquals(List.of("commerce"), bean.getActivityDomains());
             assertEquals("Agro", bean.getSector());
             assertEquals("Tech", bean.getSecondarySector());
             assertEquals(1990, bean.getFoundedYear());
+            assertEquals(42, bean.getApproximateEmployeeCount());
+            assertTrue(bean.isPublicRevenueRangeAllowed());
             assertEquals("Desc", bean.getDescription());
             assertEquals("Abidjan", bean.getRegion());
             assertEquals("PME", bean.getCustomerSummary());
@@ -562,7 +617,9 @@ class MarketplaceBeanTest {
             List<?> result = bean.getListings();
 
             assertNotNull(result);
-            verify(service).listingsFor(buyer, "Agro", "Abidjan", new BigDecimal("500"));
+            verify(service).listingsFor(buyer, new ListingSearchFilters("Agro", null, "Abidjan",
+                    null, new BigDecimal("500"), null, null, null, null, null, null, null,
+                    null, null, null), false);
         }
     }
 

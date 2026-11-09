@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>Partenaires et experts | Africa Legacy Partners</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <h:outputStylesheet library="css" name="theme.css"/>
+    <h:outputScript library="js" name="theme.js" target="head"/>
+</h:head>
+<h:body>
+<header class="topbar">
+    <h:link outcome="app" styleClass="brand" value="Africa Legacy Partners"/>
+    <div class="topbar-user">
+        <span>#{marketplace.user.name()} <small>#{marketplace.roleLabel}</small></span>
+        <h:link outcome="content-admin" value="Contenus" styleClass="button outline small"
+                rendered="#{marketplace.superUser}"/>
+        <h:link outcome="app" value="Tableau de bord" styleClass="button outline small"/>
+    </div>
+</header>
+<main class="container">
+    <section class="welcome">
+        <div>
+            <p class="eyebrow">RÉSEAU ALP</p>
+            <h1>Partenaires et experts</h1>
+            <p class="muted">Un annuaire réservé aux utilisateurs dont le profil a été validé.</p>
+        </div>
+    </section>
+    <h:messages globalOnly="false" styleClass="messages"/>
+
+    <h:panelGroup rendered="#{not marketplace.partnerDirectoryAvailable}" layout="block">
+        <section class="panel empty-state">
+            L’accès à l’annuaire sera disponible après validation de votre profil par ALP.
+        </section>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{marketplace.partnerDirectoryAvailable}" layout="block">
+        <h:panelGroup rendered="#{marketplace.superUser}" layout="block">
+            <section class="panel">
+                <div class="section-heading">
+                    <div><p class="eyebrow">ADMINISTRATION</p><h2>Gérer un partenaire ou un expert</h2></div>
+                    <h:form><h:commandButton value="Nouvelle fiche" action="#{marketplace.clearPartnerExpertForm}"
+                                             styleClass="button outline small"/></h:form>
+                </div>
+                <h:form styleClass="form-grid">
+                    <div>
+                        <h:outputLabel for="partner-name" value="Nom / organisation"/>
+                        <h:inputText id="partner-name" value="#{marketplace.partnerExpertName}"
+                                     required="true" maxlength="180"/>
+                    </div>
+                    <div>
+                        <h:outputLabel for="partner-category" value="Expertise"/>
+                        <h:selectOneMenu id="partner-category" value="#{marketplace.partnerExpertCategory}"
+                                         required="true">
+                            <f:selectItems value="#{marketplace.partnerExpertCategoryOptions}"/>
+                        </h:selectOneMenu>
+                    </div>
+                    <div>
+                        <h:outputLabel for="partner-country" value="Pays"/>
+                        <h:inputText id="partner-country" value="#{marketplace.partnerExpertCountry}"
+                                     required="true" maxlength="100"/>
+                    </div>
+                    <div>
+                        <h:outputLabel for="partner-location" value="Ville / région"/>
+                        <h:inputText id="partner-location" value="#{marketplace.partnerExpertLocation}"
+                                     maxlength="160"/>
+                    </div>
+                    <div class="span-2">
+                        <h:outputLabel for="partner-summary" value="Présentation"/>
+                        <h:inputTextarea id="partner-summary" value="#{marketplace.partnerExpertSummary}"
+                                         maxlength="2000" rows="3"/>
+                    </div>
+                    <div>
+                        <h:outputLabel for="partner-email" value="Courriel de contact"/>
+                        <h:inputText id="partner-email" value="#{marketplace.partnerExpertContactEmail}"
+                                     maxlength="254"/>
+                    </div>
+                    <div>
+                        <h:outputLabel for="partner-phone" value="Téléphone"/>
+                        <h:inputText id="partner-phone" value="#{marketplace.partnerExpertPhone}" maxlength="40"/>
+                    </div>
+                    <div>
+                        <h:outputLabel for="partner-website" value="Site web (HTTP/HTTPS)"/>
+                        <h:inputText id="partner-website" value="#{marketplace.partnerExpertWebsite}"
+                                     maxlength="300"/>
+                    </div>
+                    <div>
+                        <h:outputLabel for="partner-active" value="Fiche active"/>
+                        <h:selectBooleanCheckbox id="partner-active" value="#{marketplace.partnerExpertActive}"/>
+                    </div>
+                    <div class="span-2">
+                        <h:commandButton value="Enregistrer" action="#{marketplace.savePartnerExpert}"
+                                         styleClass="button primary"/>
+                    </div>
+                </h:form>
+            </section>
+        </h:panelGroup>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div><p class="eyebrow">RÉSEAU PROFESSIONNEL</p><h2>Experts disponibles</h2></div>
+                <span class="muted">Les coordonnées sont visibles uniquement dans cet espace vérifié.</span>
+            </div>
+            <div class="deal-list">
+                <ui:repeat value="#{marketplace.partnerExperts}" var="partner">
+                    <article class="deal-card">
+                        <div class="deal-summary">
+                            <div>
+                                <span class="tag">#{partner.categoryLabel()}</span>
+                                <h3>#{partner.name()}</h3>
+                                <p class="muted">#{partner.location()} · #{partner.country()}</p>
+                                <p>#{partner.summary()}</p>
+                                <p class="tiny">
+                                    <h:outputText value="#{partner.contactEmail()}"/>
+                                    <h:panelGroup rendered="#{not empty partner.phone()}">
+                                        · <h:outputText value="#{partner.phone()}"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{not empty partner.website()}">
+                                        · <h:outputText value="#{partner.website()}"/>
+                                    </h:panelGroup>
+                                </p>
+                            </div>
+                            <h:panelGroup rendered="#{marketplace.superUser}" layout="block">
+                                <span class="tag">#{partner.active() ? 'Actif' : 'Suspendu'}</span>
+                                <h:form styleClass="inline-form">
+                                    <h:commandButton value="Modifier"
+                                                     action="#{marketplace.loadPartnerExpertForEdit(partner)}"
+                                                     styleClass="button outline small"/>
+                                    <h:commandButton value="Suspendre"
+                                                     action="#{marketplace.setPartnerExpertActive(partner.id(), false)}"
+                                                     rendered="#{partner.active()}"
+                                                     styleClass="button danger small"/>
+                                    <h:commandButton value="Réactiver"
+                                                     action="#{marketplace.setPartnerExpertActive(partner.id(), true)}"
+                                                     rendered="#{not partner.active()}"
+                                                     styleClass="button primary small"/>
+                                </h:form>
+                            </h:panelGroup>
+                        </div>
+                    </article>
+                </ui:repeat>
+            </div>
+            <h:panelGroup rendered="#{empty marketplace.partnerExperts}">
+                <div class="empty-state">Aucun partenaire actif n’est encore référencé.</div>
+            </h:panelGroup>
+        </section>
+    </h:panelGroup>
+</main>
+<ui:include src="/WEB-INF/includes/footer.xhtml"/>
+</h:body>
+</html>

@@ -63,7 +63,8 @@ class AuthenticationFilterTest {
 
         @ParameterizedTest(name = "chemin public : {0}")
         @ValueSource(strings = { "/home.xhtml", "/acheter.xhtml", "/vendre.xhtml", "/login.xhtml",
-                "/register.xhtml", "/jakarta.faces.resource/theme.css" })
+                "/register.xhtml", "/faq.xhtml", "/legal.xhtml", "/contact.xhtml", "/article.xhtml",
+                "/jakarta.faces.resource/theme.css" })
         @DisplayName("les pages publiques et ressources statiques ne sont pas filtrées")
         void doFilter_cheminPublic_laissePasser(String servletPath) throws Exception {
             path(servletPath);
@@ -156,6 +157,78 @@ class AuthenticationFilterTest {
             filter.doFilter(request, response, chain);
 
             verify(chain).doFilter(request, response);
+        }
+
+        @Test
+        @DisplayName("content-admin.xhtml avec un rôle non SUPER : 403")
+        void doFilter_pageContenuSansRoleSuper_renvoie403() throws Exception {
+            path("/content-admin.xhtml");
+            authenticatedAs(1L, "BROKER", false);
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "Accès réservé aux super utilisateurs.");
+            verify(chain, never()).doFilter(request, response);
+        }
+
+        @Test
+        @DisplayName("content-admin.xhtml avec le rôle SUPER : accès autorisé")
+        void doFilter_pageContenuAvecRoleSuper_laissePasser() throws Exception {
+            path("/content-admin.xhtml");
+            authenticatedAs(1L, "SUPER", false);
+
+            filter.doFilter(request, response, chain);
+
+            verify(chain).doFilter(request, response);
+        }
+
+        @Test
+        @DisplayName("seller-verification.xhtml avec le rôle BROKER : accès autorisé")
+        void doFilter_pageVerificationAvecCourtier_laissePasser() throws Exception {
+            path("/seller-verification.xhtml");
+            authenticatedAs(1L, "BROKER", false);
+
+            filter.doFilter(request, response, chain);
+
+            verify(chain).doFilter(request, response);
+        }
+
+        @Test
+        @DisplayName("seller-verification.xhtml avec un rôle non autorisé : 403")
+        void doFilter_pageVerificationSansRoleAutorise_renvoie403() throws Exception {
+            path("/seller-verification.xhtml");
+            authenticatedAs(1L, "SELLER", false);
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "Accès réservé aux courtiers et aux administrateurs.");
+            verify(chain, never()).doFilter(request, response);
+        }
+
+        @Test
+        @DisplayName("buyer-kyc.xhtml avec le rôle BROKER : accès autorisé")
+        void doFilter_pageBuyerKycAvecCourtier_laissePasser() throws Exception {
+            path("/buyer-kyc.xhtml");
+            authenticatedAs(1L, "BROKER", false);
+
+            filter.doFilter(request, response, chain);
+
+            verify(chain).doFilter(request, response);
+        }
+
+        @Test
+        @DisplayName("buyer-kyc.xhtml avec un rôle BUYER : 403")
+        void doFilter_pageBuyerKycAvecAcquereur_renvoie403() throws Exception {
+            path("/buyer-kyc.xhtml");
+            authenticatedAs(1L, "BUYER", false);
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "Accès réservé aux courtiers et aux administrateurs.");
+            verify(chain, never()).doFilter(request, response);
         }
 
         @Test
