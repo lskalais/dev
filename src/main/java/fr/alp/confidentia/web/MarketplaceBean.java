@@ -554,6 +554,10 @@ public class MarketplaceBean implements Serializable {
         return "en".equals(language) ? "en" : "fr";
     }
 
+    public java.util.Locale getLocale() {
+        return java.util.Locale.forLanguageTag(getLanguage());
+    }
+
     public void setLanguage(String language) {
         if (!"fr".equals(language) && !"en".equals(language)) {
             throw new IllegalArgumentException("Unsupported language: " + language);
@@ -566,7 +570,9 @@ public class MarketplaceBean implements Serializable {
     }
 
     public String applyLanguage() {
-        return null;
+        FacesContext context = FacesContext.getCurrentInstance();
+        String viewId = context.getViewRoot() == null ? null : context.getViewRoot().getViewId();
+        return viewId == null ? null : viewId + "?faces-redirect=true";
     }
 
     public String getCsrfToken() {

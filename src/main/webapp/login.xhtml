@@ -1,36 +1,43 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<f:view xmlns:f="jakarta.faces.core" locale="#{marketplace.locale}">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
+      xmlns:pt="jakarta.faces.passthrough"
       xmlns:ui="jakarta.faces.facelets">
 <h:head>
-    <title>Connexion | Africa Legacy Market</title>
+    <title>#{msg['auth.login.title']}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&amp;family=Albert+Sans:wght@400;500;600&amp;display=swap"/>
     <h:outputStylesheet library="css" name="app.css"/>
     <h:outputStylesheet library="css" name="theme.css"/>
-    <h:outputScript library="js" name="theme.js" target="head"/>
+    <h:outputScript library="js" name="theme-i18n.js" target="head"/>
 </h:head>
 <h:body class="auth-page">
 <main class="auth-card">
     <button class="button outline small theme-toggle auth-theme-toggle" type="button" data-theme-toggle="true"
-            aria-pressed="false">Mode sombre</button>
+            aria-pressed="false" data-light-label="#{msg['auth.theme.light']}"
+            data-dark-label="#{msg['auth.theme.dark']}">#{msg['auth.theme.dark']}</button>
     <a class="brand" href="home.xhtml">Africa Legacy <span>Market</span></a>
-    <p class="eyebrow">TRANSACTIONS CONFIDENTIELLES</p>
-    <h1>Votre prochaine étape, en confiance.</h1>
-    <p class="muted">Connectez-vous à votre espace sécurisé de cession ou d'acquisition.</p>
+    <p class="eyebrow">#{msg['auth.login.eyebrow']}</p>
+    <h1>#{msg['auth.login.heading']}</h1>
+    <p class="muted">#{msg['auth.login.intro']}</p>
     <h:form>
         <h:messages globalOnly="false" styleClass="messages"/>
-        <label for="email">Adresse courriel</label>
+        <label for="email">#{msg['auth.login.email']}</label>
         <h:inputText id="email" value="#{marketplace.email}" required="true"
-                     requiredMessage="Saisissez votre adresse courriel." autocomplete="username"/>
-        <label for="password">Mot de passe</label>
+                     requiredMessage="#{msg['auth.login.emailRequired']}" autocomplete="username"/>
+        <label for="password">#{msg['auth.login.password']}</label>
         <h:inputSecret id="password" value="#{marketplace.password}" required="true"
-                       requiredMessage="Saisissez votre mot de passe." autocomplete="current-password"/>
-        <h:commandButton value="Se connecter" action="#{marketplace.login}" styleClass="button primary full"/>
+                       requiredMessage="#{msg['auth.login.passwordRequired']}" autocomplete="current-password"/>
+        <h:commandButton value="#{msg['auth.login.submit']}" action="#{marketplace.login}" styleClass="button primary full"/>
     </h:form>
-    <p class="auth-switch">Nouveau sur Africa Legacy Market ? <a href="register.xhtml">Créer un compte</a></p>
-    <p class="auth-switch"><a href="home.xhtml">Retour à l'accueil</a></p>
-    <p class="tiny">Vos données financières et vos documents ne sont jamais publics.</p>
+    <p class="auth-switch">#{msg['auth.login.newUser']} <a href="register.xhtml">#{msg['common.register']}</a></p>
+    <p class="auth-switch"><a href="home.xhtml">#{msg['auth.login.backHome']}</a></p>
+    <p class="tiny">#{msg['auth.login.privacy']}</p>
 </main>
 <ui:include src="/WEB-INF/includes/footer.xhtml"/>
 </h:body>
 </html>
+</f:view>

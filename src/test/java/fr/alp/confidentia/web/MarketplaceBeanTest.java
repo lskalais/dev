@@ -10,6 +10,7 @@ import fr.alp.confidentia.service.ViewModels.UserView;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIViewRoot;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.AfterEach;
@@ -24,6 +25,9 @@ import org.mockito.Mockito;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -85,6 +89,22 @@ class MarketplaceBeanTest {
 
         staticFaces = Mockito.mockStatic(FacesContext.class);
         staticFaces.when(FacesContext::getCurrentInstance).thenReturn(facesContext);
+    }
+
+    @Test
+    void applyLanguageStoresLocaleAndRedirectsToCurrentView() {
+        Map<String, Object> sessionMap = new HashMap<>();
+        UIViewRoot viewRoot = mock(UIViewRoot.class);
+        when(externalContext.getSessionMap()).thenReturn(sessionMap);
+        when(facesContext.getViewRoot()).thenReturn(viewRoot);
+        when(viewRoot.getViewId()).thenReturn("/register.xhtml");
+
+        bean.setLanguage("en");
+
+        assertEquals("en", bean.getLanguage());
+        assertEquals(Locale.ENGLISH, bean.getLocale());
+        assertEquals("/register.xhtml?faces-redirect=true", bean.applyLanguage());
+        verify(viewRoot).setLocale(Locale.ENGLISH);
     }
 
     @AfterEach

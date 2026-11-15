@@ -262,18 +262,73 @@ class MarketplaceServiceTest {
         }
 
         @Test
-        @DisplayName("inscription personne physique sans téléphone -> refusée avant création du compte")
-        void register_acheteurPersonnePhysique_sansTelephoneRefuse() {
+        @DisplayName("inscription personne physique sans téléphone -> acceptée")
+        void register_acheteurPersonnePhysique_sansTelephoneAcceptee() {
+            MockJpa.query(em(), COUNTER_QUERY, List.of(0L));
             BuyerRegistration registration = new BuyerRegistration(BuyerType.INDIVIDUAL,
-                    " ", "Ivoirienne", "Côte d’Ivoire", "Entrepreneure", null,
+                    null, "Ivoirienne", "Côte d’Ivoire", "Entrepreneure", null,
                     null, null, null, null, null, null, null);
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.BuyerProfile> captor =
+                    org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.BuyerProfile.class);
 
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                    () -> service.register("alice@alp.fr", TestSupport.VALID_PASSWORD, "Alice", null,
-                            fr.alp.confidentia.model.Role.BUYER, registration));
+            service.register("alice@alp.fr", TestSupport.VALID_PASSWORD, "Alice", null,
+                    fr.alp.confidentia.model.Role.BUYER, registration);
 
-            assertEquals("Le téléphone est obligatoire.", exception.getMessage());
-            verify(em(), never()).persist(any());
+            verify(em()).persist(captor.capture());
+            assertNull(captor.getValue().phone);
+        }
+
+        @Test
+        @DisplayName("inscription personne morale sans téléphone -> acceptée")
+        void register_acheteurPersonneMorale_sansTelephoneAcceptee() {
+            MockJpa.query(em(), COUNTER_QUERY, List.of(0L));
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.COMPANY,
+                    null, null, null, null, null, null, "SARL", "Côte d’Ivoire",
+                    "CI-123", "123", "Abidjan", "Gérante");
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.BuyerProfile> captor =
+                    org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.BuyerProfile.class);
+
+            service.register("contact@entreprise.ci", TestSupport.VALID_PASSWORD,
+                    "Awa Koné", "Entreprise Exemple SA",
+                    fr.alp.confidentia.model.Role.BUYER, registration);
+
+            verify(em()).persist(captor.capture());
+            assertNull(captor.getValue().phone);
+        }
+
+        @Test
+        @DisplayName("inscription personne physique avec téléphone au format libre -> acceptée")
+        void register_acheteurPersonnePhysique_telephoneAuFormatLibreAccepte() {
+            MockJpa.query(em(), COUNTER_QUERY, List.of(0L));
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.INDIVIDUAL,
+                    "contact sans format !", "Ivoirienne", "Côte d’Ivoire", "Entrepreneure", null,
+                    null, null, null, null, null, null, null);
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.BuyerProfile> captor =
+                    org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.BuyerProfile.class);
+
+            service.register("alice@alp.fr", TestSupport.VALID_PASSWORD, "Alice", null,
+                    fr.alp.confidentia.model.Role.BUYER, registration);
+
+            verify(em()).persist(captor.capture());
+            assertEquals("contact sans format !", captor.getValue().phone);
+        }
+
+        @Test
+        @DisplayName("inscription personne morale avec téléphone au format libre -> acceptée")
+        void register_acheteurPersonneMorale_telephoneAuFormatLibreAccepte() {
+            MockJpa.query(em(), COUNTER_QUERY, List.of(0L));
+            BuyerRegistration registration = new BuyerRegistration(BuyerType.COMPANY,
+                    "poste: +225 / ext. ABC", null, null, null, null, null, "SARL", "Côte d’Ivoire",
+                    "CI-123", "123", "Abidjan", "Gérante");
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.BuyerProfile> captor =
+                    org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.BuyerProfile.class);
+
+            service.register("contact@entreprise.ci", TestSupport.VALID_PASSWORD,
+                    "Awa Koné", "Entreprise Exemple SA",
+                    fr.alp.confidentia.model.Role.BUYER, registration);
+
+            verify(em()).persist(captor.capture());
+            assertEquals("poste: +225 / ext. ABC", captor.getValue().phone);
         }
 
         @Test

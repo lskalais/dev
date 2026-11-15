@@ -1,0 +1,463 @@
+{\rtf1\ansi\ansicpg1252\deff0\uc1
+{\fonttbl{\f0 Calibri;}{\f1 Consolas;}}
+{\colortbl;\red25\green55\blue70;\red0\green85\blue140;\red230\green238\blue243;}
+{\stylesheet{\s0\f0\fs22 Normal;}{\s1\keepn\b\cf1\fs40 Title;}{\s2\keepn\b\cf1\fs30 Heading 1;}{\s3\keepn\b\cf1\fs25 Heading 2;}}
+\paperw11907\paperh16840\margl1134\margr1134\margt1134\margb1134\widowctrl\deflang1036
+{\footer\pard\qc\f0\fs18 Africa Legacy Partners - {\field{\*\fldinst PAGE}{\fldrslt 1}}\par}
+\pard\plain\s1\f0\b\cf1\fs40\keepn\sb240\sa140 Guide utilisateur \u8212? Africa Legacy Partners\par
+\pard\plain\s0\f0\fs22\sa140 Version du guide : 9 novembre 2026\par
+\pard\plain\s0\f0\fs22\sa140 Public : visiteurs, acqu\u233?reurs/investisseurs, c\u233?dants, courtiers et administrateurs ALP.\par
+\pard\plain\s0\f0\fs22\sa140 Ce guide d\u233?crit les fonctions pr\u233?sentes dans la version actuelle de l\u8217?application, \u233?galement appel\u233?e {\b Africa Legacy Market} sur certains \u233?crans. Les boutons disponibles d\u233?pendent de votre r\u244?le, de la validation de votre profil et de l\u8217?\u233?tat du dossier.\par
+\pard\plain\s0\f0\fs22\li300\ri180\sb120\sa180\i La cr\u233?ation d\u8217?un compte ne donne pas automatiquement acc\u232?s aux identit\u233?s des entreprises ou aux documents sensibles. Une validation de profil, un accord de confidentialit\u233? et des autorisations documentaires distinctes peuvent \u234?tre n\u233?cessaires.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 Sommaire\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab Acc\u233?der \u224? la plateforme\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Cr\u233?er un compte et se connecter\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab Comprendre la confidentialit\u233?\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab Parcours acqu\u233?reur / investisseur\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab Parcours c\u233?dant / propri\u233?taire\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 6.\tab Demandes, signatures et \u233?changes\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 7.\tab Utiliser la data room\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 8.\tab Parcours courtier / conseil\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 9.\tab Parcours administrateur ALP\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 10.\tab Notifications, partenaires et assistance\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 11.\tab Pr\u233?f\u233?rences et limites actuelles\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 12.\tab R\u233?soudre un probl\u232?me courant\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 13.\tab Lexique\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 1. Acc\u233?der \u224? la plateforme\par
+\pard\plain\s0\f0\fs22\sa140 Pour l\u8217?installation locale, ouvrez :\par
+\pard\plain\s0\f0\fs22\sa140 {\b {\field{\*\fldinst HYPERLINK "https://tributary-rework-defensive.ngrok-free.dev/confidentia/home.xhtml"}{\fldrslt{\ul\cf2 http://localhost/confidentia/home.xhtml}}}}\par
+\pard\plain\s0\f0\fs22\sa140 Cette adresse fonctionne sur la machine qui h\u233?berge l\u8217?application. Pour un acc\u232?s depuis un autre poste, utilisez l\u8217?adresse communiqu\u233?e par ALP ; {\f1 localhost} ne d\u233?signe pas le serveur distant.\par
+\pard\plain\s0\f0\fs22\sa140 Un navigateur r\u233?cent avec JavaScript et les cookies de session activ\u233?s est recommand\u233?.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Sans compte\par
+\pard\plain\s0\f0\fs22\sa140 Depuis l\u8217?accueil, vous pouvez :\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab d\u233?couvrir les services ALP ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab consulter les aper\u231?us anonymis\u233?s dans {\b Opportunit\u233?s} ou {\b Acheter} ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab d\u233?couvrir le parcours de cession dans {\b Vendre} ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab lire les articles publi\u233?s dans {\b Articles et actualit\u233?s} ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab consulter la {\b FAQ} et les informations l\u233?gales ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab utiliser {\b Contact / r\u233?clamation}, accessible en pied de page ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab choisir {\b Cr\u233?er un compte} ou {\b Connexion}.\par
+\pard\plain\s0\f0\fs22\sa140 Une liste vide signifie qu\u8217?aucun contenu n\u8217?est actuellement disponible dans cette rubrique. Elle ne constitue pas une confirmation de panne.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Choisir le bon profil\par
+\trowd\trgaph100\trleft0\trhdr\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Profil\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Usage principal\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Acqu\u233?reur / investisseur\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Rechercher une entreprise, enregistrer des favoris et demander une introduction.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 C\u233?dant / propri\u233?taire\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Pr\u233?senter une entreprise \u224? c\u233?der, d\u233?poser les justificatifs et suivre les \u233?changes.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Courtier / conseil M&A\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Prendre en charge les dossiers autoris\u233?s, v\u233?rifier les profils et accompagner les op\u233?rations.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Administrateur ALP \u8212? SUPER\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Administrer les comptes, contenus, messages, partenaires et op\u233?rations selon ses autorisations.\cell
+\row
+\pard\plain\s0\f0\fs22\sa100\par
+\pard\plain\s0\f0\fs22\sa140 Le r\u244?le SUPER n\u8217?est pas propos\u233? dans le formulaire d\u8217?inscription public.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 2. Cr\u233?er un compte et se connecter\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Inscription\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab Cliquez sur {\b Cr\u233?er un compte}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Renseignez votre nom ou celui du repr\u233?sentant l\u233?gal et votre adresse courriel.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab S\u233?lectionnez votre r\u244?le.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab Compl\u233?tez les informations correspondant \u224? votre profil.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab Choisissez un mot de passe d\u8217?au moins {\b 12 caract\u232?res}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 6.\tab Consultez les informations relatives aux donn\u233?es personnelles et l\u8217?engagement de confidentialit\u233?.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 7.\tab Cliquez sur {\b Cr\u233?er mon compte}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 8.\tab Lisez le message de confirmation ou corrigez les champs signal\u233?s.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Informations propres aux acqu\u233?reurs\par
+\pard\plain\s0\f0\fs22\sa140 {\b Personne physique :} nationalit\u233?, pays de r\u233?sidence, t\u233?l\u233?phone et profession. Vous pouvez \u233?galement pr\u233?ciser une capacit\u233? financi\u232?re indicative, sa devise et les secteurs recherch\u233?s.\par
+\pard\plain\s0\f0\fs22\sa140 {\b Personne morale :} d\u233?nomination sociale, t\u233?l\u233?phone du repr\u233?sentant, forme juridique, pays d\u8217?immatriculation, num\u233?ro RCCM ou registre \u233?quivalent, identifiant fiscal, si\u232?ge social et fonction du repr\u233?sentant l\u233?gal.\par
+\pard\plain\s0\f0\fs22\sa140 Utilisez des renseignements exacts et coh\u233?rents avec vos justificatifs. La capacit\u233? financi\u232?re indicative n\u8217?est ni une preuve de financement ni une promesse d\u8217?investissement.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Connexion\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab Ouvrez {\b Connexion}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Saisissez votre courriel et votre mot de passe.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab Cliquez sur {\b Se connecter}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab Acc\u233?dez au tableau de bord correspondant \u224? votre r\u244?le.\par
+\pard\plain\s0\f0\fs22\sa140 Si ALP vous a attribu\u233? un mot de passe temporaire, l\u8217?application impose de choisir et de confirmer un nouveau mot de passe avant de poursuivre.\par
+\pard\plain\s0\f0\fs22\sa140 Pour quitter votre espace, utilisez {\b D\u233?connexion}, particuli\u232?rement sur un ordinateur partag\u233?.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 3. Comprendre la confidentialit\u233?\par
+\trowd\trgaph100\trleft0\trhdr\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Situation\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Acc\u232?s attendu\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Visiteur public\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Aper\u231?u non identifiant : secteur, domaines, zone g\u233?ographique, anciennet\u233? et effectif par tranche. Fourchette de CA seulement si le c\u233?dant l\u8217?autorise.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Compte inscrit sans accord sign\u233? par les deux parties\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Fonctions de son r\u244?le, mais pas de r\u233?v\u233?lation automatique des informations sensibles de l\u8217?entreprise.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Acqu\u233?reur v\u233?rifi\u233? et accord sign\u233? par les deux parties\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Informations compl\u233?mentaires autoris\u233?es du dossier, notamment identit\u233?, localisation pr\u233?cise et donn\u233?es financi\u232?res disponibles.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Document de data room\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Acc\u232?s soumis aux autorisations documentaires et \u224? la p\u233?riode de validit\u233?, en plus des conditions du dossier.\cell
+\row
+\pard\plain\s0\f0\fs22\sa100\par
+\pard\plain\s0\f0\fs22\sa140 {\b Trois validations diff\u233?rentes sont \u224? distinguer :}\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab la v\u233?rification du profil ou du compte ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab la signature de l\u8217?accord de confidentialit\u233? pour une op\u233?ration ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab l\u8217?autorisation d\u8217?acc\u232?s \u224? chaque document.\par
+\pard\plain\s0\f0\fs22\sa140 Ne placez jamais un nom d\u8217?entreprise, une adresse pr\u233?cise ou un indice permettant de l\u8217?identifier dans un champ destin\u233? \u224? un aper\u231?u anonymis\u233?.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 4. Parcours acqu\u233?reur / investisseur\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 4.1 Faire v\u233?rifier son profil KYC\par
+\pard\plain\s0\f0\fs22\sa140 Dans le tableau de bord, rep\u233?rez {\b V\u233?rification de votre profil}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab S\u233?lectionnez le type de pi\u232?ce.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Choisissez un fichier lisible.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab Utilisez le bouton de t\u233?l\u233?versement.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab V\u233?rifiez que le document appara\u238?t dans la liste.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab Consultez r\u233?guli\u232?rement le statut et les \u233?ventuelles demandes de compl\u233?ment.\par
+\trowd\trgaph100\trleft0\trhdr\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Type de compte\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Pi\u232?ces \u224? pr\u233?parer\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Personne physique\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Pi\u232?ce d\u8217?identit\u233?. Justificatif d\u8217?origine des fonds uniquement si ALP le demande.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Personne morale\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Immatriculation, statuts, identit\u233? du repr\u233?sentant l\u233?gal et pouvoirs de repr\u233?sentation. Informations sur les b\u233?n\u233?ficiaires effectifs et origine des fonds si demand\u233?es.\cell
+\row
+\pard\plain\s0\f0\fs22\sa100\par
+\pard\plain\s0\f0\fs22\sa140 Les coordonn\u233?es sont v\u233?rifi\u233?es {\b manuellement} par un courtier ou un administrateur. Cette version n\u8217?envoie pas de code de v\u233?rification OTP par courriel ou SMS.\par
+\trowd\trgaph100\trleft0\trhdr\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Statut affich\u233?\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Action \u224? entreprendre\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Documents en attente\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 D\u233?poser les pi\u232?ces n\u233?cessaires.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rification en cours\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Attendre la revue et surveiller les notifications.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Compl\u233?ment demand\u233?\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Lire le motif, puis d\u233?poser les pi\u232?ces demand\u233?es.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Profil v\u233?rifi\u233?\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Poursuivre les d\u233?marches autoris\u233?es ; les accords de confidentialit\u233? restent propres \u224? chaque dossier.\cell
+\row
+\pard\plain\s0\f0\fs22\sa100\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 4.2 Enregistrer ses crit\u232?res\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b D\u233?finir vos crit\u232?res} :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab indiquez les secteurs et la r\u233?gion recherch\u233?s ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab choisissez la devise des crit\u232?res ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab saisissez l\u8217?investissement minimum et maximum ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab cliquez sur {\b Enregistrer mes crit\u232?res}.\par
+\pard\plain\s0\f0\fs22\sa140 Ces crit\u232?res servent au classement des opportunit\u233?s compatibles. Le pourcentage de correspondance est une aide \u224? la recherche, pas une recommandation d\u8217?investissement.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 4.3 Rechercher et conserver des opportunit\u233?s\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b Entreprises \u224? d\u233?couvrir}, utilisez les filtres disponibles : secteur, domaine, pays, zone, budget, chiffre d\u8217?affaires, rentabilit\u233?, ann\u233?es de cr\u233?ation, effectif et type de transaction.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Cliquez sur {\b Appliquer} pour lancer la recherche.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Utilisez {\b R\u233?initialiser} pour retirer les filtres.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Cliquez sur {\b Ajouter aux favoris} pour conserver une annonce dans votre liste priv\u233?e.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Utilisez {\b Afficher mes favoris}, puis {\b Voir toutes les annonces}, pour changer de vue.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Utilisez {\b Retirer des favoris} pour enlever une annonce de votre s\u233?lection.\par
+\pard\plain\s0\f0\fs22\sa140 {\b Attention :} les filtres financiers exacts ne s\u8217?appliquent qu\u8217?aux dossiers dont l\u8217?accord de confidentialit\u233? est sign\u233? par les deux parties. Commencez par les crit\u232?res non financiers pour explorer les annonces anonymis\u233?es.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 4.4 Demander une introduction\par
+\pard\plain\s0\f0\fs22\sa140 Sur l\u8217?annonce souhait\u233?e, cliquez sur {\b Demander une introduction}. Suivez ensuite la demande dans {\b Demandes et dossiers}.\par
+\pard\plain\s0\f0\fs22\sa140 L\u8217?acceptation d\u8217?une introduction ne vaut ni validation d\u8217?acquisition ni acc\u232?s imm\u233?diat \u224? tous les documents.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 5. Parcours c\u233?dant / propri\u233?taire\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 5.1 D\u233?poser les justificatifs du compte\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b Pi\u232?ces justificatives du c\u233?dant}, d\u233?posez s\u233?par\u233?ment les documents correspondant aux types propos\u233?s :\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab RCCM ou document d\u8217?immatriculation ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab document fiscal ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab statuts ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab identit\u233? du repr\u233?sentant ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab pouvoir de c\u233?der ou mandat ;\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab autre pi\u232?ce utile demand\u233?e.\par
+\pard\plain\s0\f0\fs22\sa140 Pour chaque pi\u232?ce : choisissez son type, s\u233?lectionnez le fichier, cliquez sur {\b T\u233?l\u233?verser la pi\u232?ce chiffr\u233?e}, puis v\u233?rifiez sa pr\u233?sence dans la liste.\par
+\pard\plain\s0\f0\fs22\sa140 Le suivi du compte affiche :\par
+\trowd\trgaph100\trleft0\trhdr\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Statut\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Signification\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Documents en attente\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Le dossier documentaire doit \u234?tre constitu\u233? ou compl\u233?t\u233?.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 En v\u233?rification\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Un r\u233?viseur examine les pi\u232?ces.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Rejet\u233? / \u224? compl\u233?ter\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Des corrections sont attendues ; consultez le motif affich\u233?.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Documents valid\u233?s\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Les pi\u232?ces ont \u233?t\u233? accept\u233?es ; la validation finale du compte est une \u233?tape distincte.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Compte valid\u233?\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 La v\u233?rification du compte c\u233?dant est finalis\u233?e.\cell
+\row
+\pard\plain\s0\f0\fs22\sa100\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 5.2 Pr\u233?senter une entreprise\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b Pr\u233?senter votre entreprise} :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab choisissez un grand secteur : {\b primaire}, {\b secondaire} ou {\b tertiaire} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab s\u233?lectionnez un ou plusieurs domaines d\u8217?activit\u233? ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab renseignez l\u8217?activit\u233? principale, l\u8217?ann\u233?e de cr\u233?ation et l\u8217?effectif ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab indiquez le pays et une zone g\u233?ographique non identifiante ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab r\u233?digez une description anonymis\u233?e ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 6.\tab compl\u233?tez, selon votre dossier, la client\u232?le, les avantages concurrentiels, la raison de la vente, les conditions de cession et l\u8217?accompagnement envisag\u233? ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 7.\tab choisissez le type de transaction et la devise ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 8.\tab renseignez les donn\u233?es financi\u232?res disponibles ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 9.\tab saisissez le nom r\u233?el et l\u8217?adresse pr\u233?cise uniquement dans les champs marqu\u233?s {\b priv\u233?} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 10.\tab d\u233?cidez si vous autorisez l\u8217?affichage public d\u8217?une fourchette de chiffre d\u8217?affaires ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 11.\tab cliquez sur {\b Publier le teaser anonymis\u233?}.\par
+\pard\plain\s0\f0\fs22\sa140 Le courriel du courtier est facultatif. En l\u8217?absence de courtier actif correspondant, le teaser peut \u234?tre publi\u233? sans attribution, puis pris en charge par un courtier.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 5.3 Modifier le teaser\par
+\pard\plain\s0\f0\fs22\sa140 Dans votre portefeuille, cliquez sur {\b Modifier le teaser}, effectuez les changements puis sur {\b Enregistrer les modifications}.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab La modification est possible jusqu\u8217?\u224? la prise en charge par un courtier.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Apr\u232?s cette prise en charge, le c\u233?dant ne peut plus modifier le teaser depuis ce parcours.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Lors d\u8217?une modification, laisser le nom r\u233?el ou l\u8217?adresse priv\u233?e vide conserve sa valeur actuelle.\par
+\pard\plain\s0\f0\fs22\li360\fi-240\tx360\sa80 \u8226?\tab Utilisez {\b Cr\u233?er un nouveau teaser} pour repartir sur une autre annonce.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 5.4 Suivre les demandes et la cession\par
+\pard\plain\s0\f0\fs22\sa140 Traitez les demandes dans {\b Demandes et dossiers}, puis consultez {\b Parcours des annonces} pour l\u8217?\u233?tape de cession et son historique.\par
+\pard\plain\s0\f0\fs22\sa140 Les \u233?tapes pr\u233?vues vont de l\u8217?inscription du c\u233?dant \u224? la v\u233?rification, la pr\u233?paration, la publication, les manifestations d\u8217?int\u233?r\u234?t, l\u8217?accord de confidentialit\u233?, la revue documentaire, la n\u233?gociation, la conclusion, l\u8217?accompagnement post-cession et la cl\u244?ture.\par
+\pard\plain\s0\f0\fs22\sa140 Le c\u233?dant consulte le suivi. Le courtier mandat\u233? ou l\u8217?administration fait avancer les \u233?tapes autoris\u233?es. Une \u233?tape affich\u233?e ne remplace pas les actes juridiques ou les v\u233?rifications professionnelles.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 6. Demandes, signatures et \u233?changes\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Accepter ou refuser une demande\par
+\pard\plain\s0\f0\fs22\sa140 Le c\u233?dant ou le courtier habilit\u233? utilise {\b Accepter} ou {\b Refuser} dans le dossier concern\u233?.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Signer l\u8217?accord de confidentialit\u233?\par
+\pard\plain\s0\f0\fs22\sa140 Apr\u232?s acceptation :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab ouvrez le dossier en attente de signature ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab lisez les conditions de l\u8217?accord affich\u233? ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab saisissez votre nom complet ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab cliquez sur {\b Signer l\u8217?accord de confidentialit\u233?} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab attendez la signature de l\u8217?autre partie.\par
+\pard\plain\s0\f0\fs22\sa140 L\u8217?acqu\u233?reur doit disposer d\u8217?un profil KYC valid\u233? pour signer. Les signatures acqu\u233?reur et c\u233?dant sont distinctes : une seule signature ne r\u233?v\u232?le pas l\u8217?identit\u233? de l\u8217?entreprise.\par
+\pard\plain\s0\f0\fs22\li300\ri180\sb120\sa180\i La signature enregistr\u233?e est un consentement \u233?lectronique nominatif horodat\u233?. Elle n\u8217?est pas pr\u233?sent\u233?e comme une signature \u233?lectronique qualifi\u233?e. V\u233?rifiez avec vos conseils si des formalit\u233?s suppl\u233?mentaires sont n\u233?cessaires.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 \u201?changer des messages\par
+\pard\plain\s0\f0\fs22\sa140 Apr\u232?s signature bilat\u233?rale, les parties utilisent {\b Ouvrir la messagerie}, r\u233?digent leur message puis cliquent sur {\b Envoyer}.\par
+\pard\plain\s0\f0\fs22\sa140 V\u233?rifiez le num\u233?ro de dossier avant chaque envoi. Les conversations priv\u233?es sont r\u233?serv\u233?es aux participants autoris\u233?s ; l\u8217?acc\u232?s administratif \u224? une revue documentaire n\u8217?\u233?quivaut pas \u224? un acc\u232?s g\u233?n\u233?ral aux conversations.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Organiser un rendez-vous\par
+\pard\plain\s0\f0\fs22\sa140 Dans la messagerie du dossier :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab s\u233?lectionnez une date et une heure futures dans {\b Proposer une date et heure (heure locale)} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab cliquez sur {\b Proposer le rendez-vous} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab l\u8217?autre partie utilise {\b Confirmer} ou {\b Refuser} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab consultez la liste pour conna\u238?tre la r\u233?ponse et l\u8217?historique.\par
+\pard\plain\s0\f0\fs22\sa140 Si vous \u234?tes dans des pays diff\u233?rents, confirmez explicitement le fuseau horaire dans vos \u233?changes. Une proposition n\u8217?est pas une confirmation.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 7. Utiliser la data room\par
+\pard\plain\s0\f0\fs22\sa140 La data room regroupe les documents sensibles d\u8217?un dossier. Les pi\u232?ces KYC, les documents g\u233?n\u233?raux d\u8217?une annonce et les documents partag\u233?s dans une op\u233?ration ne doivent pas \u234?tre confondus.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 D\u233?poser un fichier\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab Ouvrez le dossier concern\u233?.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Dans {\b Data room}, s\u233?lectionnez le fichier.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab Cliquez sur {\b Ajouter un document \u224? la data room}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab V\u233?rifiez son apparition et son \u233?tat d\u8217?autorisation.\par
+\pard\plain\s0\f0\fs22\sa140 Formats propos\u233?s : {\b PDF, DOC, DOCX, XLS, XLSX, PNG, JPG et JPEG}. La limite technique par fichier est de {\b 20 Mio} (20 \u215? 1 024 \u215? 1 024 octets). D\u233?posez un fichier \u224? la fois et conservez les originaux dans votre propre espace s\u233?curis\u233?.\par
+\pard\plain\s0\f0\fs22\sa140 Le d\u233?p\u244?t est soumis aux droits de votre compte. Il ne rend pas automatiquement le fichier accessible \u224? l\u8217?acqu\u233?reur.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Autoriser l\u8217?acc\u232?s\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab Le c\u233?dant renseigne une {\b dur\u233?e d\u8217?acc\u232?s de 1 \u224? 365 jours}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Il clique sur {\b Autoriser le partage}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab Le courtier mandat\u233? ou l\u8217?administrateur habilit\u233? utilise {\b Valider par ALP}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab L\u8217?acqu\u233?reur peut ouvrir le lien lorsque les conditions du dossier et du document sont remplies.\par
+\pard\plain\s0\f0\fs22\sa140 La p\u233?riode commence apr\u232?s la derni\u232?re approbation requise. La date de fin appara\u238?t pr\u232?s du document. Si la fen\u234?tre est expir\u233?e ou non ouverte, le t\u233?l\u233?chargement n\u8217?est pas disponible pour l\u8217?acqu\u233?reur ; demandez \u224? ALP ou au c\u233?dant d\u8217?examiner l\u8217?acc\u232?s.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Consulter le journal\par
+\pard\plain\s0\f0\fs22\sa140 Le c\u233?dant et les r\u233?viseurs habilit\u233?s disposent du {\b Journal de consultation}, qui indique le document, l\u8217?utilisateur et la date de consultation enregistr\u233?e.\par
+\pard\plain\s0\f0\fs22\sa140 L\u8217?expiration de l\u8217?acc\u232?s dans l\u8217?application n\u8217?efface pas une copie d\u233?j\u224? t\u233?l\u233?charg\u233?e. Respectez les obligations de confidentialit\u233?, de restitution ou de suppression applicables.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 8. Parcours courtier / conseil\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Prendre en charge une annonce\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab Consultez les annonces accessibles dans votre portefeuille.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Examinez les informations et pi\u232?ces autoris\u233?es.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab Utilisez {\b Accepter le dossier} lorsqu\u8217?il est propos\u233?.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab Traitez ensuite les demandes et les autorisations relevant de votre mandat.\par
+\pard\plain\s0\f0\fs22\sa140 La prise en charge verrouille les modifications du teaser par le c\u233?dant. Les actions de publication ou de suspension ne concernent que les annonces sur lesquelles vous disposez des droits n\u233?cessaires.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 V\u233?rifier les c\u233?dants\par
+\pard\plain\s0\f0\fs22\sa140 Ouvrez {\b V\u233?rification des c\u233?dants} :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab consultez les justificatifs ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab cliquez sur {\b Commencer la v\u233?rification} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab saisissez un motif et utilisez {\b Demander un compl\u233?ment} si n\u233?cessaire ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab sinon, utilisez {\b Valider les pi\u232?ces} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab finalisez s\u233?par\u233?ment avec {\b Valider le compte c\u233?dant}.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 V\u233?rifier les acqu\u233?reurs\par
+\pard\plain\s0\f0\fs22\sa140 Ouvrez {\b KYC acqu\u233?reurs} :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab examinez le profil et les pi\u232?ces ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab commencez la v\u233?rification ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab confirmez les v\u233?rifications manuelles du courriel et du t\u233?l\u233?phone ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab signalez, si n\u233?cessaire, les exigences relatives \u224? l\u8217?origine des fonds ou aux b\u233?n\u233?ficiaires effectifs ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab demandez un compl\u233?ment motiv\u233? ou utilisez {\b Valider le profil KYC}.\par
+\pard\plain\s0\f0\fs22\sa140 Ne cochez une v\u233?rification qu\u8217?apr\u232?s avoir r\u233?ellement effectu\u233? le contr\u244?le correspondant.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Retraiter les donn\u233?es financi\u232?res\par
+\pard\plain\s0\f0\fs22\sa140 Sur un dossier pris en charge, la rubrique {\b Retraitement financier \u183? EBITDA \u215? multiple} permet de saisir le CA retrait\u233?, l\u8217?EBE/EBITDA retrait\u233? et un multiple de {\b 0 \u224? 30}, puis d\u8217?utiliser {\b Enregistrer les indicateurs}.\par
+\pard\plain\s0\f0\fs22\sa140 La valorisation est indicative et ne garantit pas un prix de vente. Une modification ult\u233?rieure des donn\u233?es du dossier invalide la validation ant\u233?rieure.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 9. Parcours administrateur ALP\par
+\pard\plain\s0\f0\fs22\sa140 Ces fonctions sont r\u233?serv\u233?es au r\u244?le {\b SUPER}, sauf celles \u233?galement ouvertes aux r\u233?viseurs habilit\u233?s.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Comptes et indicateurs\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b Administration}, consultez les indicateurs : comptes, KYC et v\u233?rifications \u224? finaliser, annonces actives ou suspendues, op\u233?rations en cours et nouveaux messages \u224? traiter.\par
+\pard\plain\s0\f0\fs22\sa140 Pour cr\u233?er un utilisateur :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab renseignez le courriel, le nom, l\u8217?organisation et le r\u244?le ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab attribuez un mot de passe temporaire ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab cliquez sur {\b Cr\u233?er le compte} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab transmettez les acc\u232?s par un canal appropri\u233?, sans les publier dans une annonce ou un article.\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b Comptes existants}, l\u8217?action {\b Attribuer} permet de remplacer le mot de passe par un mot de passe temporaire. L\u8217?utilisateur devra le changer au prochain acc\u232?s. La liste pr\u233?sente le statut KYC ; la revue des pi\u232?ces s\u8217?effectue dans l\u8217?\u233?cran d\u233?di\u233?.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Annonces et suivi\par
+\pard\plain\s0\f0\fs22\sa140 Depuis le tableau de bord, utilisez {\b Suspendre l\u8217?annonce} ou {\b Publier l\u8217?annonce} selon l\u8217?\u233?tat et vos droits. Consultez le parcours de cession et utilisez {\b Passer \u224? l\u8217?\u233?tape suivante} uniquement apr\u232?s les v\u233?rifications utiles.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Articles et actualit\u233?s\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b Contenus et messages} :\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab cliquez sur {\b Nouvel article} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab renseignez le titre, le th\u232?me, le r\u233?sum\u233? public et le contenu en texte brut ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab cliquez sur {\b Enregistrer le brouillon} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab relisez le contenu, puis utilisez {\b Publier} ;\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab utilisez {\b Modifier} ou {\b D\u233?publier} si n\u233?cessaire.\par
+\pard\plain\s0\f0\fs22\sa140 Th\u232?mes propos\u233?s : cession/transmission, reprise de PME, entrepreneuriat, \u233?conomie et finance. Ne publiez aucune information confidentielle d\u8217?un dossier.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Contacts et r\u233?clamations\par
+\pard\plain\s0\f0\fs22\sa140 Dans la m\u234?me page, consultez les demandes re\u231?ues. Renseignez une note interne et faites \u233?voluer le statut : {\b Nouveau}, {\b En cours}, {\b R\u233?solu}, puis cliquez sur {\b Enregistrer le suivi}.\par
+\pard\plain\s0\f0\fs22\sa140 Cet \u233?cran n\u8217?envoie pas de r\u233?ponse par courriel : utilisez les coordonn\u233?es fournies pour r\u233?pondre hors plateforme.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Partenaires et experts\par
+\pard\plain\s0\f0\fs22\sa140 Dans {\b Partenaires}, utilisez {\b Nouvelle fiche}, renseignez l\u8217?expertise, les coordonn\u233?es et la pr\u233?sentation, puis {\b Enregistrer}.\par
+\pard\plain\s0\f0\fs22\sa140 Les fiches peuvent \u234?tre {\b modifi\u233?es}, {\b suspendues} ou {\b r\u233?activ\u233?es}. La suspension \u233?vite une suppression et retire la fiche de la consultation normale.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 10. Notifications, partenaires et assistance\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Notifications\par
+\pard\plain\s0\f0\fs22\sa140 Consultez {\b Notifications r\u233?centes} dans le tableau de bord. Utilisez {\b Marquer comme lue} pour suivre les alertes d\u233?j\u224? trait\u233?es.\par
+\pard\plain\s0\f0\fs22\sa140 Les courriels de notification d\u233?pendent de la configuration SMTP du serveur. L\u8217?absence de courriel ne signifie pas qu\u8217?aucune action n\u8217?est attendue : consultez l\u8217?application. Les SMS ne sont pas un canal \u224? consid\u233?rer comme disponible dans cette version.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Annuaire des partenaires\par
+\pard\plain\s0\f0\fs22\sa140 Le bouton {\b Partenaires} donne acc\u232?s \u224? l\u8217?annuaire lorsque votre profil et vos droits le permettent. Si un message indique qu\u8217?une validation est n\u233?cessaire, faites finaliser votre profil aupr\u232?s d\u8217?ALP.\par
+\pard\plain\s0\f0\fs22\sa140 L\u8217?annuaire couvre notamment experts-comptables, avocats, notaires, conseillers fiscaux, \u233?valuateurs, banques et consultants.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Contacter ALP\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 1.\tab Ouvrez {\b Contact / r\u233?clamation} depuis le pied de page.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 2.\tab Choisissez {\b Demande de contact} ou {\b R\u233?clamation}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 3.\tab Renseignez votre nom, votre courriel, l\u8217?objet et le message ; le t\u233?l\u233?phone est facultatif.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 4.\tab Cliquez sur {\b Envoyer \u224? ALP}.\par
+\pard\plain\s0\f0\fs22\li420\fi-420\tx420\sa80 5.\tab V\u233?rifiez le message affich\u233?.\par
+\pard\plain\s0\f0\fs22\sa140 Le formulaire conserve la demande pour traitement par ALP. Il n\u8217?envoie pas automatiquement de courriel. Ne transmettez jamais votre mot de passe et \u233?vitez d\u8217?y joindre ou d\u8217?y recopier des informations sensibles non n\u233?cessaires.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 11. Pr\u233?f\u233?rences et limites actuelles\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Langue\par
+\pard\plain\s0\f0\fs22\sa140 En pied de page, choisissez {\b Fran\u231?ais} ou {\b English}, puis cliquez sur {\b Appliquer / Apply}. Le choix est conserv\u233? dans la session ; une d\u233?connexion, une expiration ou un red\u233?marrage du serveur peut n\u233?cessiter de le s\u233?lectionner \u224? nouveau.\par
+\pard\plain\s0\f0\fs22\sa140 {\b La traduction est partielle :} les \u233?crans d\u8217?inscription et de connexion, leurs libell\u233?s de th\u232?me et les \u233?l\u233?ments partag\u233?s associ\u233?s ont \u233?t\u233? localis\u233?s. D\u8217?autres pages, libell\u233?s m\u233?tier et contenus restent en fran\u231?ais. Le s\u233?lecteur ne traduit pas automatiquement les annonces, articles ou messages saisis par les utilisateurs.\par
+\pard\plain\s0\f0\fs22\sa140 Par pr\u233?caution, changez de langue avant de remplir un formulaire : la reconstruction de la page peut faire perdre des saisies non enregistr\u233?es.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Apparence\par
+\pard\plain\s0\f0\fs22\sa140 Utilisez {\b Mode sombre / Mode clair}. Sur les \u233?crans localis\u233?s, les boutons deviennent {\b Dark mode / Light mode}. Cette pr\u233?f\u233?rence est conserv\u233?e dans le navigateur, pas n\u233?cessairement sur vos autres appareils.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Pays et devises\par
+\pard\plain\s0\f0\fs22\sa140 Choisissez le pays et la devise correspondant \u224? l\u8217?entreprise ou \u224? votre capacit\u233? d\u8217?investissement. Lisez toujours le code de devise associ\u233? aux montants, par exemple XOF, EUR ou USD.\par
+\pard\plain\s0\f0\fs22\sa140 {\b Aucune conversion automatique n\u8217?est effectu\u233?e.} Un budget dans une devise ne doit pas \u234?tre compar\u233? directement \u224? un prix dans une autre. Pour les filtres financiers, s\u233?lectionnez la devise voulue ; un montant identique dans deux devises n\u8217?a pas la m\u234?me valeur.\par
+\pard\plain\s3\f0\b\cf1\fs25\keepn\sb240\sa140 Informations l\u233?gales et port\u233?e du service\par
+\pard\plain\s0\f0\fs22\sa140 Les pages l\u233?gales sont accessibles en pied de page. Certains textes et coordonn\u233?es restent provisoires ou \u224? compl\u233?ter avant ouverture au public. Ce guide ne remplace ni les conditions applicables, ni un mandat, ni un conseil juridique, fiscal ou financier.\par
+\pard\plain\s0\f0\fs22\sa140 La plateforme ne garantit ni la conclusion d\u8217?une cession, ni son financement, ni une valorisation.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 12. R\u233?soudre un probl\u232?me courant\par
+\trowd\trgaph100\trleft0\trhdr\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Probl\u232?me\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b V\u233?rifications et actions\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Un champ ou un bouton signale une erreur\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Lisez le message, corrigez les champs concern\u233?s, puis soumettez une seule fois \u224? nouveau.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 La session a expir\u233? ou la vue ne peut pas \u234?tre restaur\u233?e\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Ouvrez \u224? nouveau l\u8217?accueil ou la connexion depuis leur adresse, puis reconnectez-vous. V\u233?rifiez si la pr\u233?c\u233?dente action a \u233?t\u233? enregistr\u233?e avant de la r\u233?p\u233?ter.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Une page affiche HTTP 500\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Notez l\u8217?heure, l\u8217?adresse de la page et l\u8217?action r\u233?alis\u233?e. Essayez une page fra\u238?che. Si l\u8217?erreur persiste, signalez-la \u224? ALP ; ne la consid\u233?rez pas comme une confirmation de r\u233?ussite.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 La page ne s\u8217?ouvre pas\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rifiez l\u8217?adresse et la connexion. Sur un autre poste, remplacez {\f1 localhost} par l\u8217?adresse serveur communiqu\u233?e par ALP.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 L\u8217?identit\u233? de l\u8217?entreprise est encore masqu\u233?e\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rifiez la validation KYC et les signatures des deux parties dans ce dossier.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Un document est visible sans lien de t\u233?l\u233?chargement\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rifiez l\u8217?autorisation du c\u233?dant, la validation ALP et la date d\u8217?expiration. Contactez le responsable du dossier si n\u233?cessaire.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Un fichier est refus\u233?\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rifiez le format propos\u233?, la taille maximale de 20 Mio, le type de pi\u232?ce choisi et la lisibilit\u233? du fichier. Ne changez pas simplement son extension.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Le teaser n\u8217?est plus modifiable\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rifiez s\u8217?il a \u233?t\u233? pris en charge par un courtier ; demandez-lui la correction.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Aucun r\u233?sultat de recherche\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Retirez les filtres avec {\b R\u233?initialiser}. V\u233?rifiez la devise et les restrictions des crit\u232?res financiers avant NDA.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Aucun courriel re\u231?u\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Consultez les notifications internes. L\u8217?envoi par courriel d\u233?pend de la configuration du serveur.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Aucun code KYC re\u231?u\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Aucun OTP n\u8217?est envoy\u233? dans cette version ; la v\u233?rification des coordonn\u233?es est manuelle.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Mot de passe oubli\u233?\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Contactez ALP pour l\u8217?attribution d\u8217?un mot de passe temporaire ; aucun parcours public de r\u233?initialisation autonome n\u8217?est d\u233?crit ici.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Une rubrique reste en fran\u231?ais\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 La couverture bilingue n\u8217?est pas encore compl\u232?te.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 L\u8217?affichage ou un libell\u233? para\u238?t ancien\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Enregistrez les donn\u233?es en cours, puis actualisez la page avec Ctrl+F5 sous Windows. Si le probl\u232?me persiste, pr\u233?cisez le navigateur et sa version \u224? ALP.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Un bouton d\u8217?administration est absent\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rifiez le r\u244?le connect\u233?. Ne cr\u233?ez pas un autre compte pour contourner les droits ; contactez l\u8217?administrateur.\cell
+\row
+\pard\plain\s0\f0\fs22\sa100\par
+\pard\plain\s0\f0\fs22\sa140 Pour un signalement, indiquez votre r\u244?le, le num\u233?ro du dossier si disponible, la page, l\u8217?heure et le texte du message. Masquez les informations confidentielles dans les captures d\u8217?\u233?cran. Ne transmettez jamais de mot de passe ni de cookie de session.\par
+\pard\plain\s2\f0\b\cf1\fs30\keepn\sb240\sa140 13. Lexique\par
+\trowd\trgaph100\trleft0\trhdr\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\clcbpat3\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Terme\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 \b Signification\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Teaser\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Pr\u233?sentation courte et anonymis\u233?e d\u8217?une entreprise.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 C\u233?dant\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Personne ou organisation qui pr\u233?pare la transmission ou la vente d\u8217?une entreprise.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Acqu\u233?reur / repreneur\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Personne ou organisation int\u233?ress\u233?e par l\u8217?acquisition d\u8217?une entreprise.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 KYC\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 V\u233?rification de l\u8217?identit\u233?, des informations et des justificatifs d\u8217?un utilisateur.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 NDA\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Accord de confidentialit\u233? sign\u233? pour un dossier pr\u233?cis.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 Data room\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Espace documentaire d\u8217?une op\u233?ration, soumis \u224? des droits d\u8217?acc\u232?s.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 CA\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Chiffre d\u8217?affaires.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 EBE / EBITDA\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Indicateurs d\u8217?exploitation utilis\u233?s dans le diagnostic financier ; leurs retraitements doivent \u234?tre expliqu\u233?s par les professionnels concern\u233?s.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 RCCM\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 Registre du commerce et du cr\u233?dit mobilier, ou registre \u233?quivalent selon le pays.\cell
+\row
+\trowd\trgaph100\trleft0\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx4820\clbrdrt\brdrs\brdrw6\clbrdrl\brdrs\brdrw6\clbrdrb\brdrs\brdrw6\clbrdrr\brdrs\brdrw6\cellx9639
+\pard\plain\intbl\f0\fs20\sa80\sb80 SUPER\cell
+\pard\plain\intbl\f0\fs20\sa80\sb80 R\u244?le d\u8217?administration de la plateforme.\cell
+\row
+}

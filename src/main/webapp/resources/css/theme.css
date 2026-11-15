@@ -1,0 +1,251 @@
+/* Keep theme styles in the same versioned JSF library as app.css.
+   Dark palette derived from the Celadon (templatemo 633) claymorphism look:
+   deep slate canvas, soft raised plates and a muted jade accent. */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --canvas: #161E2A;
+    --plate: #1F2938;
+    --plate-2: #1A2331;
+    --sunk: #131B26;
+    --ink: #E6EDF7;
+    --ink-2: #A3B1C6;
+    --line: rgba(255, 255, 255, .08);
+    --line-strong: rgba(255, 255, 255, .16);
+
+    --muted: var(--ink-2);
+    --paper: var(--canvas);
+    --green: #8ADBBE;
+    --green-dark: #A6E7CE;
+    --mint: #233A34;
+    --white: #E6EDF7;
+    --gold: #D9B878;
+    --surface: var(--plate);
+    --surface-subtle: var(--plate-2);
+    --input-border: rgba(255, 255, 255, .12);
+    --label: #C4D0E0;
+    --focus: rgba(138, 219, 190, .35);
+    --muted-surface: var(--sunk);
+    --badge-surface: #233A34;
+    --nda-surface: #322C22;
+    --nda-ink: #E1D7BC;
+    --error: #F0A69C;
+    --pending: #DFBF7C;
+    --danger: #F0A19A;
+    --danger-line: #4A3330;
+    --glow: rgba(124, 207, 176, .2);
+
+    --clay: 0 22px 38px -20px rgba(0, 0, 0, .7), 0 8px 16px -10px rgba(0, 0, 0, .45), inset 2px 3px 4px 0 rgba(255, 255, 255, .06), inset -3px -5px 9px 0 rgba(0, 0, 0, .4);
+    --clay-sm: 0 12px 22px -13px rgba(0, 0, 0, .65), inset 2px 2px 3px 0 rgba(255, 255, 255, .06), inset -2px -3px 6px 0 rgba(0, 0, 0, .38);
+    --well: inset 4px 5px 11px -3px rgba(0, 0, 0, .6), inset -2px -3px 6px 0 rgba(255, 255, 255, .06);
+    --gloss: linear-gradient(180deg, #2B3648 0%, #263143 34%, #202A38 66%, #1A2330 100%);
+    --gloss-plate: linear-gradient(180deg, #2A3547 0%, #263143 34%, #212B39 66%, #1B2431 100%);
+    --gloss-down: linear-gradient(180deg, #131C28 0%, #1A2330 46%, #223041 72%, #2B384B 100%);
+    --gloss-jade: linear-gradient(180deg, #C3EFDF 0%, #ACEBDA 34%, #89D8BB 66%, #58B392 100%);
+    /* jade dans l'axe du modele, reserve a la barre de navigation */
+    --gloss-jade-nav: linear-gradient(90deg, #C3EFDF 0%, #B0E7D5 30%, #8EDABE 70%, #74C9AA 100%);
+    --gloss-jade-down: linear-gradient(180deg, #4FA488 0%, #63C0A0 46%, #89D6B9 72%, #AAE3CD 100%);
+    --lip: inset 0 1px 0 0 rgba(255, 255, 255, .08), inset 0 -1px 0 0 rgba(0, 0, 0, .5);
+    --lip-jade: inset 0 1px 0 0 rgba(255, 255, 255, .6), inset 0 -1px 0 0 rgba(16, 72, 56, .45);
+    --lift: 0 10px 18px -11px rgba(0, 0, 0, .85), 0 2px 4px -2px rgba(0, 0, 0, .5);
+    --lift-hi: 0 20px 30px -15px rgba(0, 0, 0, .85), 0 5px 9px -4px rgba(0, 0, 0, .5);
+    --lift-jade: 0 12px 20px -11px rgba(42, 122, 98, .8), 0 2px 4px -2px rgba(0, 0, 0, .45);
+    --lift-jade-hi: 0 22px 32px -15px rgba(42, 122, 98, .9), 0 5px 9px -4px rgba(0, 0, 0, .5);
+    --sheen: linear-gradient(100deg, rgba(255, 255, 255, 0) 36%, rgba(255, 255, 255, .12) 48%, rgba(255, 255, 255, 0) 61%);
+    --sheen-soft: linear-gradient(100deg, rgba(255, 255, 255, 0) 36%, rgba(255, 255, 255, .3) 48%, rgba(255, 255, 255, 0) 61%);
+    --sink: 0 1px 2px -1px rgba(0, 0, 0, .6), inset 0 2px 5px 0 rgba(0, 0, 0, .55);
+
+    --shadow-raised: var(--clay);
+    --shadow-soft: var(--clay-sm);
+    --shadow-inset: var(--well);
+    --shadow-hover: 0 26px 44px -22px rgba(0, 0, 0, .85), 0 10px 18px -12px rgba(0, 0, 0, .6), inset 2px 3px 4px 0 rgba(255, 255, 255, .08), inset -3px -5px 9px 0 rgba(0, 0, 0, .45);
+}
+
+:root[data-theme="dark"] body {
+    background: var(--canvas);
+    color: var(--ink);
+}
+
+:root[data-theme="dark"] body::before {
+    background:
+        radial-gradient(48vw 40vw at 12% 6%, rgba(59, 91, 135, .45), transparent 62%),
+        radial-gradient(40vw 36vw at 88% 22%, rgba(124, 207, 176, .16), transparent 64%),
+        radial-gradient(52vw 44vw at 60% 96%, rgba(232, 115, 92, .08), transparent 66%);
+}
+
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] .brand,
+:root[data-theme="dark"] .metric strong {
+    color: var(--ink);
+}
+
+.theme-toggle { flex: 0 0 auto; }
+.auth-theme-toggle { position: absolute; top: 18px; right: 18px; }
+
+:root[data-theme="dark"] .public-header,
+:root[data-theme="dark"] .topbar {
+    background: linear-gradient(180deg, rgba(38, 49, 66, .94) 0%, rgba(31, 41, 56, .94) 100%);
+    box-shadow: var(--lift), var(--lip);
+}
+
+:root[data-theme="dark"] .public-header.stuck,
+:root[data-theme="dark"] .topbar.stuck {
+    box-shadow: 0 18px 28px -16px rgba(0, 0, 0, .85), 0 3px 5px -2px rgba(0, 0, 0, .5), var(--lip);
+}
+
+/* la barre de navigation du template devient un état survolé discret */
+:root[data-theme="dark"] .public-header nav > a.button:hover {
+    color: var(--ink);
+    background-color: rgba(19, 27, 38, .7);
+}
+
+:root[data-theme="dark"] .site-footer-links a {
+    color: var(--ink);
+    background-image: var(--sheen), var(--gloss);
+    box-shadow: 0 6px 11px -8px rgba(0, 0, 0, .85), var(--lip);
+}
+
+:root[data-theme="dark"] .brand span { color: var(--ink); }
+:root[data-theme="dark"] .stat { background: var(--sunk); }
+:root[data-theme="dark"] .disc {
+    background: linear-gradient(158deg, #2B3648, var(--plate) 48%, #1C2534);
+    box-shadow: 0 18px 28px -16px rgba(0, 0, 0, .75), inset 2px 3px 4px rgba(255, 255, 255, .08), inset -3px -5px 10px rgba(0, 0, 0, .45);
+}
+
+:root[data-theme="dark"] .auth-page {
+    background: radial-gradient(circle at 75% 10%, var(--glow), transparent 40%), var(--canvas);
+}
+
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .public-hero,
+:root[data-theme="dark"] .home-hero-note,
+:root[data-theme="dark"] .metric,
+:root[data-theme="dark"] .panel,
+:root[data-theme="dark"] .listing-card,
+:root[data-theme="dark"] .deal-card,
+:root[data-theme="dark"] .faq-item,
+:root[data-theme="dark"] .legal-toc,
+:root[data-theme="dark"] .search-filters,
+:root[data-theme="dark"] .empty-state,
+:root[data-theme="dark"] .message,
+:root[data-theme="dark"] .nda-terms,
+:root[data-theme="dark"] .registration-details,
+:root[data-theme="dark"] .domain-fieldset,
+:root[data-theme="dark"] .data-table,
+:root[data-theme="dark"] .site-footer-inner {
+    background: linear-gradient(160deg, #273244, var(--plate) 46%, var(--plate-2));
+    border: 0;
+    box-shadow: var(--clay);
+}
+
+:root[data-theme="dark"] .public-hero {
+    background:
+        radial-gradient(ellipse at 92% 8%, rgba(124, 207, 176, .16), transparent 46%),
+        linear-gradient(158deg, #273244, var(--plate) 46%, var(--plate-2));
+}
+
+:root[data-theme="dark"] .auth-card {
+    background: linear-gradient(158deg, #273244, #202A39 46%, #1A2330);
+    box-shadow: var(--clay);
+}
+
+:root[data-theme="dark"] .listing-card,
+:root[data-theme="dark"] .faq-item,
+:root[data-theme="dark"] .deal-card,
+:root[data-theme="dark"] .home-service-card,
+:root[data-theme="dark"] .home-insight-card,
+:root[data-theme="dark"] .home-listing-card,
+:root[data-theme="dark"] .search-filters,
+:root[data-theme="dark"] .empty-state,
+:root[data-theme="dark"] .registration-details,
+:root[data-theme="dark"] .domain-fieldset,
+:root[data-theme="dark"] .data-table {
+    box-shadow: var(--clay-sm);
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+    border: 0;
+    color: var(--ink);
+    background-color: var(--sunk);
+    box-shadow: var(--well);
+}
+
+:root[data-theme="dark"] label { color: var(--label); }
+:root[data-theme="dark"] .muted,
+:root[data-theme="dark"] .tiny,
+:root[data-theme="dark"] .eyebrow { color: var(--ink-2); }
+:root[data-theme="dark"] .eyebrow { color: var(--green); }
+
+:root[data-theme="dark"] .button.primary {
+    color: #102B22;
+    background-image: var(--sheen-soft), var(--gloss-jade);
+}
+
+:root[data-theme="dark"] .button.outline,
+:root[data-theme="dark"] .button.danger {
+    color: var(--ink);
+    background-image: var(--sheen), var(--gloss);
+}
+
+:root[data-theme="dark"] .button.danger { color: var(--danger); }
+
+:root[data-theme="dark"] .legal-form .ui-button,
+:root[data-theme="dark"] .language-form .ui-button,
+:root[data-theme="dark"] .language-form input[type="submit"],
+:root[data-theme="dark"] .language-form button {
+    color: var(--ink);
+    background-image: var(--sheen), var(--gloss);
+    box-shadow: var(--lift), var(--lip);
+}
+
+:root[data-theme="dark"] .data-table th { background: rgba(19, 27, 38, .7); }
+:root[data-theme="dark"] .data-table tbody tr:nth-child(even) { background: rgba(19, 27, 38, .45); }
+:root[data-theme="dark"] .data-table th,
+:root[data-theme="dark"] .data-table td { border-bottom-color: var(--line); }
+
+:root[data-theme="dark"] .site-footer { background: transparent; }
+
+/* la navigation en liens texte garde sa couleur secondaire, elle s'arrose au survol */
+:root[data-theme="dark"] .public-header nav > a.button { color: var(--ink-2); background-color: transparent; box-shadow: none; }
+
+:root[data-theme="dark"] .home-join {
+    color: #F2FBF7;
+    background:
+        radial-gradient(ellipse at 88% 10%, rgba(124, 207, 176, .22), transparent 52%),
+        linear-gradient(155deg, #2F6B57, #275747 55%, #1E4438);
+}
+:root[data-theme="dark"] .home-join h2 { color: inherit; }
+:root[data-theme="dark"] .home-join .muted { color: rgba(240, 251, 246, .82); }
+:root[data-theme="dark"] .home-join-actions .button.outline { color: #F2FBF7; }
+
+:root[data-theme="dark"] .privacy-badge,
+:root[data-theme="dark"] .tag {
+    color: #B8EEDB;
+    background: linear-gradient(160deg, #2A473F, #24403A);
+    box-shadow: var(--clay-sm);
+}
+
+:root[data-theme="dark"] .nda-terms { color: var(--nda-ink); background: var(--nda-surface); }
+:root[data-theme="dark"] .pending-approval,
+:root[data-theme="dark"] .match { color: var(--pending); }
+:root[data-theme="dark"] .messages { color: var(--error); }
+:root[data-theme="dark"] .flash.success { color: #B8EEDB; background: #233A34; }
+:root[data-theme="dark"] .flash.error { color: var(--error); background: #3A2624; }
+:root[data-theme="dark"] .flash.warning { color: var(--pending); background: var(--nda-surface); }
+:root[data-theme="dark"] .legal-status { color: var(--nda-ink) !important; background: var(--nda-surface); }
+:root[data-theme="dark"] .verification-card .status-badge { color: var(--pending); background: var(--nda-surface); }
+:root[data-theme="dark"] .financials { background: var(--sunk); }
+:root[data-theme="dark"] .financials strong { color: var(--ink); }
+:root[data-theme="dark"] .faq-item summary { color: var(--ink); }
+:root[data-theme="dark"] .faq-item[open] summary { color: var(--green); }
+:root[data-theme="dark"] .faq-item summary::after {
+    background:
+        linear-gradient(var(--ink), var(--ink)) center / 13px 2.4px no-repeat,
+        linear-gradient(var(--ink), var(--ink)) center / 2.4px 13px no-repeat,
+        var(--sunk);
+}
+:root[data-theme="dark"] .service-number { color: var(--green); background: var(--sunk); }

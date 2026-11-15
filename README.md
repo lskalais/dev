@@ -2,6 +2,10 @@
 
 Marketplace confidentielle de mise en relation entre cédants, acquéreurs/investisseurs et courtiers M&A.
 
+## Documentation utilisateur
+
+Le [guide utilisateur](GUIDE_UTILISATEUR.md) présente les parcours des visiteurs, acquéreurs, cédants, courtiers et administrateurs, les règles d’accès aux documents ainsi que les limites actuelles de la plateforme.
+
 ## Stack
 
 - Java 17+

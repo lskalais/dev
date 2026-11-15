@@ -6,17 +6,22 @@
 <h:head>
     <title>Article | Africa Legacy Partners</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&amp;family=Albert+Sans:wght@400;500;600&amp;display=swap"/>
     <h:outputStylesheet library="css" name="app.css"/>
     <h:outputStylesheet library="css" name="theme.css"/>
-    <h:outputScript library="js" name="theme.js" target="head"/>
+    <h:outputScript library="js" name="theme-i18n.js" target="head"/>
 </h:head>
-<h:body>
+<h:body class="public-page">
 <f:metadata>
     <f:viewParam name="id" value="#{marketplace.publicArticleId}"/>
 </f:metadata>
-<header class="topbar">
+<header class="public-header">
     <h:link outcome="home" styleClass="brand" value="Africa Legacy Partners"/>
-    <h:link outcome="acheter" value="Opportunités" styleClass="button outline small"/>
+    <nav aria-label="Navigation principale">
+        <h:link outcome="acheter" value="Opportunités" styleClass="button outline small"/>
+    </nav>
 </header>
 <main class="public-container">
     <h:panelGroup layout="block" styleClass="panel article-detail" rendered="#{not empty marketplace.publicArticle}">

@@ -1,149 +1,154 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<f:view xmlns:f="jakarta.faces.core" locale="#{marketplace.locale}">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
       xmlns:pt="jakarta.faces.passthrough"
       xmlns:ui="jakarta.faces.facelets">
 <h:head>
-    <title>Créer un compte | Africa Legacy Market</title>
+    <title>#{msg['auth.createAccount.title']}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&amp;family=Albert+Sans:wght@400;500;600&amp;display=swap"/>
     <h:outputStylesheet library="css" name="app.css"/>
     <h:outputStylesheet library="css" name="theme.css"/>
-    <h:outputScript library="js" name="theme.js" target="head"/>
+    <h:outputScript library="js" name="theme-i18n.js" target="head"/>
     <h:outputScript library="js" name="buyer-registration.js" target="head"/>
 </h:head>
 <h:body class="auth-page">
 <main class="auth-card registration-card">
     <button class="button outline small theme-toggle auth-theme-toggle" type="button" data-theme-toggle="true"
-            aria-pressed="false">Mode sombre</button>
+            aria-pressed="false" data-light-label="#{msg['auth.theme.light']}"
+            data-dark-label="#{msg['auth.theme.dark']}">#{msg['auth.theme.dark']}</button>
     <a class="brand" href="home.xhtml">Africa Legacy <span>Market</span></a>
-    <p class="eyebrow">REJOINDRE LE RÉSEAU</p>
-    <h1>Un espace adapté à votre rôle.</h1>
+    <p class="eyebrow">#{msg['auth.register.eyebrow']}</p>
+    <h1>#{msg['auth.register.heading']}</h1>
     <h:form id="registration" styleClass="registration-form">
         <h:messages globalOnly="false" styleClass="messages"/>
         <div class="registration-grid">
         <div>
-        <h:outputLabel for="name" value="Nom complet / représentant légal"/>
+        <h:outputLabel for="name" value="#{msg['auth.register.name']}"/>
         <h:inputText id="name" value="#{marketplace.fullName}" required="true" maxlength="160"/>
         </div>
         <div>
-        <h:outputLabel for="email" value="Adresse courriel de contact"/>
+        <h:outputLabel for="email" value="#{msg['auth.register.email']}"/>
         <h:inputText id="email" value="#{marketplace.email}" required="true"
                      autocomplete="username" pt:type="email"/>
         </div>
         <div class="registration-role">
-        <h:outputLabel for="role" value="Je suis"/>
+        <h:outputLabel for="role" value="#{msg['auth.register.role']}"/>
         <h:selectOneMenu id="role" value="#{marketplace.role}" pt:data-registration-role="true">
-            <f:selectItem itemValue="BUYER" itemLabel="Acquéreur / investisseur"/>
-            <f:selectItem itemValue="SELLER" itemLabel="Cédant / propriétaire"/>
-            <f:selectItem itemValue="BROKER" itemLabel="Courtier / conseil M&amp;A"/>
+            <f:selectItem itemValue="BUYER" itemLabel="#{msg['auth.register.role.buyer']}"/>
+            <f:selectItem itemValue="SELLER" itemLabel="#{msg['auth.register.role.seller']}"/>
+            <f:selectItem itemValue="BROKER" itemLabel="#{msg['auth.register.role.broker']}"/>
         </h:selectOneMenu>
         </div>
         <div data-buyer-account-type="true">
-        <h:outputLabel for="buyerType" value="Type de compte acquéreur"/>
+        <h:outputLabel for="buyerType" value="#{msg['auth.register.buyerType']}"/>
         <h:selectOneMenu id="buyerType" value="#{marketplace.buyerType}"
                          pt:data-buyer-type-selector="true">
-            <f:selectItem itemValue="INDIVIDUAL" itemLabel="Personne physique"/>
-            <f:selectItem itemValue="COMPANY" itemLabel="Personne morale"/>
+            <f:selectItem itemValue="INDIVIDUAL" itemLabel="#{msg['auth.register.individual']}"/>
+            <f:selectItem itemValue="COMPANY" itemLabel="#{msg['auth.register.company']}"/>
         </h:selectOneMenu>
         </div>
         <div data-buyer-organization="true">
-        <h:outputLabel for="organization" value="Dénomination sociale / entreprise / cabinet"/>
+        <h:outputLabel for="organization" value="#{msg['auth.register.organization']}"/>
         <h:inputText id="organization" value="#{marketplace.organization}" maxlength="160"/>
         </div>
         </div>
 
         <fieldset class="registration-details" data-buyer-details="INDIVIDUAL">
-            <legend>Profil acquéreur · personne physique</legend>
+            <legend>#{msg['auth.register.individualProfile']}</legend>
             <div class="registration-grid">
                 <div>
-                    <h:outputLabel for="buyerNationality" value="Nationalité"/>
+                    <h:outputLabel for="buyerNationality" value="#{msg['auth.register.nationality']}"/>
                     <h:inputText id="buyerNationality" value="#{marketplace.buyerNationality}" maxlength="100"/>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerResidence" value="Pays de résidence"/>
+                    <h:outputLabel for="buyerResidence" value="#{msg['auth.register.residence']}"/>
                     <h:inputText id="buyerResidence" value="#{marketplace.buyerResidence}" maxlength="120"/>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerPhone" value="Téléphone de contact"/>
+                    <h:outputLabel for="buyerPhone" value="#{msg['auth.register.phone']}"/>
                     <h:inputText id="buyerPhone" value="#{marketplace.buyerPhone}" maxlength="40"
-                                 pt:type="tel" autocomplete="tel"/>
+                                 autocomplete="tel"/>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerProfession" value="Profession"/>
+                    <h:outputLabel for="buyerProfession" value="#{msg['auth.register.profession']}"/>
                     <h:inputText id="buyerProfession" value="#{marketplace.buyerProfession}" maxlength="160"/>
                 </div>
                 <div>
-                    <h:outputLabel for="financialCapacityCurrencyCode" value="Devise de la capacité financière"/>
+                    <h:outputLabel for="financialCapacityCurrencyCode" value="#{msg['auth.register.financialCurrency']}"/>
                     <h:selectOneMenu id="financialCapacityCurrencyCode"
-                                     value="#{marketplace.financialCapacityCurrencyCode}" required="true">
+                                     value="#{marketplace.financialCapacityCurrencyCode}">
                         <f:selectItems value="#{marketplace.currencyOptions}"/>
                     </h:selectOneMenu>
                 </div>
                 <div>
-                    <h:outputLabel for="indicativeFinancialCapacity" value="Capacité financière indicative (facultatif)"/>
+                    <h:outputLabel for="indicativeFinancialCapacity" value="#{msg['auth.register.financialCapacity']}"/>
                     <h:inputText id="indicativeFinancialCapacity"
                                  value="#{marketplace.indicativeFinancialCapacity}"
                                  pt:type="number" pt:min="0" pt:step="0.01"/>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerSectors" value="Secteurs recherchés (facultatif)"/>
+                    <h:outputLabel for="buyerSectors" value="#{msg['auth.register.sectors']}"/>
                     <h:inputText id="buyerSectors" value="#{marketplace.buyerSectors}"
-                                 maxlength="500" pt:placeholder="Ex. agriculture, industrie, services"/>
+                                 maxlength="500" pt:placeholder="#{msg['auth.register.sectorsPlaceholder']}"/>
                 </div>
             </div>
         </fieldset>
 
         <fieldset class="registration-details" data-buyer-details="COMPANY">
-            <legend>Profil acquéreur · personne morale</legend>
+            <legend>#{msg['auth.register.companyProfile']}</legend>
             <div class="registration-grid">
                 <div>
-                    <h:outputLabel for="buyerCompanyPhone" value="Téléphone du représentant légal"/>
+                    <h:outputLabel for="buyerCompanyPhone" value="#{msg['auth.register.representativePhone']}"/>
                     <h:inputText id="buyerCompanyPhone" value="#{marketplace.buyerPhone}" maxlength="40"
-                                 pt:type="tel" autocomplete="tel"/>
+                                 autocomplete="tel"/>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerLegalForm" value="Forme juridique"/>
+                    <h:outputLabel for="buyerLegalForm" value="#{msg['auth.register.legalForm']}"/>
                     <h:inputText id="buyerLegalForm" value="#{marketplace.buyerLegalForm}" maxlength="100"
-                                 pt:placeholder="Ex. SARL, SA, SAS"/>
+                                 pt:placeholder="#{msg['auth.register.legalFormPlaceholder']}"/>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerCountryCode" value="Pays d’immatriculation"/>
-                    <h:selectOneMenu id="buyerCountryCode" value="#{marketplace.buyerCountryCode}" required="true">
-                        <f:selectItem itemValue="" itemLabel="Choisir un pays" noSelectionOption="true"/>
+                    <h:outputLabel for="buyerCountryCode" value="#{msg['auth.register.country']}"/>
+                    <h:selectOneMenu id="buyerCountryCode" value="#{marketplace.buyerCountryCode}">
+                        <f:selectItem itemValue="" itemLabel="#{msg['auth.register.chooseCountry']}" noSelectionOption="true"/>
                         <f:selectItems value="#{marketplace.countryOptions}"/>
                     </h:selectOneMenu>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerRegistrationNumber" value="N° RCCM ou registre équivalent"/>
+                    <h:outputLabel for="buyerRegistrationNumber" value="#{msg['auth.register.registrationNumber']}"/>
                     <h:inputText id="buyerRegistrationNumber" value="#{marketplace.buyerRegistrationNumber}"
                                  maxlength="120"/>
                 </div>
                 <div>
-                    <h:outputLabel for="buyerTaxIdentifier" value="N° fiscal"/>
+                    <h:outputLabel for="buyerTaxIdentifier" value="#{msg['auth.register.taxNumber']}"/>
                     <h:inputText id="buyerTaxIdentifier" value="#{marketplace.buyerTaxIdentifier}"
                                  maxlength="120"/>
                 </div>
                 <div class="registration-span-2">
-                    <h:outputLabel for="buyerHeadOffice" value="Siège social"/>
+                    <h:outputLabel for="buyerHeadOffice" value="#{msg['auth.register.headOffice']}"/>
                     <h:inputText id="buyerHeadOffice" value="#{marketplace.buyerHeadOffice}" maxlength="240"/>
                 </div>
                 <div class="registration-span-2">
-                    <h:outputLabel for="buyerRepresentativeFunction" value="Fonction du représentant légal"/>
+                    <h:outputLabel for="buyerRepresentativeFunction" value="#{msg['auth.register.representativeFunction']}"/>
                     <h:inputText id="buyerRepresentativeFunction"
                                  value="#{marketplace.buyerRepresentativeFunction}" maxlength="120"/>
                 </div>
             </div>
         </fieldset>
 
-        <h:outputLabel for="password" value="Mot de passe (12 caractères minimum)"/>
+        <h:outputLabel for="password" value="#{msg['auth.register.password']}"/>
         <h:inputSecret id="password" value="#{marketplace.password}" required="true"
                        autocomplete="new-password"/>
-        <p class="tiny">En créant un compte, vous acceptez de traiter confidentiellement les informations échangées. Consultez nos <a href="legal.xhtml#donnees-personnelles">informations relatives aux données personnelles</a>.</p>
-        <h:commandButton value="Créer mon compte" action="#{marketplace.register}" styleClass="button primary full"/>
+        <p class="tiny">#{msg['auth.register.confidentiality']} <a href="legal.xhtml#donnees-personnelles">#{msg['auth.register.personalDataLink']}</a>.</p>
+        <h:commandButton value="#{msg['auth.register.create']}" action="#{marketplace.register}" styleClass="button primary full"/>
     </h:form>
-    <p class="auth-switch">Déjà inscrit ? <a href="login.xhtml">Se connecter</a></p>
+    <p class="auth-switch">#{msg['auth.register.alreadyRegistered']} <a href="login.xhtml">#{msg['common.login']}</a></p>
 </main>
 <ui:include src="/WEB-INF/includes/footer.xhtml"/>
 </h:body>
 </html>
+</f:view>

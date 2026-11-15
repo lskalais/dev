@@ -547,14 +547,14 @@ public class MarketplaceService {
             throw new IllegalArgumentException("Choisissez une devise ISO 4217 valide pour la capacité financière.");
         }
         if (registration.type() == BuyerType.INDIVIDUAL) {
-            requireBuyerField(registration.phone(), 40, "Le téléphone");
+            validateLength(registration.phone(), 40, "Le téléphone");
             requireBuyerField(registration.nationality(), 100, "La nationalité");
             requireBuyerField(registration.residence(), 120, "Le pays de résidence");
             requireBuyerField(registration.profession(), 160, "La profession");
             return;
         }
         requireBuyerField(organization, 160, "La dénomination sociale");
-        requireBuyerField(registration.phone(), 40, "Le téléphone");
+        validateLength(registration.phone(), 40, "Le téléphone");
         requireBuyerField(registration.legalForm(), 100, "La forme juridique");
         requireBuyerField(registration.country(), 100, "Le pays d’immatriculation");
         if (registration.countryCode() != null && !MarketCatalog.isCountryCode(registration.countryCode())) {

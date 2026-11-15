@@ -342,8 +342,9 @@ public final class Jpa {
         String populatedColumnCheck = availableColumns.stream()
                 .map(column -> "l." + column + " IS NOT NULL")
                 .collect(java.util.stream.Collectors.joining(" OR "));
-        String sql = "INSERT INTO listing_financial_diagnoses (listing_id, " + columns + ") "
-                + "SELECT l.id, " + selectedColumns + " FROM listings l "
+        String sql = "INSERT INTO listing_financial_diagnoses "
+                + "(listing_id, countryCode, currencyCode, " + columns + ") "
+                + "SELECT l.id, NULL, 'EUR', " + selectedColumns + " FROM listings l "
                 + "LEFT JOIN listing_financial_diagnoses d ON d.listing_id = l.id "
                 + "WHERE d.id IS NULL AND (" + populatedColumnCheck + ")";
         try (var statement = connection.createStatement()) {
