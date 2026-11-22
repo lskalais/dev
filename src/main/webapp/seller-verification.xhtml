@@ -66,13 +66,11 @@
                         · #{document.sizeBytes()} octets
                     </li>
                 </ui:repeat>
+                <li rendered="#{empty verification.documents()}" class="muted">
+                    Aucune pièce n’a encore été téléversée par le cédant.
+                </li>
             </ul>
             <h:panelGroup layout="block" styleClass="workflow-actions">
-                <h:form rendered="#{verification.status().name() eq 'DOCUMENTS_PENDING'}">
-                    <h:commandButton value="Commencer la vérification"
-                                     action="#{marketplace.startSellerVerification(verification.sellerId())}"
-                                     styleClass="button outline small"/>
-                </h:form>
                 <h:form rendered="#{verification.status().name() eq 'UNDER_REVIEW'}">
                     <h:inputTextarea value="#{marketplace.verificationFeedback}"
                                      rows="2" maxlength="1000"
@@ -80,14 +78,14 @@
                     <h:commandButton value="Demander un complément"
                                      action="#{marketplace.requestSellerCorrections(verification.sellerId())}"
                                      styleClass="button outline small"/>
-                    <h:commandButton value="Valider les pièces"
-                                     action="#{marketplace.validateSellerDocuments(verification.sellerId())}"
-                                     styleClass="button primary small"/>
-                </h:form>
-                <h:form rendered="#{verification.status().name() eq 'DOCUMENTS_VALIDATED'}">
                     <h:commandButton value="Valider le compte cédant"
                                      action="#{marketplace.validateSellerAccount(verification.sellerId())}"
                                      styleClass="button primary small"/>
+                </h:form>
+                <h:form rendered="#{verification.status().name() eq 'DOCUMENTS_PENDING'}">
+                    <h:commandButton value="Commencer la vérification"
+                                     action="#{marketplace.startSellerVerification(verification.sellerId())}"
+                                     styleClass="button outline small"/>
                 </h:form>
             </h:panelGroup>
         </section>

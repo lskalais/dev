@@ -469,14 +469,14 @@ class MarketplaceServiceTest {
         }
 
         @Test
-        @DisplayName("démarrer une vérification sans pièce -> refusé")
-        void updateSellerVerification_sansPieceRefuse() {
-            verification(SellerVerificationStatus.DOCUMENTS_PENDING);
+        @DisplayName("aucune pièce n’est obligatoire : démarrer une vérification sans pièce est autorisé")
+        void updateSellerVerification_sansPieceAutorise() {
+            SellerVerification verification = verification(SellerVerificationStatus.DOCUMENTS_PENDING);
             MockJpa.query(em(), DOCUMENT_COUNT_QUERY, List.of(0L));
 
-            assertTrue(assertThrows(IllegalArgumentException.class,
-                    () -> service.updateSellerVerification(superUser, seller.id(), "UNDER_REVIEW", null))
-                    .getMessage().contains("au moins une pièce"));
+            service.updateSellerVerification(superUser, seller.id(), "UNDER_REVIEW", null);
+
+            assertEquals(SellerVerificationStatus.UNDER_REVIEW, verification.status);
         }
 
         @Test
@@ -497,14 +497,18 @@ class MarketplaceServiceTest {
         }
 
         @Test
-        @DisplayName("demande de complément sans motif -> refusée")
-        void updateSellerVerification_demandeCorrectionSansMotifRefusee() {
+        @DisplayName("demande de complément sans motif -> envoyée au cédant, aucun motif exigé")
+        void updateSellerVerification_demandeCorrectionSansMotifEnvoieUnMessage() {
             SellerVerification verification = verification(SellerVerificationStatus.UNDER_REVIEW);
 
-            assertTrue(assertThrows(IllegalArgumentException.class,
-                    () -> service.updateSellerVerification(superUser, seller.id(), "NEEDS_CORRECTION", " "))
-                    .getMessage().contains("Précisez"));
-            assertEquals(SellerVerificationStatus.UNDER_REVIEW, verification.status);
+            service.updateSellerVerification(superUser, seller.id(), "NEEDS_CORRECTION", " ");
+
+            assertEquals(SellerVerificationStatus.NEEDS_CORRECTION, verification.status);
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.UserNotification> captor =
+                    org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.UserNotification.class);
+            verify(em()).persist(captor.capture());
+            assertEquals(seller.id(), captor.getValue().recipientId);
+            assertEquals("Complément demandé sur votre dossier", captor.getValue().title);
         }
 
         @Test

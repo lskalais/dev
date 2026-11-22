@@ -254,7 +254,7 @@ public final class ViewModels {
                            String currencyCode) {
     }
 
-    public record MessageView(String sender, String body, Instant sentAt) {
+    public record MessageView(String sender, String body, Instant sentAt, boolean alpTeam) {
     }
 
     public record DocumentView(Long id, Long listingId, Long requestId, String name,

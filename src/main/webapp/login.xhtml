@@ -33,6 +33,7 @@
                        requiredMessage="#{msg['auth.login.passwordRequired']}" autocomplete="current-password"/>
         <h:commandButton value="#{msg['auth.login.submit']}" action="#{marketplace.login}" styleClass="button primary full"/>
     </h:form>
+    <p class="auth-switch"><a href="forgot-password.xhtml">#{msg['auth.login.forgotPassword']}</a></p>
     <p class="auth-switch">#{msg['auth.login.newUser']} <a href="register.xhtml">#{msg['common.register']}</a></p>
     <p class="auth-switch"><a href="home.xhtml">#{msg['auth.login.backHome']}</a></p>
     <p class="tiny">#{msg['auth.login.privacy']}</p>

@@ -64,7 +64,7 @@
                     <div><dt>Siège social</dt><dd>#{kyc.headOffice()}</dd></div>
                 </dl>
             </ui:fragment>
-            <h3>Pièces KYC</h3>
+            <h3>Pièces fournies</h3>
             <ul class="document-list">
                 <ui:repeat value="#{kyc.documents()}" var="document">
                     <li>
@@ -78,12 +78,31 @@
                         · #{document.sizeBytes()} octets
                     </li>
                 </ui:repeat>
+                <li rendered="#{empty kyc.documents()}" class="muted">
+                    Aucune pièce n’a encore été téléversée par l’acquéreur.
+                </li>
+            </ul>
+            <h3>Liste des pièces à examiner</h3>
+            <p class="muted">Aucune pièce n’est obligatoire : le contrôle est réalisé manuellement par le réviseur.</p>
+            <ul class="document-list">
+                <ui:repeat value="#{marketplace.getBuyerKycDocumentChecklist(kyc)}" var="item">
+                    <li>
+                        <strong>#{item.label()}</strong>
+                        · <span class="status-badge">#{item.statusLabel()}</span>
+                    </li>
+                </ui:repeat>
             </ul>
             <h:panelGroup layout="block" styleClass="flash warning"
                           rendered="#{not empty kyc.feedback()}">
                 Motif ou complément demandé : #{kyc.feedback()}
             </h:panelGroup>
             <h:form styleClass="workflow-actions">
+                <h:panelGroup rendered="#{not empty kyc.email()}">
+                    <a class="button outline small" href="#{marketplace.getBuyerKycContactHref(kyc)}"
+                       target="_blank" rel="noopener noreferrer">
+                        Contacter l’acquéreur
+                    </a>
+                </h:panelGroup>
                 <label>
                     <h:selectBooleanCheckbox value="#{marketplace.buyerKycEmailVerified[kyc.buyerId()]}"/>
                     Courriel vérifié manuellement

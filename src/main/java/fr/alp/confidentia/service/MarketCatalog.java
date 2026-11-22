@@ -11,6 +11,8 @@ public final class MarketCatalog {
     private static final Set<String> COUNTRY_CODES =
             Locale.getISOCountries(Locale.IsoCountryCode.PART1_ALPHA2);
     private static final Set<Currency> CURRENCIES = Currency.getAvailableCurrencies();
+    /** UEMOA : le franc CFA (XOF) est la seule monnaie légale de ces huit pays. */
+    private static final Set<String> XOF_COUNTRIES = Set.of("BJ", "BF", "CI", "GW", "ML", "NE", "SN", "TG");
 
     private MarketCatalog() {
     }
@@ -28,6 +30,25 @@ public final class MarketCatalog {
         } catch (IllegalArgumentException exception) {
             return false;
         }
+    }
+
+    /**
+     * Devise imposée par le pays du dossier lorsque celui-ci utilise une monnaie unique légale.
+     * Cas couvert : les huit pays de la zone UEMOA (Côte d'Ivoire, Sénégal, Bénin…) libellent en
+     * franc CFA (XOF), quelle que soit la devise choisie auparavant.
+     *
+     * @return le code ISO 4217 imposé, ou {@code null} si la devise reste libre.
+     */
+    public static String mandatedCurrencyFor(String countryCode) {
+        return countryCode != null && XOF_COUNTRIES.contains(countryCode) ? "XOF" : null;
+    }
+
+    /** Libellé de la devise tel qu'attendu par les professionnels locaux (« FCFA » plutôt que « XOF »). */
+    public static String currencyLabel(String code, Locale displayLocale) {
+        if ("XOF".equals(code)) {
+            return "FCFA (XOF)";
+        }
+        return isCurrencyCode(code) ? Currency.getInstance(code).getDisplayName(displayLocale) : code;
     }
 
     public static List<SelectItem> countryOptions(Locale displayLocale) {
@@ -65,6 +86,13 @@ public final class MarketCatalog {
         java.text.NumberFormat formatter = java.text.NumberFormat.getNumberInstance(displayLocale);
         formatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
         formatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-        return formatter.format(amount) + " " + code;
+        // code_052 : les dossiers de la zone FCFA sont libellés « FCFA » (avec le code ISO pour lever
+        // toute ambiguïté), le franc CFA n'ayant pas de sous-unité affichée.
+        return formatter.format(amount) + " " + displayCode(code);
+    }
+
+    /** Code de devise tel qu'affiché à côté d'un montant. */
+    public static String displayCode(String code) {
+        return "XOF".equals(code) ? "FCFA (XOF)" : code;
     }
 }

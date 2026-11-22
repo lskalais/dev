@@ -64,6 +64,7 @@ class AuthenticationFilterTest {
         @ParameterizedTest(name = "chemin public : {0}")
         @ValueSource(strings = { "/home.xhtml", "/acheter.xhtml", "/vendre.xhtml", "/login.xhtml",
                 "/register.xhtml", "/faq.xhtml", "/legal.xhtml", "/contact.xhtml", "/article.xhtml",
+                "/forgot-password.xhtml", "/reset-password.xhtml",
                 "/jakarta.faces.resource/theme.css" })
         @DisplayName("les pages publiques et ressources statiques ne sont pas filtrées")
         void doFilter_cheminPublic_laissePasser(String servletPath) throws Exception {

@@ -5,6 +5,7 @@ fr\alp\confidentia\service\MarketplaceServiceTest$Authenticate.class
 fr\alp\confidentia\model\DealRequestTest.class
 fr\alp\confidentia\web\AuthenticationFilterTest$UtilisateurAuthentifie.class
 fr\alp\confidentia\service\MarketplaceContentServiceTest.class
+fr\alp\confidentia\service\PasswordResetServiceTest.class
 fr\alp\confidentia\web\DocumentServletTest$Telechargement.class
 fr\alp\confidentia\service\MarketplaceServiceTest$BuyerCriteria.class
 fr\alp\confidentia\service\MarketplaceServiceTest$Register.class

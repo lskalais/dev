@@ -22,4 +22,11 @@ public class SecureMessage {
 
     @Column(nullable = false)
     public Instant createdAt;
+
+    /**
+     * Renseigné lorsque l'équipe ALP écrit dans le dossier : le message n'est alors pas un échange
+     * entre les parties et reste visible des courtiers et administrateurs (supervision ALP).
+     */
+    @Column(name = "alp_team", nullable = false)
+    public boolean alpTeam;
 }

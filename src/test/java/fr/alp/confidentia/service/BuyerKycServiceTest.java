@@ -211,16 +211,15 @@ class BuyerKycServiceTest {
     }
 
     @Test
-    @DisplayName("le courtier ne peut valider sans pièce d’identité")
-    void updateBuyerKyc_withoutIdentityDocument_rejected() {
+    @DisplayName("aucune pièce n’est obligatoire : le courtier peut démarrer la revue sans pièce")
+    void updateBuyerKyc_withoutAnyDocument_startsReview() {
         stubProfile(profile(BuyerType.INDIVIDUAL));
         BuyerKyc kyc = kyc(BuyerKycStatus.DOCUMENTS_PENDING);
-        stubDocumentCount(BuyerKycDocumentType.IDENTITY_DOCUMENT, 0L);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> service.updateBuyerKyc(broker, buyer.id(), "UNDER_REVIEW", null,
-                        false, false, false, false));
-        assertEquals(BuyerKycStatus.DOCUMENTS_PENDING, kyc.status);
+        service.updateBuyerKyc(broker, buyer.id(), "UNDER_REVIEW", null,
+                false, false, false, false);
+
+        assertEquals(BuyerKycStatus.UNDER_REVIEW, kyc.status);
     }
 
     @Test
@@ -265,20 +264,15 @@ class BuyerKycServiceTest {
     }
 
     @Test
-    @DisplayName("la revue d’une société ne commence pas sans son dossier légal complet")
-    void updateBuyerKyc_companyCannotStartWithoutRequiredDocuments() {
+    @DisplayName("la revue d’une société peut démarrer sans dossier légal : contrôle manuel")
+    void updateBuyerKyc_companyStartsWithoutRequiredDocuments() {
         stubProfile(profile(BuyerType.COMPANY));
         BuyerKyc kyc = kyc(BuyerKycStatus.DOCUMENTS_PENDING);
-        stubCompanyDocumentCounts(1L, false);
-        stubDocumentCount(BuyerKycDocumentType.COMPANY_STATUTES, 0L);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.updateBuyerKyc(broker, buyer.id(), "UNDER_REVIEW", null,
-                        false, false, false, false));
+        service.updateBuyerKyc(broker, buyer.id(), "UNDER_REVIEW", null,
+                false, false, false, false);
 
-        assertEquals("La pièce requise doit être déposée : Statuts de la personne morale.",
-                exception.getMessage());
-        assertEquals(BuyerKycStatus.DOCUMENTS_PENDING, kyc.status);
+        assertEquals(BuyerKycStatus.UNDER_REVIEW, kyc.status);
     }
 
     @Test
@@ -299,17 +293,40 @@ class BuyerKycServiceTest {
     }
 
     @Test
-    @DisplayName("la personne morale est validée avec ses pièces légales sans exigence systématique de bénéficiaires")
-    void updateBuyerKyc_companyValidatesWithRequiredDocuments() {
+    @DisplayName("la personne morale est validée sans pièce ni exigence systématique de bénéficiaires")
+    void updateBuyerKyc_companyValidatesWithoutRequiredDocuments() {
         stubProfile(profile(BuyerType.COMPANY));
         BuyerKyc kyc = kyc(BuyerKycStatus.UNDER_REVIEW);
-        stubCompanyDocumentCounts(1L, false);
 
         service.updateBuyerKyc(broker, buyer.id(), "VALIDATED", null,
                 true, true, false, false);
 
         assertEquals(BuyerKycStatus.VALIDATED, kyc.status);
         assertFalse(kyc.beneficialOwnersRequired);
+    }
+
+    @Test
+    @DisplayName("la demande de complément envoie un message à l’acquéreur sans exiger de motif")
+    void updateBuyerKyc_requestCorrectionsWithoutFeedback_notifiesBuyer() {
+        stubProfile(profile(BuyerType.INDIVIDUAL));
+        BuyerKyc kyc = kyc(BuyerKycStatus.UNDER_REVIEW);
+        UserAccount account = MockJpa.newEntity(UserAccount.class);
+        account.id = buyer.id();
+        account.email = buyer.email();
+        account.fullName = buyer.name();
+        account.role = fr.alp.confidentia.model.Role.BUYER;
+        account.passwordHash = "hash";
+        when(em().find(UserAccount.class, buyer.id())).thenReturn(account);
+
+        service.updateBuyerKyc(broker, buyer.id(), "NEEDS_CORRECTION", null,
+                false, false, false, false);
+
+        assertEquals(BuyerKycStatus.NEEDS_CORRECTION, kyc.status);
+        org.mockito.ArgumentCaptor<fr.alp.confidentia.model.UserNotification> captor =
+                org.mockito.ArgumentCaptor.forClass(fr.alp.confidentia.model.UserNotification.class);
+        verify(em()).persist(captor.capture());
+        assertEquals(buyer.id(), captor.getValue().recipientId);
+        assertEquals("Complément KYC demandé", captor.getValue().title);
     }
 
     @Test

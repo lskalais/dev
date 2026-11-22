@@ -9,6 +9,7 @@ import fr.alp.confidentia.model.PartnerExpertCategory;
 import fr.alp.confidentia.service.ActivityTaxonomy;
 import fr.alp.confidentia.service.MarketCatalog;
 import fr.alp.confidentia.service.MarketplaceService;
+import fr.alp.confidentia.service.PasswordResetService;
 import fr.alp.confidentia.service.ViewModels.BuyerRegistration;
 import fr.alp.confidentia.service.ViewModels.*;
 import jakarta.enterprise.context.SessionScoped;
@@ -40,6 +41,9 @@ public class MarketplaceBean implements Serializable {
 
     @Inject
     private MarketplaceService service;
+
+    @Inject
+    private PasswordResetService passwordResetService;
 
     private UserView user;
     private String email;
@@ -101,6 +105,13 @@ public class MarketplaceBean implements Serializable {
     private final Map<Long, String> contactMessageNotes = new HashMap<>();
     private Long activeDealId;
     private Long selectedListingId;
+    private String resetEmail;
+    private String resetToken;
+    private String resetNewPassword;
+    private String resetConfirmedPassword;
+    private String resetLink;
+    private boolean resetRequestSubmitted;
+    private String alpMessage;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private String sectors;
@@ -221,6 +232,46 @@ public class MarketplaceBean implements Serializable {
         clearActiveDeal();
         user = null;
         return "/login.xhtml?faces-redirect=true";
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Mot de passe oublié (code_053)
+    // ---------------------------------------------------------------------------------------------
+
+    public String requestPasswordReset() {
+        try {
+            PasswordResetService.ResetRequestResult result = passwordResetService.requestReset(resetEmail);
+            resetRequestSubmitted = true;
+            // Le lien n'est communiqué que si aucun courriel n'a pu être envoyé (SMTP absent).
+            resetLink = result.emailSent() ? null : result.resetLink();
+            addInfo("Si un compte correspond à cette adresse, un lien de réinitialisation vient d’être envoyé.");
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            addError(exception.getMessage());
+        }
+        return null;
+    }
+
+    /** Contrôle le jeton reçu par courriel avant d'afficher le formulaire de nouveau mot de passe. */
+    public boolean isPasswordResetTokenValid() {
+        try {
+            return passwordResetService.isValidToken(resetToken);
+        } catch (RuntimeException exception) {
+            return false;
+        }
+    }
+
+    public String submitPasswordReset() {
+        try {
+            passwordResetService.resetPassword(resetToken, resetNewPassword, resetConfirmedPassword);
+            resetToken = null;
+            resetNewPassword = "";
+            resetConfirmedPassword = "";
+            addInfo("Votre mot de passe a été remplacé. Vous pouvez maintenant vous connecter.");
+            return "/login.xhtml?faces-redirect=true";
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            addError(exception.getMessage());
+            return null;
+        }
     }
 
     public void saveCriteria() {
@@ -613,8 +664,37 @@ public class MarketplaceBean implements Serializable {
     }
 
     public List<MessageView> getActiveMessages() {
-        return user == null || activeDealId == null || isSuperUser()
-                ? List.of() : service.messages(user, activeDealId);
+        if (user == null || activeDealId == null) {
+            return List.of();
+        }
+        // L'équipe ALP (courtier mandaté ou administrateur) voit tout l'échange du dossier ;
+        // les parties ne voient que l'échange bilatéral et les messages de l'équipe ALP.
+        return isVerificationReviewer()
+                ? service.alpDealMessages(user, activeDealId)
+                : service.messages(user, activeDealId);
+    }
+
+    public boolean isAlpDealMessaging() {
+        return isVerificationReviewer() && activeDealId != null;
+    }
+
+    /** Envoi d'un message de l'équipe ALP au cédant (ou à l'acquéreur) depuis la revue du dossier. */
+    public void sendAlpMessageToSeller() {
+        sendAlpMessage(true);
+    }
+
+    public void sendAlpMessageToBuyer() {
+        sendAlpMessage(false);
+    }
+
+    private void sendAlpMessage(boolean toSeller) {
+        try {
+            service.sendAlpMessage(user, activeDealId, toSeller, alpMessage);
+            alpMessage = "";
+            addInfo(toSeller ? "Le message a été transmis au cédant." : "Le message a été transmis à l’acquéreur.");
+        } catch (IllegalArgumentException | SecurityException | IllegalStateException exception) {
+            addError(exception.getMessage());
+        }
     }
 
     public List<DocumentView> getActiveDealDocuments() {
@@ -723,6 +803,47 @@ public class MarketplaceBean implements Serializable {
                 .toList();
     }
 
+    /** Élément de la liste des pièces d’un dossier KYC (fournie ou non). */
+    public record ChecklistItem(String type, String label, boolean provided) implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public String statusLabel() {
+            return provided ? "Fournie" : "Non fournie";
+        }
+    }
+
+    /**
+     * Liste des pièces déclarées pour un acquéreur, y compris celles qui n’ont pas encore été
+     * téléversées : aucune pièce n’est obligatoire, le réviseur contrôle librement la liste.
+     */
+    public List<ChecklistItem> getBuyerKycDocumentChecklist(BuyerKycView kyc) {
+        if (kyc == null || kyc.buyerType() == null) {
+            return List.of();
+        }
+        java.util.Set<String> provided = new java.util.HashSet<>();
+        kyc.documents().forEach(document -> provided.add(document.verificationType()));
+        return java.util.Arrays.stream(BuyerKycDocumentType.values())
+                .filter(type -> type.isAvailableFor(kyc.buyerType()))
+                .map(type -> new ChecklistItem(type.name(), type.label(), provided.contains(type.name())))
+                .toList();
+    }
+
+    /** Contact direct de l’acquéreur (courriel) pour solliciter une pièce complémentaire. */
+    public String getBuyerKycContactHref(BuyerKycView kyc) {
+        return kyc == null ? "" : mailHref(kyc.email());
+    }
+
+    public String getSellerVerificationContactHref(SellerVerificationView verification) {
+        return verification == null ? "" : mailHref(verification.email());
+    }
+
+    private static String mailHref(String email) {
+        if (email == null || email.isBlank()) {
+            return "";
+        }
+        return "mailto:" + java.net.URLEncoder.encode(email.trim(), java.nio.charset.StandardCharsets.UTF_8);
+    }
+
     public String buyerKycDocumentTypeLabel(String type) {
         try {
             return BuyerKycDocumentType.valueOf(type).label();
@@ -740,7 +861,7 @@ public class MarketplaceBean implements Serializable {
     }
 
     public String requestBuyerKycCorrections(Long buyerId) {
-        return updateBuyerKyc(buyerId, "NEEDS_CORRECTION", "La demande de complément KYC a été enregistrée.");
+        return updateBuyerKyc(buyerId, "NEEDS_CORRECTION", "La demande de complément KYC a été transmise à l’acquéreur.");
     }
 
     private String updateBuyerKyc(Long buyerId, String status, String successMessage) {
@@ -772,7 +893,7 @@ public class MarketplaceBean implements Serializable {
 
     public String requestSellerCorrections(Long sellerId) {
         return updateSellerVerification(sellerId, "NEEDS_CORRECTION",
-                "La demande de complément a été enregistrée.");
+                "La demande de complément a été transmise au cédant.");
     }
 
     public String validateSellerAccount(Long sellerId) {
@@ -1193,6 +1314,18 @@ public class MarketplaceBean implements Serializable {
     }
 
     public UserView getUser() { return user; }
+    public String getResetEmail() { return resetEmail; }
+    public void setResetEmail(String resetEmail) { this.resetEmail = resetEmail; }
+    public String getResetToken() { return resetToken; }
+    public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+    public String getResetNewPassword() { return resetNewPassword; }
+    public void setResetNewPassword(String resetNewPassword) { this.resetNewPassword = resetNewPassword; }
+    public String getResetConfirmedPassword() { return resetConfirmedPassword; }
+    public void setResetConfirmedPassword(String resetConfirmedPassword) { this.resetConfirmedPassword = resetConfirmedPassword; }
+    public String getResetLink() { return resetLink; }
+    public boolean isResetRequestSubmitted() { return resetRequestSubmitted; }
+    public String getAlpMessage() { return alpMessage; }
+    public void setAlpMessage(String alpMessage) { this.alpMessage = alpMessage; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
@@ -1230,10 +1363,25 @@ public class MarketplaceBean implements Serializable {
     public String getBuyerCountryCode() { return buyerCountryCode; }
     public void setBuyerCountryCode(String buyerCountryCode) { this.buyerCountryCode = buyerCountryCode; }
     public String getListingCountryCode() { return listingCountryCode; }
-    public void setListingCountryCode(String listingCountryCode) { this.listingCountryCode = listingCountryCode; }
+    public void setListingCountryCode(String listingCountryCode) {
+        this.listingCountryCode = listingCountryCode;
+        // code_052 : la devise suit le pays dès qu'il impose une monnaie unique (FCFA pour l'UEMOA).
+        String mandated = MarketCatalog.mandatedCurrencyFor(listingCountryCode);
+        if (mandated != null) {
+            listingCurrencyCode = mandated;
+        }
+    }
     public String getListingCurrencyCode() { return listingCurrencyCode; }
     public void setListingCurrencyCode(String listingCurrencyCode) {
         this.listingCurrencyCode = listingCurrencyCode;
+    }
+    /** Devise imposée par le pays du dossier, ou {@code null} si le cédant reste libre de choisir. */
+    public String getMandatedListingCurrency() {
+        return MarketCatalog.mandatedCurrencyFor(listingCountryCode);
+    }
+    /** Libellé affiché de la devise (ex. « FCFA (XOF) ») pour les champs financiers. */
+    public String getListingCurrencyLabel() {
+        return MarketCatalog.currencyLabel(listingCurrencyCode, displayLocale());
     }
     public List<SelectItem> getCountryOptions() {
         return MarketCatalog.countryOptions(displayLocale());

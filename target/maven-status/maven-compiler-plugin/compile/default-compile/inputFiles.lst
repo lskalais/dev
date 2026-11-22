@@ -19,6 +19,7 @@ C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\ListingSaleProcessH
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\ListingTransactionType.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\PartnerExpert.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\PartnerExpertCategory.java
+C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\PasswordResetToken.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\Role.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\SaleProcessStage.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\model\SecureDocument.java
@@ -34,6 +35,7 @@ C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\service\ActivityTaxonomy.
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\service\MarketCatalog.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\service\MarketplaceService.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\service\NotificationEmailSender.java
+C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\service\PasswordResetService.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\service\ViewModels.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\web\AuthenticationFilter.java
 C:\devtool\projet\alp\src\main\java\fr\alp\confidentia\web\DocumentServlet.java

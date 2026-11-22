@@ -1,4 +1,5 @@
 fr\alp\confidentia\service\MarketplaceService$1.class
+fr\alp\confidentia\service\PasswordResetService$ResetRequestResult.class
 fr\alp\confidentia\web\MarketplaceBean.class
 fr\alp\confidentia\model\BuyerProfile.class
 fr\alp\confidentia\service\MarketplaceService$NotificationDelivery.class
@@ -6,6 +7,7 @@ fr\alp\confidentia\service\ViewModels$SaleProcessHistoryView.class
 fr\alp\confidentia\service\ViewModels$ArticleView.class
 fr\alp\confidentia\model\UserNotification.class
 fr\alp\confidentia\model\PartnerExpert.class
+fr\alp\confidentia\service\PasswordResetService.class
 fr\alp\confidentia\model\PartnerExpertCategory.class
 fr\alp\confidentia\service\ViewModels$DocumentView.class
 fr\alp\confidentia\model\SellerVerification.class
@@ -32,6 +34,7 @@ fr\alp\confidentia\model\ListingSaleProcessHistory.class
 fr\alp\confidentia\security\CryptoService$UnreadableCiphertextException.class
 fr\alp\confidentia\model\SellerVerificationStatus.class
 fr\alp\confidentia\service\ViewModels.class
+fr\alp\confidentia\model\PasswordResetToken.class
 fr\alp\confidentia\web\AuthenticationFilter.class
 fr\alp\confidentia\service\MarketplaceService$ValidatedUpload.class
 fr\alp\confidentia\config\ApplicationListener.class
@@ -54,6 +57,7 @@ fr\alp\confidentia\service\ViewModels$NotificationView.class
 fr\alp\confidentia\model\Role.class
 fr\alp\confidentia\model\ListingSaleProcess.class
 fr\alp\confidentia\web\DocumentServlet.class
+fr\alp\confidentia\web\MarketplaceBean$ChecklistItem.class
 fr\alp\confidentia\service\ViewModels$PartnerExpertView.class
 fr\alp\confidentia\service\ViewModels$BuyerKycView.class
 fr\alp\confidentia\service\ViewModels$PublicListingView.class

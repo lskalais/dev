@@ -20,6 +20,7 @@ public class AuthenticationFilter implements Filter {
                 || path.endsWith("/vendre.xhtml") || path.endsWith("/login.xhtml")
                 || path.endsWith("/register.xhtml") || path.endsWith("/faq.xhtml")
                 || path.endsWith("/legal.xhtml") || path.endsWith("/contact.xhtml")
+                || path.endsWith("/forgot-password.xhtml") || path.endsWith("/reset-password.xhtml")
                 || path.endsWith("/article.xhtml")) {
             chain.doFilter(request, response);
             return;

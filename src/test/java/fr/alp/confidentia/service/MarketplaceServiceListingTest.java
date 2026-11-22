@@ -278,6 +278,51 @@ class MarketplaceServiceListingTest {
         }
 
         @Test
+        @DisplayName("saveListing : dossier ivoirien -> devise imposée en FCFA (XOF) pour les montants")
+        void saveListing_dossierIvoirien_imposeLeFcfa() {
+            MockJpa.query(em(), SECTOR_QUERY, List.of());
+
+            service.saveListing(seller, null, null, "PRIMARY", List.of("agriculture"),
+                    "Agro", null, 2010, "Description", "Abidjan", null, null, null,
+                    new BigDecimal("1000000"), new BigDecimal("100000"), new BigDecimal("500000"),
+                    new BigDecimal("10"), null, null, null, null, null, false,
+                    fr.alp.confidentia.model.ListingTransactionType.FULL_SALE,
+                    new BigDecimal("80000"), new BigDecimal("900000"), new BigDecimal("250000"),
+                    new BigDecimal("300000"), null, "CI", "EUR");
+
+            verify(em(), atLeastOnce()).persist(org.mockito.ArgumentMatchers.argThat(entity ->
+                    entity instanceof ListingFinancialDiagnosis diagnosis
+                            && "XOF".equals(diagnosis.currencyCode)
+                            && "CI".equals(diagnosis.countryCode)));
+        }
+
+        @Test
+        @DisplayName("saveListing : changement de devise sur des montants déjà saisis -> refusé")
+        void saveListing_changementDeDeviseAvecMontants_refuse() {
+            Listing existing = MockJpa.newEntity(Listing.class);
+            existing.id = 7L;
+            existing.sellerId = seller.id();
+            existing.status = "PUBLISHED";
+            existing.revenue = new BigDecimal("1000");
+            doReturn(existing).when(em()).find(Listing.class, 7L);
+            ListingFinancialDiagnosis diagnosis = MockJpa.newEntity(ListingFinancialDiagnosis.class);
+            diagnosis.listingId = 7L;
+            diagnosis.currencyCode = "EUR";
+            MockJpa.query(em(),
+                    "select d from ListingFinancialDiagnosis d where d.listingId = :listingId", List.of(diagnosis));
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> service.saveListing(seller, 7L, null, "PRIMARY", List.of("agriculture"),
+                            "Agro", null, 2010, "Description", "Abidjan", null, null, null,
+                            new BigDecimal("1000"), null, null, null, null, null, null, null, null, false,
+                            fr.alp.confidentia.model.ListingTransactionType.FULL_SALE,
+                            null, null, null, null, null, "CI", "EUR"));
+
+            assertTrue(exception.getMessage().contains("Ressaisissez-les en XOF"));
+            assertEquals("EUR", diagnosis.currencyCode, "La devise enregistrée ne doit pas être réécrite");
+        }
+
+        @Test
         @DisplayName("saveListing : secteur et domaines incohérents -> refusés")
         void saveListing_domaineHorsSecteur_refuse() {
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -1239,7 +1284,8 @@ class MarketplaceServiceListingTest {
             message.senderId = 20L;
             message.encryptedBody = "enc:Bonjour";
             message.createdAt = Instant.now();
-            MockJpa.query(em(), "select m from SecureMessage m where m.requestId = :requestId order by m.createdAt",
+            MockJpa.query(em(), "select m from SecureMessage m where m.requestId = :requestId "
+                            + "and (m.alpTeam = true or m.senderId in :parties) order by m.createdAt",
                     List.of(message));
             doReturn(account(20L, Role.BUYER)).when(em()).find(UserAccount.class, 20L);
 
@@ -1248,6 +1294,70 @@ class MarketplaceServiceListingTest {
             assertEquals(1, views.size());
             assertEquals("Bonjour", views.get(0).body());
             assertEquals("Utilisateur 20", views.get(0).sender());
+        }
+
+        @Test
+        @DisplayName("sendAlpMessage : le courtier écrit au cédant → message ALP persisté et notifié")
+        void sendAlpMessage_auCedant_persisteUnMessageAlp() {
+            DealRequest signed = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing(5L, 10L, null, "PUBLISHED"), signed);
+            org.mockito.ArgumentCaptor<fr.alp.confidentia.model.SecureMessage> captor = org.mockito.ArgumentCaptor
+                    .forClass(fr.alp.confidentia.model.SecureMessage.class);
+
+            service.sendAlpMessage(broker, 7L, true, "  Merci de compléter le mandat  ");
+
+            verify(em()).persist(captor.capture());
+            assertTrue(captor.getValue().alpTeam);
+            assertEquals("enc:Merci de compléter le mandat", captor.getValue().encryptedBody);
+        }
+
+        @Test
+        @DisplayName("sendAlpMessage : un acquéreur ne peut pas écrire en tant qu'équipe ALP")
+        void sendAlpMessage_acquereur_refuse() {
+            assertThrows(SecurityException.class, () -> service.sendAlpMessage(buyer, 7L, true, "Bonjour"));
+        }
+
+        @Test
+        @DisplayName("sendAlpMessage : message vide refusé")
+        void sendAlpMessage_vide_refuse() {
+            assertThrows(IllegalArgumentException.class, () -> service.sendAlpMessage(broker, 7L, true, "  "));
+        }
+
+        @Test
+        @DisplayName("alpDealMessages : l'équipe ALP voit tout l'échange, parties comprises")
+        void alpDealMessages_equipeAlpVoitToutLEchange() {
+            DealRequest signed = deal(7L, 5L, 20L, true, true);
+            prepareDealAccess(listing(5L, 10L, broker.id(), "PUBLISHED"), signed);
+            fr.alp.confidentia.model.SecureMessage exchange = MockJpa
+                    .newEntity(fr.alp.confidentia.model.SecureMessage.class);
+            exchange.id = 3L;
+            exchange.requestId = 7L;
+            exchange.senderId = 20L;
+            exchange.encryptedBody = "enc:Bonjour";
+            exchange.createdAt = Instant.now();
+            fr.alp.confidentia.model.SecureMessage alp = MockJpa
+                    .newEntity(fr.alp.confidentia.model.SecureMessage.class);
+            alp.id = 4L;
+            alp.requestId = 7L;
+            alp.senderId = broker.id();
+            alp.encryptedBody = "enc:Message ALP";
+            alp.alpTeam = true;
+            alp.createdAt = Instant.now();
+            MockJpa.query(em(), "select m from SecureMessage m where m.requestId = :requestId order by m.createdAt",
+                    List.of(exchange, alp));
+            doReturn(account(20L, Role.BUYER)).when(em()).find(UserAccount.class, 20L);
+            doReturn(account(broker.id(), Role.BROKER)).when(em()).find(UserAccount.class, broker.id());
+
+            var views = service.alpDealMessages(broker, 7L);
+
+            assertEquals(2, views.size());
+            assertTrue(views.get(1).sender().endsWith("(équipe ALP)"));
+        }
+
+        @Test
+        @DisplayName("alpDealMessages : un acquéreur n'a pas accès à la supervision ALP")
+        void alpDealMessages_acquereur_refuse() {
+            assertThrows(SecurityException.class, () -> service.alpDealMessages(buyer, 7L));
         }
 
         @Test
@@ -1311,7 +1421,8 @@ class MarketplaceServiceListingTest {
             message.senderId = 20L;
             message.encryptedBody = "old:abc";
             message.createdAt = Instant.now();
-            MockJpa.query(em(), "select m from SecureMessage m where m.requestId = :requestId order by m.createdAt",
+            MockJpa.query(em(), "select m from SecureMessage m where m.requestId = :requestId "
+                            + "and (m.alpTeam = true or m.senderId in :parties) order by m.createdAt",
                     List.of(message));
             doReturn(account(20L, Role.BUYER)).when(em()).find(UserAccount.class, 20L);
 

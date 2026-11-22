@@ -270,18 +270,23 @@
                 <div><label for="broker">Courriel du courtier (facultatif)</label><h:inputText id="broker" value="#{marketplace.brokerEmail}"/><small>Si aucun courtier actif ne correspond, le teaser sera publié sans attribution et un courtier pourra le prendre en charge.</small></div>
                 <div>
                     <label for="listing-currency">Devise des données financières</label>
-                    <h:selectOneMenu id="listing-currency" value="#{marketplace.listingCurrencyCode}" required="true">
+                    <h:selectOneMenu id="listing-currency" value="#{marketplace.listingCurrencyCode}" required="true"
+                                     disabled="#{not empty marketplace.mandatedListingCurrency}">
                         <f:selectItems value="#{marketplace.currencyOptions}"/>
                     </h:selectOneMenu>
+                    <small rendered="#{not empty marketplace.mandatedListingCurrency}">
+                        Pays de la zone FCFA : les montants sont saisis et affichés en
+                        #{marketplace.listingCurrencyLabel}.
+                    </small>
                 </div>
-                <div><label for="revenue">Chiffre d'affaires (#{marketplace.listingCurrencyCode})</label><h:inputText id="revenue" value="#{marketplace.revenue}"/></div>
-                <div><label for="ebitda">EBE / EBITDA (#{marketplace.listingCurrencyCode})</label><h:inputText id="ebitda" value="#{marketplace.ebitda}"/></div>
-                <div><label for="asking-price">Prix demandé (#{marketplace.listingCurrencyCode})</label><h:inputText id="asking-price" value="#{marketplace.askingPrice}"/></div>
+                <div><label for="revenue">Chiffre d'affaires (#{marketplace.listingCurrencyLabel})</label><h:inputText id="revenue" value="#{marketplace.revenue}"/></div>
+                <div><label for="ebitda">EBE / EBITDA (#{marketplace.listingCurrencyLabel})</label><h:inputText id="ebitda" value="#{marketplace.ebitda}"/></div>
+                <div><label for="asking-price">Prix demandé (#{marketplace.listingCurrencyLabel})</label><h:inputText id="asking-price" value="#{marketplace.askingPrice}"/></div>
                 <div><label for="margin">Marge bénéficiaire (%)</label><h:inputText id="margin" value="#{marketplace.profitMargin}"/></div>
-                <div><label for="net-income">Résultat net (#{marketplace.listingCurrencyCode})</label><h:inputText id="net-income" value="#{marketplace.netIncome}"/></div>
-                <div><label for="total-assets">Actifs (#{marketplace.listingCurrencyCode})</label><h:inputText id="total-assets" value="#{marketplace.totalAssets}"/></div>
-                <div><label for="total-debts">Dettes (#{marketplace.listingCurrencyCode})</label><h:inputText id="total-debts" value="#{marketplace.totalDebts}"/></div>
-                <div><label for="fixed-assets">Immobilisations (#{marketplace.listingCurrencyCode})</label><h:inputText id="fixed-assets" value="#{marketplace.fixedAssets}"/></div>
+                <div><label for="net-income">Résultat net (#{marketplace.listingCurrencyLabel})</label><h:inputText id="net-income" value="#{marketplace.netIncome}"/></div>
+                <div><label for="total-assets">Actifs (#{marketplace.listingCurrencyLabel})</label><h:inputText id="total-assets" value="#{marketplace.totalAssets}"/></div>
+                <div><label for="total-debts">Dettes (#{marketplace.listingCurrencyLabel})</label><h:inputText id="total-debts" value="#{marketplace.totalDebts}"/></div>
+                <div><label for="fixed-assets">Immobilisations (#{marketplace.listingCurrencyLabel})</label><h:inputText id="fixed-assets" value="#{marketplace.fixedAssets}"/></div>
                 <div class="span-2"><label for="financial-outlook">Perspectives et éléments de diagnostic</label><h:inputTextarea id="financial-outlook" value="#{marketplace.financialOutlook}" rows="3" maxlength="2000"/></div>
                 <div><label for="company">Nom réel de l'entreprise (privé)</label><h:inputText id="company" value="#{marketplace.companyName}"/></div>
                 <div><label for="exact-location">Localisation exacte (privée)</label><h:inputText id="exact-location" value="#{marketplace.exactLocation}"/></div>
@@ -569,6 +574,32 @@
                                      action="#{marketplace.proposeAppointment(marketplace.activeDealId)}"
                                      styleClass="button outline"/>
                 </h:form>
+            </h:panelGroup>
+            <h3>Échanges du dossier</h3>
+            <h:panelGroup rendered="#{marketplace.alpDealMessaging}">
+                <p class="tiny">Équipe ALP : vous voyez l’échange entre les parties et pouvez écrire
+                    directement au cédant ou à l’acquéreur. Vos messages sont identifiés « équipe ALP ».</p>
+                <div class="message-list">
+                    <ui:repeat value="#{marketplace.activeMessages}" var="line">
+                        <article class="message"><strong>#{line.sender()}</strong><p>#{line.body()}</p><time>#{line.sentAt()}</time></article>
+                    </ui:repeat>
+                    <h:panelGroup rendered="#{empty marketplace.activeMessages}">
+                        <p class="tiny">Aucun échange dans ce dossier pour le moment.</p>
+                    </h:panelGroup>
+                </div>
+                <h:form styleClass="message-compose">
+                    <h:inputTextarea value="#{marketplace.alpMessage}" rows="3" required="true" maxlength="8000"
+                                     pt:placeholder="Message de l’équipe ALP..." xmlns:pt="jakarta.faces.passthrough"/>
+                    <div class="message-compose-actions">
+                        <h:commandButton value="Envoyer au cédant" action="#{marketplace.sendAlpMessageToSeller}"
+                                         styleClass="button primary"/>
+                        <h:commandButton value="Envoyer à l’acquéreur" action="#{marketplace.sendAlpMessageToBuyer}"
+                                         styleClass="button outline"/>
+                    </div>
+                </h:form>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{marketplace.buyer or marketplace.seller}">
+                <p class="tiny">Les messages de l’équipe ALP sont identifiés « équipe ALP ».</p>
                 <div class="message-list">
                     <ui:repeat value="#{marketplace.activeMessages}" var="line">
                         <article class="message"><strong>#{line.sender()}</strong><p>#{line.body()}</p><time>#{line.sentAt()}</time></article>

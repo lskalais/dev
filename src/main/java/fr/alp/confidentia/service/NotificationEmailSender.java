@@ -20,6 +20,15 @@ final class NotificationEmailSender {
         return configuredValue("SMTP_HOST") != null && configuredValue("SMTP_FROM") != null;
     }
 
+    /**
+     * Lien absolu de l'application utilisé dans les courriels transactionnels.
+     * Ex. {@code APP_BASE_URL=https://market.africalegacy.example}.
+     */
+    static String baseUrl() {
+        String value = configuredValue("APP_BASE_URL");
+        return value == null ? null : value.replaceAll("/+$", "");
+    }
+
     static void send(String recipient, String subject, String body) {
         String host = configuredValue("SMTP_HOST");
         String from = configuredValue("SMTP_FROM");

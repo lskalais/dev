@@ -1,6 +1,7 @@
 package fr.alp.confidentia.web;
 
 import fr.alp.confidentia.service.MarketplaceService;
+import fr.alp.confidentia.service.PasswordResetService;
 import fr.alp.confidentia.model.BuyerType;
 import fr.alp.confidentia.service.ViewModels.BuyerRegistration;
 import fr.alp.confidentia.service.ViewModels.ListingEditView;
@@ -62,6 +63,7 @@ class MarketplaceBeanTest {
 
     private MarketplaceBean bean;
     private MarketplaceService service;
+    private PasswordResetService passwordResetService;
     private FacesContext facesContext;
     private ExternalContext externalContext;
     private HttpServletRequest request;
@@ -72,6 +74,7 @@ class MarketplaceBeanTest {
     void setUp() throws Exception {
         bean = new MarketplaceBean();
         service = mock(MarketplaceService.class);
+        passwordResetService = mock(PasswordResetService.class);
         facesContext = mock(FacesContext.class);
         externalContext = mock(ExternalContext.class);
         request = mock(HttpServletRequest.class);
@@ -182,6 +185,23 @@ class MarketplaceBeanTest {
                     fr.alp.confidentia.model.Role.BUYER, registration);
             assertNull(bean.getBuyerPhone(), "Les coordonnées ne doivent pas rester dans le bean de session.");
             assertNull(bean.getIndicativeFinancialCapacity());
+        }
+
+        @Test
+        @DisplayName("mot de passe oublié : lien affiché seulement si aucun courriel n'a pu partir")
+        void requestPasswordReset_sansSmtp_exposeLeLien() throws Exception {
+            Field resetServiceField = MarketplaceBean.class.getDeclaredField("passwordResetService");
+            resetServiceField.setAccessible(true);
+            resetServiceField.set(bean, passwordResetService);
+            when(passwordResetService.requestReset("a@alp.fr"))
+                    .thenReturn(new PasswordResetService.ResetRequestResult(true, false, "http://x/reset?t=1"));
+            bean.setResetEmail("a@alp.fr");
+
+            assertNull(bean.requestPasswordReset());
+
+            assertTrue(bean.isResetRequestSubmitted());
+            assertEquals("http://x/reset?t=1", bean.getResetLink());
+            assertInfo("Si un compte correspond à cette adresse, un lien de réinitialisation vient d’être envoyé.");
         }
 
         @Test

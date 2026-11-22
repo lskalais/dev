@@ -45,6 +45,22 @@ public class MarketplaceService {
     private record SavedListing(ListingSaveResult result, Listing listing) {
     }
 
+    /**
+     * code_052 : refuse un changement de devise lorsqu'un montant déjà enregistré du dossier a pu
+     * être saisi dans l'ancienne devise. Aucun taux de conversion n'étant connu, le réviseur doit
+     * ressaisir les montants dans la devise imposée plutôt que de les réétiqueter.
+     */
+    private static void ensureAmountsMatchCurrency(Listing listing, ListingFinancialDiagnosis diagnosis,
+                                                   String targetCurrency) {
+        boolean hasAmounts = listing.revenue != null || listing.ebitda != null || listing.askingPrice != null
+                || diagnosis.netIncome != null || diagnosis.totalAssets != null
+                || diagnosis.totalDebts != null || diagnosis.fixedAssets != null;
+        if (hasAmounts) {
+            throw new IllegalArgumentException("Les montants de ce dossier ont été enregistrés dans une autre devise."
+                    + " Ressaisissez-les en " + targetCurrency + " avant d'enregistrer (aucune conversion automatique).");
+        }
+    }
+
     private static void validateLength(String value, int maximum, String label) {
         if (value != null && value.length() > maximum) {
             throw new IllegalArgumentException(label + " dépasse " + maximum + " caractères.");
@@ -751,6 +767,11 @@ public class MarketplaceService {
         if (!MarketCatalog.isCurrencyCode(currencyCode)) {
             throw new IllegalArgumentException("Choisissez une devise ISO 4217 valide pour les données financières.");
         }
+        // code_052 : pour un dossier ivoirien (zone UEMOA), les montants sont saisis et affichés en
+        // FCFA (XOF). La devise effective est donc imposée par le pays, jamais un simple libellé.
+        String mandatedCurrency = MarketCatalog.mandatedCurrencyFor(countryCode);
+        String effectiveCurrency = mandatedCurrency == null ? currencyCode : mandatedCurrency;
+        boolean currencyChanged = mandatedCurrency != null && !mandatedCurrency.equals(currencyCode);
         if (countryCode != null && !MarketCatalog.isCountryCode(countryCode)) {
             throw new IllegalArgumentException("Choisissez un pays ISO 3166-1 valide.");
         }
@@ -838,8 +859,13 @@ public class MarketplaceService {
                 em.persist(diagnosis);
             }
             if (diagnosis != null && (newDiagnosis || countryCode != null)) {
+                if (currencyChanged && !newDiagnosis) {
+                    // Les montants déjà stockés sont dans l'ancienne devise : on refuse de changer le
+                    // libellé sans conversion, pour ne pas réétiqueter des montants en silence.
+                    ensureAmountsMatchCurrency(listing, diagnosis, mandatedCurrency);
+                }
                 diagnosis.countryCode = countryCode;
-                diagnosis.currencyCode = currencyCode;
+                diagnosis.currencyCode = effectiveCurrency;
             }
             if (diagnosis != null && updateFinancialDiagnosis) {
                 diagnosis.netIncome = netIncome;
@@ -1338,11 +1364,43 @@ public class MarketplaceService {
             message.senderId = user.id();
             message.encryptedBody = encryptedBody;
             message.createdAt = Instant.now();
+            message.alpTeam = false;
             em.persist(message);
             return otherDealParticipant(user, request, listing);
         });
         notifyUser(recipientId, "Nouveau message sécurisé",
                 "Un participant a envoyé un message dans le dossier #" + requestId + ".");
+    }
+
+    /**
+     * L'équipe ALP (courtier ou administrateur) écrit dans le dossier pour échanger avec le cédant
+     * ou l'acquéreur. Le message reste visible des autres membres ALP : il ne relève pas de
+     * l'échange bilatéral entre les parties.
+     */
+    public void sendAlpMessage(UserView alpMember, Long requestId, boolean toSeller, String body) {
+        if (alpMember == null || !(Role.SUPER.name().equals(alpMember.role())
+                || Role.BROKER.name().equals(alpMember.role()))) {
+            throw new SecurityException("Seule l'équipe ALP peut écrire depuis la revue du dossier.");
+        }
+        if (body == null || body.isBlank() || body.length() > 8000) {
+            throw new IllegalArgumentException("Le message doit contenir entre 1 et 8 000 caractères.");
+        }
+        String encryptedBody = CryptoService.encrypt(body.trim());
+        Long recipientId = Jpa.transaction(em -> {
+            DealRequest request = requireRequest(em, requestId);
+            Listing listing = requireListing(em, request.listingId);
+            Long recipient = toSeller ? listing.sellerId : request.buyerId;
+            SecureMessage message = new SecureMessage();
+            message.requestId = requestId;
+            message.senderId = alpMember.id();
+            message.encryptedBody = encryptedBody;
+            message.createdAt = Instant.now();
+            message.alpTeam = true;
+            em.persist(message);
+            return recipient;
+        });
+        notifyUser(recipientId, "Message de l'équipe ALP",
+                "L'équipe ALP vous a adressé un message dans le dossier #" + requestId + ".");
     }
 
     public List<MessageView> messages(UserView user, Long requestId) {
@@ -1354,14 +1412,45 @@ public class MarketplaceService {
             if (!request.isNdaSigned()) {
                 throw new SecurityException("L'accord de confidentialité doit être signé par les deux parties.");
             }
+            // Les parties voient l'échange bilatéral et les messages de l'équipe ALP ; elles ne voient
+            // jamais la supervision interne ALP des autres messages.
             List<SecureMessage> messages = em.createQuery(
-                            "select m from SecureMessage m where m.requestId = :requestId order by m.createdAt",
-                            SecureMessage.class).setParameter("requestId", requestId).getResultList();
-            return messages.stream().map(message -> new MessageView(
-                    em.find(UserAccount.class, message.senderId).fullName,
-                    decryptForDisplay(message.encryptedBody, "message sécurisé", message.id),
-                    message.createdAt)).toList();
+                            "select m from SecureMessage m where m.requestId = :requestId "
+                                    + "and (m.alpTeam = true or m.senderId in :parties) order by m.createdAt",
+                            SecureMessage.class).setParameter("requestId", requestId)
+                    .setParameter("parties", List.of(request.buyerId, listing.sellerId)).getResultList();
+            return messages.stream().map(message -> messageView(em, message)).toList();
         });
+    }
+
+    /**
+     * Fil de discussion complet du dossier pour l'équipe ALP (supervision) lorsqu'elle a ouvert
+     * la revue du dossier.
+     */
+    public List<MessageView> alpDealMessages(UserView alpMember, Long requestId) {
+        if (alpMember == null || !(Role.SUPER.name().equals(alpMember.role())
+                || Role.BROKER.name().equals(alpMember.role()))) {
+            throw new SecurityException("Seule l'équipe ALP peut consulter l'échange du dossier.");
+        }
+        return Jpa.transaction(em -> {
+            DealRequest request = requireRequest(em, requestId);
+            Listing listing = requireListing(em, request.listingId);
+            requireDealReviewer(alpMember, listing);
+            return em.createQuery(
+                            "select m from SecureMessage m where m.requestId = :requestId order by m.createdAt",
+                            SecureMessage.class).setParameter("requestId", requestId).getResultList()
+                    .stream().map(message -> messageView(em, message)).toList();
+        });
+    }
+
+    private static MessageView messageView(jakarta.persistence.EntityManager em, SecureMessage message) {
+        UserAccount sender = em.find(UserAccount.class, message.senderId);
+        String senderName = sender == null ? "ALP" : sender.fullName;
+        if (message.alpTeam) {
+            senderName = senderName + " (équipe ALP)";
+        }
+        return new MessageView(senderName, decryptForDisplay(message.encryptedBody, "message sécurisé", message.id),
+                message.createdAt, message.alpTeam);
     }
 
     public DocumentView storeDocument(UserView user, Long listingId, Long requestId,
@@ -1695,12 +1784,8 @@ public class MarketplaceService {
                 throw new IllegalArgumentException("Cette transition KYC n’est pas autorisée depuis l’état « "
                         + current.label() + " ».");
             }
-            if (target == BuyerKycStatus.UNDER_REVIEW || target == BuyerKycStatus.VALIDATED) {
-                validateRequiredBuyerKycDocuments(em, buyerId, profile.buyerType);
-            }
-            if (target == BuyerKycStatus.NEEDS_CORRECTION && normalizedFeedback == null) {
-                throw new IllegalArgumentException("Précisez les pièces manquantes ou les corrections attendues.");
-            }
+            // Aucune pièce n’est obligatoire : le réviseur contrôle librement les pièces fournies.
+            // La demande de complément est un simple message à l’acquéreur : aucun motif n’est exigé.
             if (target == BuyerKycStatus.VALIDATED) {
                 if (!emailVerified || !phoneVerified) {
                     throw new IllegalArgumentException(
@@ -1727,6 +1812,13 @@ public class MarketplaceService {
             kyc.updatedAt = Instant.now();
             return null;
         });
+        if (target == BuyerKycStatus.NEEDS_CORRECTION) {
+            notifyUser(buyerId, "Complément KYC demandé",
+                    normalizedFeedback == null
+                            ? "Le réviseur vous invite à contacter ALP au sujet de votre dossier KYC."
+                            : "Le réviseur vous demande un complément sur votre dossier KYC : "
+                                    + normalizedFeedback);
+        }
     }
 
     private List<DocumentView> sellerVerificationDocumentsFor(Long sellerId) {
@@ -1832,26 +1924,21 @@ public class MarketplaceService {
                 throw new IllegalArgumentException("Cette transition n’est pas autorisée depuis l’état « "
                         + current.label() + " ».");
             }
-            if (target == SellerVerificationStatus.UNDER_REVIEW
-                    || target == SellerVerificationStatus.DOCUMENTS_VALIDATED
-                    || target == SellerVerificationStatus.ACCOUNT_VALIDATED) {
-                Long documentCount = em.createQuery(
-                                "select count(d) from SecureDocument d where d.documentPurpose = 'SELLER_VERIFICATION' "
-                                        + "and d.uploadedBy = :id", Long.class)
-                        .setParameter("id", sellerId).getSingleResult();
-                if (documentCount == null || documentCount == 0L) {
-                    throw new IllegalArgumentException("Le cédant doit téléverser au moins une pièce justificative.");
-                }
-            }
-            if (target == SellerVerificationStatus.NEEDS_CORRECTION && normalizedFeedback == null) {
-                throw new IllegalArgumentException("Précisez les pièces manquantes ou les corrections attendues.");
-            }
+            // Aucune pièce n’est obligatoire : le réviseur contrôle librement les pièces fournies.
+            // La demande de complément est un simple message au cédant : aucun motif n’est exigé.
             verification.status = target;
             verification.feedback = target == SellerVerificationStatus.NEEDS_CORRECTION ? normalizedFeedback : null;
             verification.updatedBy = reviewer.id();
             verification.updatedAt = Instant.now();
             return null;
         });
+        if (target == SellerVerificationStatus.NEEDS_CORRECTION) {
+            notifyUser(sellerId, "Complément demandé sur votre dossier",
+                    normalizedFeedback == null
+                            ? "L’équipe ALP vous invite à la contacter au sujet de votre dossier de vérification."
+                            : "L’équipe ALP vous demande un complément sur votre dossier : "
+                                    + normalizedFeedback);
+        }
     }
 
     public List<DocumentView> documentsFor(UserView user, Long listingId) {
@@ -2452,6 +2539,13 @@ public class MarketplaceService {
         }
     }
 
+    private static void requireListingReviewer(UserView user, Listing listing) {
+        if (user != null && Role.SUPER.name().equals(user.role())) {
+            return;
+        }
+        requireListingManager(user, listing);
+    }
+
     private static void requireOperationManager(UserView user, Listing listing) {
         if (user != null && Role.SUPER.name().equals(user.role())) {
             return;
@@ -2459,11 +2553,8 @@ public class MarketplaceService {
         requireListingManager(user, listing);
     }
 
-    private static void requireListingReviewer(UserView user, Listing listing) {
-        if (user != null && Role.SUPER.name().equals(user.role())) {
-            return;
-        }
-        requireListingManager(user, listing);
+    private static void requireDealReviewer(UserView user, Listing listing) {
+        requireListingReviewer(user, listing);
     }
 
     private static void requireListingPublicationManager(UserView user, Listing listing) {
@@ -2624,24 +2715,7 @@ public class MarketplaceService {
         return em.createQuery(query, Long.class).setParameter("id", buyerId).getSingleResult();
     }
 
-    private static void validateRequiredBuyerKycDocuments(jakarta.persistence.EntityManager em, Long buyerId,
-                                                           BuyerType buyerType) {
-        List<BuyerKycDocumentType> requiredTypes = switch (buyerType) {
-            case INDIVIDUAL -> List.of(BuyerKycDocumentType.IDENTITY_DOCUMENT);
-            case COMPANY -> {
-                yield List.of(
-                        BuyerKycDocumentType.COMPANY_REGISTRATION,
-                        BuyerKycDocumentType.COMPANY_STATUTES,
-                        BuyerKycDocumentType.LEGAL_REPRESENTATIVE_ID,
-                        BuyerKycDocumentType.REPRESENTATION_AUTHORITY);
-            }
-        };
-        for (BuyerKycDocumentType type : requiredTypes) {
-            if (buyerKycDocumentCount(em, buyerId, type) == 0L) {
-                throw new IllegalArgumentException("La pièce requise doit être déposée : " + type.label() + ".");
-            }
-        }
-    }
+
 
     private static BuyerKycView buyerKycView(BuyerProfile profile, UserAccount account, BuyerKyc kyc,
                                              List<DocumentView> documents) {
@@ -2744,10 +2818,7 @@ public class MarketplaceService {
     }
 
     private static void validatePassword(String password) {
-        if (password == null || password.length() < 12
-                || password.getBytes(StandardCharsets.UTF_8).length > 72) {
-            throw new IllegalArgumentException("Le mot de passe doit contenir au moins 12 caractères et au plus 72 octets UTF-8.");
-        }
+        PasswordResetService.validatePassword(password);
     }
 
     private static String trimToNull(String value) {

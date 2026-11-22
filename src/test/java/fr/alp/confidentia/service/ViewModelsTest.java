@@ -16,6 +16,7 @@ import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -90,10 +91,11 @@ class ViewModelsTest {
     void messageView_instantConserve() {
         Instant now = Instant.parse("2026-10-31T10:15:30Z");
 
-        MessageView view = new MessageView("Alice", "Bonjour", now);
+        MessageView view = new MessageView("Alice", "Bonjour", now, false);
 
         assertEquals(now, view.sentAt());
         assertEquals("Alice", view.sender());
+        assertFalse(view.alpTeam());
     }
 
     @Test
