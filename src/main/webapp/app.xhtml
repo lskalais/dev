@@ -4,6 +4,9 @@
       xmlns:f="jakarta.faces.core"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:c="jakarta.tags.core">
+<f:metadata>
+    <f:viewAction action="#{marketplace.refresh}"/>
+</f:metadata>
 <h:head>
     <title>Tableau de bord | Africa Legacy Market</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -15,9 +18,6 @@
     <h:outputScript library="js" name="theme-i18n.js" target="head"/>
 </h:head>
 <h:body>
-<f:metadata>
-    <f:viewAction action="#{marketplace.refresh}"/>
-</f:metadata>
 <header class="topbar">
     <a class="brand" href="app.xhtml">Africa Legacy <span>Market</span></a>
     <div class="topbar-user">
@@ -75,11 +75,11 @@
     <h:panelGroup layout="block" rendered="#{marketplace.seller}">
         <section class="panel verification-status">
             <p class="eyebrow">SUIVI DE VOTRE COMPTE</p>
-            <h2>#{marketplace.sellerVerificationStatus.status.label()}</h2>
+            <h2>#{marketplace.sellerVerificationStatus.status().label()}</h2>
             <p class="muted">Après l’envoi de vos pièces, un courtier ou un administrateur examinera votre dossier. Une demande de complément sera affichée ici.</p>
             <h:panelGroup layout="block" styleClass="flash warning"
-                          rendered="#{not empty marketplace.sellerVerificationStatus.feedback}">
-                #{marketplace.sellerVerificationStatus.feedback}
+                          rendered="#{not empty marketplace.sellerVerificationStatus.feedback()}">
+                #{marketplace.sellerVerificationStatus.feedback()}
             </h:panelGroup>
         </section>
     </h:panelGroup>
@@ -87,18 +87,18 @@
     <h:panelGroup layout="block" rendered="#{not empty marketplace.buyerKycStatus}">
         <section class="panel verification-status">
             <p class="eyebrow">VÉRIFICATION DE VOTRE PROFIL</p>
-            <h2>#{marketplace.buyerKycStatus.status.label()}</h2>
-            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType.name() eq 'INDIVIDUAL'}">
+            <h2>#{marketplace.buyerKycStatus.status().label()}</h2>
+            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType().name() eq 'INDIVIDUAL'}">
                 <p class="muted">Déposez une pièce d’identité lisible. Un courtier ou un administrateur vérifiera vos coordonnées; aucun justificatif d’origine des fonds n’est demandé sauf si ALP vous l’indique.</p>
             </ui:fragment>
-            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType.name() eq 'COMPANY'}">
+            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType().name() eq 'COMPANY'}">
                 <p class="muted">Déposez les pièces d’immatriculation, les statuts, l’identité du représentant légal et ses pouvoirs. ALP pourra demander les informations sur les bénéficiaires effectifs si nécessaire.</p>
             </ui:fragment>
             <h:panelGroup layout="block" styleClass="flash warning"
-                          rendered="#{not empty marketplace.buyerKycStatus.feedback}">
-                #{marketplace.buyerKycStatus.feedback}
+                          rendered="#{not empty marketplace.buyerKycStatus.feedback()}">
+                #{marketplace.buyerKycStatus.feedback()}
             </h:panelGroup>
-            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType.name() eq 'COMPANY'}">
+            <ui:fragment rendered="#{marketplace.buyerKycStatus.buyerType().name() eq 'COMPANY'}">
                 <dl class="kyc-details">
                     <div><dt>Dénomination sociale</dt><dd>#{marketplace.buyerKycStatus.organization}</dd></div>
                     <div><dt>Forme juridique</dt><dd>#{marketplace.buyerKycStatus.legalForm}</dd></div>
@@ -110,7 +110,7 @@
                 </dl>
             </ui:fragment>
             <ul class="document-list">
-                <ui:repeat value="#{marketplace.buyerKycStatus.documents}" var="buyerKycDocument">
+                <ui:repeat value="#{marketplace.buyerKycStatus.documents()}" var="buyerKycDocument">
                     <li>
                         <strong>#{marketplace.buyerKycDocumentTypeLabel(buyerKycDocument.verificationType())}</strong>
                         · <h:outputText value="#{buyerKycDocument.name()}"

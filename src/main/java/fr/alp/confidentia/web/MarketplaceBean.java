@@ -639,11 +639,17 @@ public class MarketplaceBean implements Serializable {
     }
 
     public List<DocumentView> getSellerVerificationDocuments() {
-        return isSeller() ? service.sellerVerificationDocuments(user) : List.of();
+        return isSeller()
+                ? requestCachedList("marketplaceSellerVerificationDocumentsCache",
+                () -> service.sellerVerificationDocuments(currentUser()))
+                : List.of();
     }
 
     public SellerVerificationStatusView getSellerVerificationStatus() {
-        return isSeller() ? service.sellerVerificationStatus(user) : null;
+        return isSeller()
+                ? requestCachedValue("marketplaceSellerVerificationStatusCache",
+                () -> service.sellerVerificationStatus(currentUser()))
+                : null;
     }
 
     public List<SellerVerificationView> getSellerVerificationQueue() {
@@ -799,10 +805,11 @@ public class MarketplaceBean implements Serializable {
     }
 
     public String getRoleLabel() {
-        if (user == null) {
+        UserView current = currentUser();
+        if (current == null) {
             return "";
         }
-        return switch (user.role()) {
+        return switch (current.role()) {
             case "SELLER" -> "Cédant";
             case "BUYER" -> "Acquéreur / investisseur";
             case "BROKER" -> "Courtier";
@@ -812,11 +819,12 @@ public class MarketplaceBean implements Serializable {
     }
 
     public boolean isSuperUser() {
-        return service.isSuperUser(user);
+        return service.isSuperUser(currentUser());
     }
 
     public boolean isVerificationReviewer() {
-        return user != null && ("BROKER".equals(user.role()) || "SUPER".equals(user.role()));
+        UserView current = currentUser();
+        return current != null && ("BROKER".equals(current.role()) || "SUPER".equals(current.role()));
     }
 
     public List<AdminUserView> getAdminUsers() {
@@ -1001,15 +1009,18 @@ public class MarketplaceBean implements Serializable {
     }
 
     public boolean isBuyer() {
-        return user != null && "BUYER".equals(user.role());
+        UserView current = currentUser();
+        return current != null && "BUYER".equals(current.role());
     }
 
     public boolean isSeller() {
-        return user != null && "SELLER".equals(user.role());
+        UserView current = currentUser();
+        return current != null && "SELLER".equals(current.role());
     }
 
     public boolean isBroker() {
-        return user != null && "BROKER".equals(user.role());
+        UserView current = currentUser();
+        return current != null && "BROKER".equals(current.role());
     }
 
     public String getTemporaryPassword() { return temporaryPassword; }
@@ -1039,6 +1050,21 @@ public class MarketplaceBean implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
+    private <T> T requestCachedValue(String key, Supplier<T> loader) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context == null) {
+            return loader.get();
+        }
+        Map<String, Object> requestMap = context.getExternalContext().getRequestMap();
+        if (requestMap.containsKey(key)) {
+            return (T) requestMap.get(key);
+        }
+        T loaded = loader.get();
+        requestMap.put(key, loaded);
+        return loaded;
+    }
+
+    @SuppressWarnings("unchecked")
     private <T> List<T> requestCachedList(String key, Supplier<List<T>> loader) {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context == null) {
@@ -1056,6 +1082,22 @@ public class MarketplaceBean implements Serializable {
 
     private void clearCredentials() {
         password = "";
+    }
+
+    /**
+     * Le bean est en session : l'utilisateur affiché doit être réévalué à chaque accès à partir de
+     * la session (où register()/login() publient « authenticatedUser »), pour ne jamais servir un
+     * rôle périmé à isSeller()/isBuyer()/isSuperUser() pendant le rendu de la vue.
+     */
+    private UserView currentUser() {
+        UserView current = user;
+        FacesContext context = FacesContext.getCurrentInstance();
+        Object authenticated = context == null ? null
+                : context.getExternalContext().getSessionMap().get("authenticatedUser");
+        if (authenticated instanceof UserView) {
+            current = (UserView) authenticated;
+        }
+        return current;
     }
 
     private void clearBuyerRegistration() {

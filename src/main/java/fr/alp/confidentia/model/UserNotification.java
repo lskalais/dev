@@ -21,11 +21,12 @@ public class UserNotification {
     @Column(nullable = false, length = 500)
     public String body;
 
-    @Column(nullable = false, length = 40)
+    @Column(name = "email_delivery_status", nullable = false, length = 40)
     public String emailDeliveryStatus;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     public Instant createdAt;
 
+    @Column(name = "read_at")
     public Instant readAt;
 }

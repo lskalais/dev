@@ -36,6 +36,7 @@ public final class Jpa {
         migrateListingSaleProcesses(host, port, database);
         migratePartnerExperts(host, port, database);
         migratePasswordChangeRequired(host, port, database);
+        migrateUserNotificationColumns(host, port, database);
         properties.put("jakarta.persistence.jdbc.url",
                 "jdbc:mariadb://" + host + ":" + port + "/" + database + "?useUnicode=true&characterEncoding=utf8");
         properties.put("jakarta.persistence.jdbc.user", env("DB_USER", "root"));
@@ -447,6 +448,74 @@ public final class Jpa {
                     """);
         } catch (SQLException exception) {
             throw new IllegalStateException("Impossible d'appliquer la migration des partenaires et experts.", exception);
+        }
+    }
+
+    /**
+     * La table user_notifications a d'abord été générée par Hibernate sans @Column explicite : les
+     * colonnes s'appelaient createdAt/readAt/emailDeliveryStatus alors que l'index
+     * idx_notifications_recipient_created porte déjà sur created_at, ce qui faisait échouer le
+     * démarrage (Key column 'created_at' doesn't exist in table). Renommage idempotent.
+     */
+    private static void migrateUserNotificationColumns(String host, String port, String database) {
+        String url = "jdbc:mariadb://" + host + ":" + port + "/" + database
+                + "?useUnicode=true&characterEncoding=utf8";
+        try (Connection connection = DriverManager.getConnection(url, env("DB_USER", "root"),
+                env("DB_PASSWORD", ""))) {
+            ensureMigrationTable(connection);
+            boolean tableExists;
+            try (PreparedStatement statement = connection.prepareStatement("""
+                    SELECT 1 FROM information_schema.tables
+                    WHERE table_schema = DATABASE() AND table_name = 'user_notifications'
+                    """);
+                 ResultSet result = statement.executeQuery()) {
+                tableExists = result.next();
+            }
+            if (!tableExists) {
+                return;
+            }
+            renameColumnIfPresent(connection, "user_notifications", "createdAt", "created_at");
+            renameColumnIfPresent(connection, "user_notifications", "readAt", "read_at");
+            renameColumnIfPresent(connection, "user_notifications", "emailDeliveryStatus", "email_delivery_status");
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "INSERT IGNORE INTO app_migrations (version) VALUES (?)")) {
+                statement.setString(1, "2026-11-notification-snake-case-columns");
+                statement.executeUpdate();
+            }
+        } catch (SQLException exception) {
+            throw new IllegalStateException("Impossible de renommer les colonnes de user_notifications.", exception);
+        }
+    }
+
+    private static void renameColumnIfPresent(Connection connection, String tableName, String oldName,
+                                              String newName) throws SQLException {
+        boolean oldExists;
+        boolean newExists;
+        try (PreparedStatement statement = connection.prepareStatement("""
+                SELECT column_name FROM information_schema.columns
+                WHERE table_schema = DATABASE() AND table_name = ? AND column_name IN (?, ?)
+                """)) {
+            statement.setString(1, tableName);
+            statement.setString(2, oldName);
+            statement.setString(3, newName);
+            oldExists = false;
+            newExists = false;
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    String column = result.getString(1);
+                    if (oldName.equals(column)) {
+                        oldExists = true;
+                    } else if (newName.equals(column)) {
+                        newExists = true;
+                    }
+                }
+            }
+        }
+        if (!oldExists || newExists) {
+            return;
+        }
+        try (var statement = connection.createStatement()) {
+            statement.executeUpdate("ALTER TABLE " + tableName + " RENAME COLUMN " + oldName + " TO " + newName);
         }
     }
 

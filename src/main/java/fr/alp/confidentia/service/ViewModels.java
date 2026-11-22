@@ -56,6 +56,22 @@ public final class ViewModels {
 
     public record SellerVerificationStatusView(SellerVerificationStatus status, String feedback,
                                                Instant updatedAt) {
+        /**
+         * Accesseurs explicites (en plus de status()/feedback() du record) : EL ne détecte pas
+         * toujours les accesseurs d'un record défini dans une classe imbriquée, ce qui provoquait
+         * « Propriété [status] introuvable sur le type ...SellerVerificationStatusView ».
+         */
+        public SellerVerificationStatus getStatus() {
+            return status;
+        }
+
+        public String getFeedback() {
+            return feedback;
+        }
+
+        public Instant getUpdatedAt() {
+            return updatedAt;
+        }
     }
 
     public record SellerVerificationView(Long sellerId, String name, String email, String organization,
@@ -73,6 +89,21 @@ public final class ViewModels {
                                boolean phoneVerified, boolean sourceOfFundsRequired,
                                boolean beneficialOwnersRequired, Instant updatedAt,
                                java.util.List<DocumentView> documents) {
+        /**
+         * Accesseurs explicites (en plus de buyerType(), status()...) : sans eux, EL ne résout pas
+         * #{...buyerType} et la vue /app.xhtml tombe en 500 après inscription d'un acquéreur.
+         */
+        public BuyerType getBuyerType() {
+            return buyerType;
+        }
+
+        public BuyerKycStatus getStatus() {
+            return status;
+        }
+
+        public String getFeedback() {
+            return feedback;
+        }
     }
 
     public record ListingView(Long id, String sectorCategory, String activityDomains,

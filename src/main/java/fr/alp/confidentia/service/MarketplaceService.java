@@ -1738,14 +1738,30 @@ public class MarketplaceService {
     }
 
     public SellerVerificationStatusView sellerVerificationStatus(UserView seller) {
-        requireRole(seller, Role.SELLER);
-        return Jpa.transaction(em -> {
-            SellerVerification verification = findSellerVerification(em, seller.id());
-            return verification == null
-                    ? new SellerVerificationStatusView(SellerVerificationStatus.DOCUMENTS_PENDING, null, null)
-                    : new SellerVerificationStatusView(verification.status, verification.feedback,
-                    verification.updatedAt);
-        });
+        if (seller != null && Role.SELLER.name().equals(seller.role())) {
+            SellerVerificationStatusView status = loadSellerVerificationStatus(seller);
+            if (status != null) {
+                return status;
+            }
+        }
+        // Jamais de null vers la vue : app.xhtml lit sellerVerificationStatus.status.
+        return new SellerVerificationStatusView(SellerVerificationStatus.DOCUMENTS_PENDING, null, null);
+    }
+
+    private SellerVerificationStatusView loadSellerVerificationStatus(UserView seller) {
+        try {
+            return Jpa.transaction(em -> {
+                SellerVerification verification = findSellerVerification(em, seller.id());
+                return verification == null || verification.status == null
+                        ? new SellerVerificationStatusView(SellerVerificationStatus.DOCUMENTS_PENDING, null, null)
+                        : new SellerVerificationStatusView(verification.status, verification.feedback,
+                        verification.updatedAt);
+            });
+        } catch (RuntimeException exception) {
+            LOGGER.log(java.util.logging.Level.WARNING,
+                    "Statut de vérification cédant indisponible pour l'utilisateur " + seller.id(), exception);
+            return null;
+        }
     }
 
     public List<SellerVerificationView> sellerVerificationQueue(UserView reviewer) {
